@@ -1,0 +1,98 @@
+Design an intuitive mobile app interface for a prototype of 20minCoach.
+
+App Overall Design:
+
+Create a simple but aesthetically pleasing login screen for both user and coach personas. For prototyping, assume simple email and password fields with a "Sign In" button; authentication logic is not required.
+The user's homepage should allow a client to simulate requesting a coach. The user must be able to input a description of their problem (with a validation message for inputs less than 40 words) and select from a group of tags to categorize the problem (e.g., #arts, #science, #mechanic).
+The homepage must also include navigation buttons to access other app parts such as Settings, Favorites, User Profile, and Session History. These screens can be simple placeholders for this prototype.
+After clicking the "Search for a Coach" button, the app should display a static, hard-coded list of coach profiles that fit the described problem. This list must display each coach's name, profile picture, tags, and rating. At the top of this list, the user must be able to see and edit their original problem description and tags.
+Tapping on a coach's profile should open a modal (pop-up) displaying more detailed information (e.g., bio, experience, detailed ratings) along with buttons to "Request Help" or "Cancel". The "Request Help" button can simulate a successful request by displaying a confirmation message.
+
+For the coach's homepage, design a profile management screen. It should include input fields for their professional data, location, a section to select their tags, a text area for a bio, and a toggle switch to set their availability status ("Connected" or "Disconnected"). No data persistence is required; the form can reset on app reload.
+
+For the Frontend Layer Design use a modern, clean, and accessible design system. Implement a Component-Driven Architecture with reusable UI components (Button, Input, Card, Modal). Adhere to Atomic Design principles for structure.
+
+    Styling: Use Styled-Components or React Native's StyleSheet to create a consistent theme. Define a color palette (primary, secondary, neutral colors), a typography scale, and spacing units.
+    State Management: Use React's built-in State and Context API exclusively to manage the UI state (e.g., form inputs, which modal is open, the current list of coaches, mock authentication state).
+    Navigation: Implement React Navigation for the main flows. Use a Stack Navigator for core navigation and a Bottom Tab Navigator for the user's main tabs (Home, Favorites, History, Profile).
+    Forms: Use local component state (useState) to manage all form inputs. Implement basic UI validation (e.g., word count for the problem description).
+
+Make the seccion of "Choose Your Categories" when the user is describing the probelem smaller and more similar to a dropdown list, select box or similar (where you can also search for teh tags ini the data base); but keep the desciption and the way to add tags manuallay. 
+
+    Predefined Tag Selection: Display a horizontal ScrollView of Pressable components showing popular, predefined tags. Selecting a tag should add it to an array in the component's state.
+    Custom Tag Input: An optional TextInput field that allows users to type a custom tag. Pressing a "Add" button would add the custom tag to the state array.
+    Tag Chips: Each selected tag should be displayed as a deletable "Chip" component (a rounded rectangle with the tag text and an 'X' icon). Tapping the 'X' should remove the tag from the state array. The entire selection should be visually distinct.
+
+It MUST be a mobile application using React Native framework and...
+Framework: React Native (using Expo for streamlined development and testing).
+Data: All data (user profile, list of coaches, session history) will be hard-coded as JavaScript objects or arrays within the application. No API calls are to be implemented.
+Real-Time Features: The video call functionality is out of scope. The "Request Help" flow should end with a static confirmation screen simulating a successful connection.
+Notifications: Do not implement push notifications. Any alerts to the user (e.g., "Request Sent") should be done through inline messages or simple modal dialogs.
+
+You are to generate a React Native (Expo + TypeScript) frontend app.
+Organize the code in the following folder structure inside src/:
+
+'
+src/
+  assets/         # images, icons, fonts used by components/screens
+  controllers/    # controller logic for handling user actions, input validation, and calling services
+  models/         # TypeScript classes/interfaces (User, Coach, etc.)
+  screens/        # UI screens (LoginScreen, SearchScreen, ResultsScreen, DetailScreen)
+  slices/         # Redux slices (authSlice, coachesSlice)
+  state/          # Redux store configuration
+  tests/          # Jest unit tests for models, controllers, and slices
+  utils/          # helper functions (logger, validators, transformers)
+'
+
+Requirements.:
+
+Entry Point
+    Root App.tsx (in /src/) should use React Navigation with at least: LoginScreen, SearchScreen, ResultsScreen & Coaches' screen.
+    
+Authentication Flow and LoginScreen with email + password.
+    Fake auth in the frontend for now (no backend). Store user in Redux slice. Support two roles in the slice: BasicUser and PremiumUser.
+
+Models
+    User (email, role, methods for role checking).
+    Coach (id, name, specialization).
+
+Controllers
+    searchController.ts → handles search logic (mock filtering coaches).
+    authController.ts → handles login (mock auth).
+
+Slices/State
+    authSlice.ts → login/logout, stores role.
+    coachesSlice.ts → holds coaches array.
+    store.ts in /state/ to combine reducers.
+
+Utils
+    logger.ts (simple console logger).
+    validator.ts (example: email validation).
+
+Tests
+    At least 2 Jest test files:
+    tests/user.test.ts → test role permissions.
+    tests/authController.test.ts → test mock login.
+
+Code Style
+    Use TypeScript (.tsx / .ts).
+    Use functional components with React Hooks.
+    Screens must import controllers, not handle logic inline.
+    Keep UI components in /screens and logic in /controllers or /utils.
+
+Extras
+    Add one reusable component Button.tsx inside /components/common/.
+    Place all static images in /src/assets/.
+
+
+Description of 20minCoach...
+20minCoach is a real-time coaching platform that connects people with experts across multiple fields—such as health, psychology, law, mechanics, programming, cloud services, arts, agriculture, and more—through on-demand 20-minute video sessions. Users can describe their need by text or voice, review available coaches’ profiles, ratings, and specialties, and instantly connect once the coach accepts the request. Coaches manage their availability directly in the app, while ratings influence both their reputation and earnings. The business model is based on flexible packages that allow users to purchase a set number of coaching sessions, making expert guidance affordable, accessible, and time-efficient.
+20minCoach: A Day in the Life of Users and Coaches
+Imagine waking up on a Monday morning and facing a challenge: your car makes a strange sound, and you’re not sure what it means. Instead of spending hours searching online, you open 20minCoach, an app designed to instantly connect people with professional coaches across dozens of areas—mechanics, psychology, art, law, cloud services, agriculture, and more.
+As a user, you simply type or record a quick voice note explaining what you need: “I think my car is making a noise from the engine, can someone help me understand what it could be?” In seconds, the system searches for available coaches, prioritizing those closest to you. You see a mechanic’s profile: photo, professional background, customer reviews, and areas of expertise. Everything looks good, so you hit Connect. The mechanic receives a notification, confirms availability, and a 20-minute video call starts right away. During this call, you show the noise on camera, describe what you hear, and the mechanic guides you on what to check and whether a repair shop visit is urgent.
+The session ends after exactly 20 minutes, giving you focused, personalized advice without overcommitting your time or money. You rate the coach, leaving a short review. That rating directly contributes to the coach’s earnings and reputation within the platform.
+From the coach’s perspective, the day looks different. Take Maria, a professional painter who uses her mornings to update her profile on 20minCoach, uploading new images of her work and writing about her teaching style. She sets herself as Available before starting her day. Later, while having coffee, she receives a notification: someone nearby is looking for help with watercolor techniques. She reviews the request, accepts, and within moments is in a video call. For 20 minutes, she provides guidance, tips, and even small live demonstrations. When the session ends, Maria checks her earnings, notes her updated rating, and toggles her availability off before moving on with her day.
+The Business Model 20minCoach works with prepaid packages, making access to expert help affordable and flexible. For example:
+Starter Package: $19.99 per month for 2 coaching sessions.
+Pro Package: $59.99 per month for 8 coaching sessions.
+This model allows users to plan ahead while giving coaches a consistent flow of opportunities to earn, all within a simple and structured 20-minute framework.
