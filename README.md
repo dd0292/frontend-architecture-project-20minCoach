@@ -25,7 +25,7 @@ A React Native mobile application prototype for connecting users with expert coa
 ## Technical Architecture
 
 ### Folder Structure
-\`\`\`
+``` bash
 src/
   assets/         # Images, icons, fonts
   controllers/    # Business logic (authController, searchController)
@@ -37,7 +37,7 @@ src/
   utils/          # Helper functions (logger, validators)
   components/     # Reusable components
     common/       # Common components (Button, NavigationBar)
-\`\`\`
+```
 
 ### Technologies Used
 - React Native with Expo
@@ -107,3 +107,49 @@ npm test
 
 ## License
 This is a prototype application for demonstration purposes.
+
+## required diagrams
+- N-Layer Architecture Diagram — a logical stack view showing how responsibilities are separated into layers (Presentation, Controllers, State, Business, API/Proxy, Data).
+
+- (System) Architecture Diagram — a system/network view showing runtime components and external systems (mobile app, auth provider, backend API, DB, third-party services, notification/real-time).
+
+- Classes Diagram (UML) — a focused view of the main classes, their attributes & methods, and relationships (associations, composition, dependencies).
+
+## Map of the src
+```bash 
+   src/
+   App.tsx                # => Presentation / App bootstrap
+   components/            # => Presentation Layer (reusable UI)
+      common/
+         Button.tsx
+         NavigationBar.tsx
+         TagSelector.tsx
+   screens/                # => Presentation (screens)
+      LoginScreen.tsx
+      SearchScreen.tsx
+      ResultsScreen.tsx
+      CoachProfileScreen.tsx
+      ...
+   controllers/           # => Controllers Layer (orchestration)
+      authController.ts
+      searchController.ts
+   slices/                # => State Management Layer (Redux slices)
+      authSlice.ts
+      coachesSlice.ts
+   state/
+      store.ts             # => State store setup
+   models/                 # => Model Layer (domain objects)
+      Coach.ts
+      User.ts
+   utils/                  # => Utilities / validators / small middleware
+      logger.ts
+      validator.ts
+   tests/                  # => Testing (unit tests / PoC tests)
+```
+
+Where you will add missing pieces (recommended):
+
+   - `src/api/client.ts` (API client / proxy layer)
+   - `src/business/services/coachService.ts` (business logic layer)
+   - `src/middleware/` (request interceptor, error handler)
+   - `docs/diagrams/` (where to save exported PDFs & .drawio sources)
