@@ -1,55 +1,31 @@
-import { AuthController } from "../controllers/authController"
-import { UserModel } from "../models/User"
+import { authenticateUser, validateEmail } from "../controllers/authController"
 
 describe("AuthController", () => {
-  describe("login", () => {
-    test("should successfully login with valid credentials", async () => {
-      const user = await AuthController.login("test@example.com", "password123")
-
-      expect(user).toBeInstanceOf(UserModel)
-      expect(user.email).toBe("test@example.com")
-      expect(user.role).toBe("BasicUser")
-      expect(user.name).toBe("test")
-    })
-
-    test("should create coach user for coach email", async () => {
-      const user = await AuthController.login("coach@example.com", "password123")
-
-      expect(user.role).toBe("Coach")
-      expect(user.isCoach()).toBe(true)
-    })
-
-    test("should create premium user for premium email", async () => {
-      const user = await AuthController.login("premium@example.com", "password123")
-
-      expect(user.role).toBe("PremiumUser")
-      expect(user.isPremiumUser()).toBe(true)
-    })
-
-    test("should throw error for empty email", async () => {
-      await expect(AuthController.login("", "password123")).rejects.toThrow("Email and password are required")
-    })
-
-    test("should throw error for empty password", async () => {
-      await expect(AuthController.login("test@example.com", "")).rejects.toThrow("Email and password are required")
-    })
-
-    test("should throw error for short password", async () => {
-      await expect(AuthController.login("test@example.com", "123")).rejects.toThrow(
-        "Password must be at least 6 characters",
-      )
-    })
-
-    test("should handle email with dots and underscores in name", async () => {
-      const user = await AuthController.login("john.doe_test@example.com", "password123")
-
-      expect(user.name).toBe("john doe test")
-    })
+  test("should authenticate valid user", async () => {
+    const user = await authenticateUser("john@example.com", "password123")
+    expect(user).toBeTruthy()
+    expect(user?.email).toBe("john@example.com")
+    expect(user?.name).toBe("John Doe")
   })
 
-  describe("logout", () => {
-    test("should complete logout successfully", async () => {
-      await expect(AuthController.logout()).resolves.toBeUndefined()
-    })
+  test("should reject invalid user", async () => {
+    const user = await authenticateUser("invalid@example.com", "password123")
+    expect(user).toBeNull()
+  })
+
+  test("should reject empty password", async () => {
+    const user = await authenticateUser("john@example.com", "")
+    expect(user).toBeNull()
+  })
+
+  test("should validate correct email format", () => {
+    expect(validateEmail("test@example.com")).toBe(true)
+    expect(validateEmail("user.name@domain.co.uk")).toBe(true)
+  })
+
+  test("should reject invalid email format", () => {
+    expect(validateEmail("invalid-email")).toBe(false)
+    expect(validateEmail("test@")).toBe(false)
+    expect(validateEmail("@example.com")).toBe(false)
   })
 })

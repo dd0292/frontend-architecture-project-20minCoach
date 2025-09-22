@@ -1,84 +1,57 @@
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  type ViewStyle,
-  type TextStyle,
-  type StyleProp,
-} from "react-native"
+import type React from "react"
+import { TouchableOpacity, Text, StyleSheet, type ViewStyle, type TextStyle } from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
 
 interface ButtonProps {
   title: string
   onPress: () => void
-  variant?: "primary" | "secondary" | "outline"
+  variant?: "primary" | "secondary" | "text"
+  size?: "small" | "medium" | "large"
   disabled?: boolean
-  style?: StyleProp<ViewStyle>
-  textStyle?: StyleProp<TextStyle>
+  style?: ViewStyle
+  textStyle?: TextStyle
 }
 
-export default function Button({
+const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
   variant = "primary",
+  size = "medium",
   disabled = false,
   style,
   textStyle,
-}: ButtonProps) {
-
+}) => {
   const getButtonStyle = () => {
-    const baseStyle: StyleProp<ViewStyle>[] = [styles.button]
-
-    switch (variant) {
-      case "primary":
-        baseStyle.push(styles.primaryButton)
-        break
-      case "secondary":
-        baseStyle.push(styles.secondaryButton)
-        break
-      case "outline":
-        baseStyle.push(styles.outlineButton)
-        break
-    }
-
-    if (disabled) {
-      baseStyle.push(styles.disabledButton)
-    }
-
-    if (style) {
-      baseStyle.push(style)
-    }
-
+    const baseStyle = [styles.button as ViewStyle, styles[size] as ViewStyle]
+    if (disabled) baseStyle.push(styles.disabled)
+    if (style) baseStyle.push(style)
     return baseStyle
   }
 
   const getTextStyle = () => {
-    const baseStyle: StyleProp<TextStyle>[] = [styles.buttonText]
-
-    switch (variant) {
-      case "primary":
-        baseStyle.push(styles.primaryButtonText)
-        break
-      case "secondary":
-        baseStyle.push(styles.secondaryButtonText)
-        break
-      case "outline":
-        baseStyle.push(styles.outlineButtonText)
-        break
-    }
-
-    if (disabled) {
-      baseStyle.push(styles.disabledButtonText)
-    }
-
-    if (textStyle) {
-      baseStyle.push(textStyle)
-    }
-
+    const baseStyle = [styles.text, styles[`${variant}Text`], styles[`${size}Text`] as TextStyle]
+    if (disabled) baseStyle.push(styles.disabledText)
+    if (textStyle) baseStyle.push(textStyle)
     return baseStyle
   }
 
+  if (variant === "primary" && !disabled) {
+    return (
+      <TouchableOpacity onPress={onPress} style={getButtonStyle()} disabled={disabled}>
+        <LinearGradient
+          colors={["#4361EE", "#3A0CA3"]}
+          style={[styles.gradient, styles[size]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <Text style={getTextStyle()}>{title}</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+    )
+  }
+
   return (
-    <TouchableOpacity style={getButtonStyle()} onPress={onPress} disabled={disabled} activeOpacity={0.8}>
+    <TouchableOpacity onPress={onPress} style={getButtonStyle()} disabled={disabled}>
       <Text style={getTextStyle()}>{title}</Text>
     </TouchableOpacity>
   )
@@ -86,43 +59,62 @@ export default function Button({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 48,
   },
-  primaryButton: {
-    backgroundColor: "#1f2937",
+  gradient: {
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
   },
-  secondaryButton: {
-    backgroundColor: "#8b5cf6",
+  small: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    height: 36,
   },
-  outlineButton: {
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: "#1f2937",
+  medium: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    height: 48,
   },
-  disabledButton: {
-    backgroundColor: "#e5e7eb",
-    borderColor: "#e5e7eb",
+  large: {
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    height: 56,
   },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
+  text: {
+    fontFamily: "Inter-Medium",
     textAlign: "center",
   },
-  primaryButtonText: {
-    color: "#ffffff",
+  primaryText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
-  secondaryButtonText: {
-    color: "#ffffff",
+  secondaryText: {
+    color: "#4361EE",
+    fontWeight: "600",
   },
-  outlineButtonText: {
-    color: "#1f2937",
+  textText: {
+    color: "#4361EE",
+    fontWeight: "500",
   },
-  disabledButtonText: {
-    color: "#9ca3af",
+  smallText: {
+    fontSize: 14,
+  },
+  mediumText: {
+    fontSize: 16,
+  },
+  largeText: {
+    fontSize: 18,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  disabledText: {
+    color: "#9CA3AF",
   },
 })
+
+export default Button

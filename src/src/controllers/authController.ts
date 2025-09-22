@@ -1,32 +1,51 @@
-import { UserModel } from "../models/User"
+import type { User } from "../models/User"
 
-export class AuthController {
-  // Mock authentication - in real app this would call an API
-  static async login(email: string, password: string): Promise<UserModel> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+// Hard-coded users for testing
+const hardCodedUsers: User[] = [
+  {
+    id: "user1",
+    email: "john@example.com",
+    name: "John Doe",
+    role: "PremiumUser",
+    profilePicture: "/professional-man-user.jpg",
+    sessionsRemaining: 8,
+    packageType: "Premium Monthly",
+  },
+  {
+    id: "user2",
+    email: "sarah@example.com",
+    name: "Sarah Smith",
+    role: "BasicUser",
+    profilePicture: "/professional-woman-user.jpg",
+    sessionsRemaining: 3,
+    packageType: "Basic Package",
+  },
+  {
+    id: "coach1",
+    email: "maria@example.com",
+    name: "Dr. Maria Rodriguez",
+    role: "PremiumUser",
+    profilePicture: "/professional-woman-psychologist.png",
+    sessionsRemaining: 0,
+    packageType: "Coach Account",
+  },
+]
 
-    // Mock validation
-    if (!email || !password) {
-      throw new Error("Email and password are required")
-    }
+export const authenticateUser = async (email: string, password: string): Promise<User | null> => {
+  // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    if (password.length < 6) {
-      throw new Error("Password must be at least 6 characters")
-    }
+  // Mock authentication - in real app, this would validate against backend
+  const user = hardCodedUsers.find((u) => u.email === email)
 
-    // Mock user creation based on email domain
-    const isCoach = email.includes("coach")
-    const isPremium = email.includes("premium")
-
-    const role = isCoach ? "Coach" : isPremium ? "PremiumUser" : "BasicUser"
-    const name = email.split("@")[0].replace(/[._]/g, " ")
-
-    return new UserModel(Math.random().toString(36).substr(2, 9), email, role, name)
+  if (user && password.length > 0) {
+    return user
   }
 
-  static async logout(): Promise<void> {
-    // In real app, this would clear tokens, call logout API, etc.
-    await new Promise((resolve) => setTimeout(resolve, 500))
-  }
+  return null
+}
+
+export const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
 }

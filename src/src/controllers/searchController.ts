@@ -1,62 +1,34 @@
 import type { Coach } from "../models/Coach"
 
-export class SearchController {
-  static validateProblemDescription(description: string): { isValid: boolean; message?: string } {
-    const wordCount = description.trim().split(/\s+/).length
-
-    if (wordCount < 40) {
-      return {
-        isValid: false,
-        message: `Please provide at least 40 words. Current count: ${wordCount} words.`,
-      }
-    }
-
-    return { isValid: true }
+export const searchCoaches = (coaches: Coach[], query: string, tags: string[]): Coach[] => {
+  if (!query && tags.length === 0) {
+    return coaches
   }
 
-  static filterCoaches(coaches: Coach[], query: string, tags: string[]): Coach[] {
-    return coaches.filter((coach) => {
-      const matchesQuery =
-        query === "" ||
-        coach.name.toLowerCase().includes(query.toLowerCase()) ||
-        coach.specialization.some((spec) => spec.toLowerCase().includes(query.toLowerCase())) ||
-        coach.bio.toLowerCase().includes(query.toLowerCase())
+  return coaches.filter((coach) => {
+    const matchesQuery =
+      !query ||
+      coach.name.toLowerCase().includes(query.toLowerCase()) ||
+      coach.title.toLowerCase().includes(query.toLowerCase()) ||
+      coach.specialization.some((spec) => spec.toLowerCase().includes(query.toLowerCase())) ||
+      coach.bio.toLowerCase().includes(query.toLowerCase())
 
-      const matchesTags = tags.length === 0 || tags.some((tag) => coach.tags.includes(tag))
+    const matchesTags =
+      tags.length === 0 ||
+      tags.some(
+        (tag) =>
+          coach.tags.some((coachTag) => coachTag.toLowerCase().includes(tag.toLowerCase())) ||
+          coach.specialization.some((spec) => spec.toLowerCase().includes(tag.toLowerCase())),
+      )
 
-      return matchesQuery && matchesTags && coach.isAvailable
-    })
-  }
+    return matchesQuery && matchesTags
+  })
+}
 
-  static getAvailableTags(): string[] {
-    return [
-      "psychology",
-      "life-coaching",
-      "therapy",
-      "mental-health",
-      "programming",
-      "web-development",
-      "react",
-      "cloud",
-      "tech",
-      "arts",
-      "writing",
-      "creativity",
-      "mechanics",
-      "engineering",
-      "automotive",
-      "health",
-      "fitness",
-      "nutrition",
-      "business",
-      "finance",
-      "entrepreneurship",
-      "law",
-      "legal",
-      "contracts",
-      "agriculture",
-      "sustainability",
-      "farming",
-    ]
-  }
+export const getAvailableCoaches = (coaches: Coach[]): Coach[] => {
+  return coaches.filter((coach) => coach.isAvailable)
+}
+
+export const sortCoachesByRating = (coaches: Coach[]): Coach[] => {
+  return [...coaches].sort((a, b) => b.rating - a.rating)
 }

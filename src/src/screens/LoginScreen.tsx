@@ -1,5 +1,6 @@
 "use client"
 
+import type React from "react"
 import { useState } from "react"
 import {
   View,
@@ -7,279 +8,203 @@ import {
   TextInput,
   StyleSheet,
   SafeAreaView,
+  Image,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Alert,
-  Image,
 } from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
 import { useDispatch } from "react-redux"
-import { loginStart, loginSuccess, loginFailure } from "../slices/authSlice"
-import { AuthController } from "../controllers/authController"
-import { Validator } from "../utils/validator"
-import { Logger } from "../utils/logger"
+import { useNavigation } from "@react-navigation/native"
 import Button from "../components/common/Button"
+import { authenticateUser, validateEmail } from "../controllers/authController"
+import { loginStart, loginSuccess, loginFailure } from "../slices/authSlice"
+import { useTheme } from "../components/contexts/ThemeContext"
 
-interface LoginScreenProps {
-  navigation: any
-}
-
-export default function LoginScreen({ navigation }: LoginScreenProps) {
+const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [emailError, setEmailError] = useState("")
-  const [passwordError, setPasswordError] = useState("")
-
+  const [isLogin, setIsLogin] = useState(true)
+  const { colors } = useTheme()
   const dispatch = useDispatch()
+  const navigation = useNavigation()
 
-  const validateForm = (): boolean => {
-    let isValid = true
-
-    // Reset errors
-    setEmailError("")
-    setPasswordError("")
-
-    // Validate email
-    if (!email.trim()) {
-      setEmailError("Email is required")
-      isValid = false
-    } else if (!Validator.isValidEmail(email)) {
-      setEmailError("Please enter a valid email address")
-      isValid = false
-    }
-
-    // Validate password
-    if (!password) {
-      setPasswordError("Password is required")
-      isValid = false
-    } else if (!Validator.isValidPassword(password)) {
-      setPasswordError("Password must be at least 6 characters")
-      isValid = false
-    }
-
-    return isValid
-  }
-
-  const handleLogin = async () => {
-    if (!validateForm()) {
+  const handleAuth = async () => {
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address")
       return
     }
 
-    setIsLoading(true)
+    if (password.length < 1) {
+      Alert.alert("Error", "Please enter a password")
+      return
+    }
+
     dispatch(loginStart())
 
     try {
-      Logger.log("Attempting login", { email })
-      const user = await AuthController.login(email, password)
-
-      dispatch(loginSuccess(user))
-      Logger.log("Login successful", { userId: user.id, role: user.role })
-
-      // Navigate based on user role
-      if (user.isCoach()) {
-        navigation.replace("CoachProfile")
+      const user = await authenticateUser(email, password)
+      if (user) {
+        dispatch(loginSuccess(user))
+        // Navigate based on user role
+        if (user.name === "Dr. Maria Rodriguez") {
+          navigation.navigate("CoachDashboard" as never)
+        } else {
+          navigation.navigate("UserHome" as never)
+        }
       } else {
-        navigation.replace("Search")
+        dispatch(loginFailure())
+        Alert.alert("Error", "Invalid credentials. Try john@example.com or sarah@example.com")
       }
-    } catch (error: any) {
-      Logger.error("Login failed", error)
+    } catch (error) {
       dispatch(loginFailure())
-      Alert.alert("Login Failed", error.message || "Please check your credentials and try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleDemoLogin = (userType: "user" | "coach") => {
-    if (userType === "user") {
-      setEmail("user@example.com")
-      setPassword("password123")
-    } else {
-      setEmail("coach@example.com")
-      setPassword("password123")
+      Alert.alert("Error", "Authentication failed")
     }
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.header}>
-            <Image source={{ uri: "/placeholder.svg?height=80&width=80&text=20min" }} style={styles.logo} />
-            <Text style={styles.title}>20minCoach</Text>
-            <Text style={styles.subtitle}>Connect with experts in 20 minutes</Text>
-          </View>
+    <LinearGradient colors={[colors.background, colors.border]} style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+          <View style={styles.content}>
+            <View style={[styles.card, { backgroundColor: colors.surface }]}>
+              <View style={styles.logoContainer}>
+                <Text style={[styles.logo, { color: colors.primary }]}>20minCoach</Text>
+              </View>
 
-          <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={[styles.input, emailError ? styles.inputError : null]}
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text)
-                  if (emailError) setEmailError("")
-                }}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
+              <Image
+                source={{ uri: "/two-people-video-call-coaching-illustration.jpg" }}
+                style={styles.illustration}
+                resizeMode="contain"
               />
-              {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-            </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={[styles.input, passwordError ? styles.inputError : null]}
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text)
-                  if (passwordError) setPasswordError("")
-                }}
-                placeholder="Enter your password"
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-            </View>
+              <Text style={[styles.headline, { color: colors.text }]}>Connect with an expert in 20 minutes.</Text>
+              <Text style={[styles.subheading, { color: colors.textSecondary }]}>
+                Get instant help from vetted professionals in law, health, tech, arts, and more.
+              </Text>
 
-            <Button
-              title={isLoading ? "Signing In..." : "Sign In"}
-              onPress={handleLogin}
-              disabled={isLoading}
-              style={styles.signInButton}
-            />
+              <View style={styles.form}>
+                <TextInput
+                  style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+                  placeholder="Email"
+                  placeholderTextColor={colors.textSecondary}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                <TextInput
+                  style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+                  placeholder="Password"
+                  placeholderTextColor={colors.textSecondary}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
 
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>Or try demo accounts</Text>
-              <View style={styles.dividerLine} />
-            </View>
+                <Button
+                  title={isLogin ? "Log In" : "Sign Up with Email"}
+                  onPress={handleAuth}
+                  variant="primary"
+                  size="large"
+                  style={styles.primaryButton}
+                />
 
-            <View style={styles.demoButtons}>
-              <Button
-                title="Demo User"
-                onPress={() => handleDemoLogin("user")}
-                variant="outline"
-                style={styles.demoButton}
-              />
-              <Button
-                title="Demo Coach"
-                onPress={() => handleDemoLogin("coach")}
-                variant="secondary"
-                style={styles.demoButton}
-              />
+                <Button
+                  title={isLogin ? "Sign Up" : "Log In"}
+                  onPress={() => setIsLogin(!isLogin)}
+                  variant="text"
+                  style={styles.secondaryButton}
+                />
+              </View>
+
+              <Text style={[styles.footer, { color: colors.textSecondary }]}>
+                By continuing, you agree to our Terms of Service and Privacy Policy.
+              </Text>
             </View>
           </View>
-
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>New to 20minCoach? Create an account to get started.</Text>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
-  keyboardAvoidingView: {
+  safeArea: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: 24,
+  keyboardView: {
+    flex: 1,
   },
-  header: {
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+  },
+  card: {
+    borderRadius: 12,
+    padding: 32,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  logoContainer: {
     alignItems: "center",
-    marginBottom: 48,
+    marginBottom: 24,
   },
   logo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 16,
-  },
-  title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#1f2937",
-    marginBottom: 8,
+    fontFamily: "Inter-Bold",
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#6b7280",
+  illustration: {
+    width: "100%",
+    height: 150,
+    marginBottom: 24,
+  },
+  headline: {
+    fontSize: 24,
+    fontWeight: "bold",
     textAlign: "center",
+    marginBottom: 8,
+    fontFamily: "Inter-Bold",
+  },
+  subheading: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 32,
+    lineHeight: 24,
+    fontFamily: "Inter-Regular",
   },
   form: {
-    marginBottom: 32,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 8,
+    marginBottom: 24,
   },
   input: {
-    borderWidth: 2,
-    borderColor: "#e5e7eb",
-    borderRadius: 8,
+    borderWidth: 1,
+    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    backgroundColor: "#f9fafb",
+    marginBottom: 16,
+    fontFamily: "Inter-Regular",
   },
-  inputError: {
-    borderColor: "#ef4444",
+  primaryButton: {
+    marginBottom: 16,
   },
-  errorText: {
-    color: "#ef4444",
-    fontSize: 14,
-    marginTop: 4,
-  },
-  signInButton: {
+  secondaryButton: {
     marginTop: 8,
-    marginBottom: 24,
-  },
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 24,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#e5e7eb",
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    color: "#6b7280",
-    fontSize: 14,
-  },
-  demoButtons: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  demoButton: {
-    flex: 1,
   },
   footer: {
-    alignItems: "center",
-  },
-  footerText: {
-    color: "#6b7280",
-    fontSize: 14,
+    fontSize: 12,
     textAlign: "center",
-    lineHeight: 20,
+    lineHeight: 18,
+    fontFamily: "Inter-Regular",
   },
 })
+
+export default LoginScreen

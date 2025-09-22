@@ -1,195 +1,303 @@
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image } from "react-native"
-import NavigationBar from "../components/common/NavigationBar"
+"use client"
 
-interface FavoritesScreenProps {
-  navigation: any
-}
+import type React from "react"
+import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Image } from "react-native"
+import { useSelector, useDispatch } from "react-redux"
+import { useNavigation } from "@react-navigation/native"
+import { Ionicons } from "@expo/vector-icons"
+import type { RootState } from "../state/store"
+import { toggleFavorite } from "../slices/coachesSlice"
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../models/Navigation';
+import { useTheme } from "../components/contexts/ThemeContext"
 
-export default function FavoritesScreen({ navigation }: FavoritesScreenProps) {
-  const favoriteCoaches = [
-    {
-      id: "1",
-      name: "Dr. Sarah Johnson",
-      specialization: "Psychology",
-      rating: 4.9,
-      profilePicture: "/placeholder.svg?height=60&width=60&text=SJ",
-      isAvailable: true,
-    },
-    {
-      id: "6",
-      name: "Robert Kim",
-      specialization: "Business",
-      rating: 4.9,
-      profilePicture: "/placeholder.svg?height=60&width=60&text=RK",
-      isAvailable: true,
-    },
-    {
-      id: "10",
-      name: "Alex Turner",
-      specialization: "Programming",
-      rating: 4.8,
-      profilePicture: "/placeholder.svg?height=60&width=60&text=AT",
-      isAvailable: false,
-    },
-  ]
+const FavoritesScreen: React.FC = () => {
+  const { coaches, favorites } = useSelector((state: RootState) => state.coaches)
+  const dispatch = useDispatch()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+  const { colors } = useTheme()
+
+  const favoriteCoaches = coaches.filter((coach) => favorites.includes(coach.id))
 
   const renderStars = (rating: number) => {
     const stars = []
-    const fullStars = Math.floor(rating)
-    for (let i = 0; i < fullStars; i++) {
-      stars.push("⭐")
+    for (let i = 1; i <= 5; i++) {
+      stars.push(<Ionicons key={i} name={i <= rating ? "star" : "star-outline"} size={16} color="#FFB800" />)
     }
-    return stars.join("")
+    return stars
   }
+
+  const handleRemoveFavorite = (coachId: string) => {
+    dispatch(toggleFavorite(coachId))
+  }
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      backgroundColor: colors.surface,
+      paddingHorizontal: 24,
+      paddingVertical: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+      fontFamily: "Inter-SemiBold",
+    },
+    placeholder: {
+      width: 40,
+    },
+    listContainer: {
+      paddingHorizontal: 24,
+      paddingVertical: 16,
+    },
+    coachCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 16,
+      shadowColor: "#000000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    cardContent: {
+      flexDirection: "row",
+      marginBottom: 12,
+    },
+    profilePicture: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      marginRight: 12,
+    },
+    coachInfo: {
+      flex: 1,
+    },
+    coachName: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: colors.text,
+      marginBottom: 2,
+      fontFamily: "Inter-Bold",
+    },
+    coachTitle: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginBottom: 6,
+      fontFamily: "Inter-Regular",
+    },
+    ratingContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 6,
+    },
+    stars: {
+      flexDirection: "row",
+      marginRight: 6,
+    },
+    ratingText: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: colors.text,
+      marginRight: 4,
+      fontFamily: "Inter-SemiBold",
+    },
+    reviewCount: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      fontFamily: "Inter-Regular",
+    },
+    availabilityContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    statusDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      marginRight: 6,
+    },
+    statusText: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      fontFamily: "Inter-Medium",
+    },
+    tagsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+    },
+    tag: {
+      backgroundColor: colors.border,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      marginRight: 6,
+      marginBottom: 4,
+    },
+    tagText: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      fontFamily: "Inter-Medium",
+    },
+    cardActions: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      paddingTop: 12,
+    },
+    favoriteButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: "#FEF2F2",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    connectButton: {
+      backgroundColor: "#4361EE",
+      paddingHorizontal: 24,
+      paddingVertical: 10,
+      borderRadius: 20,
+    },
+    connectButtonText: {
+      color: "#FFFFFF",
+      fontSize: 14,
+      fontWeight: "600",
+      fontFamily: "Inter-SemiBold",
+    },
+    emptyState: {
+      alignItems: "center",
+      paddingVertical: 64,
+    },
+    emptyStateTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: colors.text,
+      marginTop: 16,
+      marginBottom: 8,
+      fontFamily: "Inter-Bold",
+    },
+    emptyStateText: {
+      fontSize: 16,
+      color: colors.textSecondary,
+      textAlign: "center",
+      lineHeight: 24,
+      paddingHorizontal: 32,
+      marginBottom: 24,
+      fontFamily: "Inter-Regular",
+    },
+    browseButton: {
+      backgroundColor: "#4361EE",
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 24,
+    },
+    browseButtonText: {
+      color: "#FFFFFF",
+      fontSize: 16,
+      fontWeight: "600",
+      fontFamily: "Inter-SemiBold",
+    },
+  })
+
+  const renderCoachCard = ({ item }: { item: any }) => (
+    <View style={styles.coachCard}>
+      <TouchableOpacity
+        style={styles.cardContent}
+        onPress={() => navigation.navigate("CoachDetail", { coach: item })}
+      >
+        <Image source={{ uri: item.profilePicture }} style={styles.profilePicture} />
+
+        <View style={styles.coachInfo}>
+          <Text style={styles.coachName}>{item.name}</Text>
+          <Text style={styles.coachTitle}>{item.title}</Text>
+
+          <View style={styles.ratingContainer}>
+            <View style={styles.stars}>{renderStars(Math.floor(item.rating))}</View>
+            <Text style={styles.ratingText}>{item.rating}</Text>
+            <Text style={styles.reviewCount}>({item.reviewCount})</Text>
+          </View>
+
+          <View style={styles.availabilityContainer}>
+            <View style={[styles.statusDot, { backgroundColor: item.isAvailable ? "#10B981" : "#6B7280" }]} />
+            <Text style={styles.statusText}>{item.isAvailable ? "Available Now" : "Available Soon"}</Text>
+          </View>
+
+          <View style={styles.tagsContainer}>
+            {item.tags.slice(0, 2).map((tag: string, index: number) => (
+              <View key={index} style={styles.tag}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      <View style={styles.cardActions}>
+        <TouchableOpacity style={styles.favoriteButton} onPress={() => handleRemoveFavorite(item.id)}>
+          <Ionicons name="heart" size={20} color="#F72585" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.connectButton}
+          onPress={() => navigation.navigate("CoachDetail", { coach: item })}
+        >
+          <Text style={styles.connectButtonText}>Connect</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Favorite Coaches</Text>
-        <Text style={styles.subtitle}>Your saved coaches for quick access</Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color={colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Favorite Coaches</Text>
+        <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {favoriteCoaches.map((coach) => (
-          <TouchableOpacity key={coach.id} style={styles.coachCard}>
-            <Image source={{ uri: coach.profilePicture }} style={styles.coachAvatar} />
-
-            <View style={styles.coachInfo}>
-              <Text style={styles.coachName}>{coach.name}</Text>
-              <Text style={styles.coachSpecialization}>{coach.specialization}</Text>
-
-              <View style={styles.ratingContainer}>
-                <Text style={styles.rating}>{renderStars(coach.rating)}</Text>
-                <Text style={styles.ratingText}>{coach.rating}</Text>
-              </View>
-            </View>
-
-            <View style={styles.rightSection}>
-              <View style={[styles.availabilityBadge, coach.isAvailable ? styles.available : styles.unavailable]}>
-                <Text
-                  style={[styles.availabilityText, coach.isAvailable ? styles.availableText : styles.unavailableText]}
-                >
-                  {coach.isAvailable ? "Available" : "Busy"}
-                </Text>
-              </View>
-
-              <TouchableOpacity style={styles.removeButton}>
-                <Text style={styles.removeButtonText}>Remove</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        ))}
-
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
-
-      <NavigationBar navigation={navigation} activeScreen="Favorites" />
+      <FlatList
+        data={favoriteCoaches}
+        renderItem={renderCoachCard}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <Ionicons name="heart-outline" size={64} color="#D1D5DB" />
+            <Text style={styles.emptyStateTitle}>No Favorites Yet</Text>
+            <Text style={styles.emptyStateText}>
+              Add coaches to your favorites by tapping the heart icon on their profile.
+            </Text>
+            <TouchableOpacity style={styles.browseButton} onPress={() => navigation.navigate("UserHome" as never)}>
+              <Text style={styles.browseButtonText}>Browse Coaches</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
     </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  header: {
-    padding: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#6b7280",
-  },
-  scrollView: {
-    flex: 1,
-    padding: 24,
-  },
-  coachCard: {
-    flexDirection: "row",
-    backgroundColor: "#f9fafb",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    alignItems: "center",
-  },
-  coachAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
-  },
-  coachInfo: {
-    flex: 1,
-  },
-  coachName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-  coachSpecialization: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginBottom: 6,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  rating: {
-    fontSize: 12,
-    marginRight: 4,
-  },
-  ratingText: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#6b7280",
-  },
-  rightSection: {
-    alignItems: "flex-end",
-  },
-  availabilityBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  available: {
-    backgroundColor: "#dcfce7",
-  },
-  unavailable: {
-    backgroundColor: "#fef2f2",
-  },
-  availabilityText: {
-    fontSize: 10,
-    fontWeight: "500",
-  },
-  availableText: {
-    color: "#16a34a",
-  },
-  unavailableText: {
-    color: "#dc2626",
-  },
-  removeButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  removeButtonText: {
-    fontSize: 12,
-    color: "#ef4444",
-    fontWeight: "500",
-  },
-  bottomSpacer: {
-    height: 100,
-  },
-})
+export default FavoritesScreen

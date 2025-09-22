@@ -1,46 +1,36 @@
 export interface Coach {
   id: string
   name: string
+  title: string
   specialization: string[]
-  bio: string
   rating: number
-  profilePicture: string
-  location: string
-  isAvailable: boolean
-  experience: string
+  reviewCount: number
   tags: string[]
+  profilePicture: string
+  isAvailable: boolean
+  bio: string
+  experience: string
+  hourlyRate: number
+  coverPhoto?: string
 }
 
-export class CoachModel implements Coach {
+export interface Session {
   id: string
-  name: string
-  specialization: string[]
-  bio: string
-  rating: number
-  profilePicture: string
-  location: string
-  isAvailable: boolean
-  experience: string
+  coachId: string
+  userId: string
+  problem: string
   tags: string[]
+  scheduledTime: string
+  status: "upcoming" | "completed" | "cancelled"
+  rating?: number
+  review?: string
+}
 
-  constructor(data: Coach) {
-    this.id = data.id
-    this.name = data.name
-    this.specialization = data.specialization
-    this.bio = data.bio
-    this.rating = data.rating
-    this.profilePicture = data.profilePicture
-    this.location = data.location
-    this.isAvailable = data.isAvailable
-    this.experience = data.experience
-    this.tags = data.tags
-  }
-
-  hasTag(tag: string): boolean {
-    return this.tags.includes(tag)
-  }
-
-  matchesSpecialization(specialization: string): boolean {
-    return this.specialization.some((spec) => spec.toLowerCase().includes(specialization.toLowerCase()))
-  }
+export interface Review {
+  id: string
+  userId: string
+  userName: string
+  rating: number
+  comment: string
+  date: string
 }

@@ -1,16 +1,16 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { UserModel } from "../models/User"
+import type { User } from "../models/User"
 
 interface AuthState {
-  user: UserModel | null
+  user: User | null
   isAuthenticated: boolean
-  loading: boolean
+  isLoading: boolean
 }
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  loading: false,
+  isLoading: false,
 }
 
 const authSlice = createSlice({
@@ -18,25 +18,30 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginStart: (state) => {
-      state.loading = true
+      state.isLoading = true
     },
-    loginSuccess: (state, action: PayloadAction<UserModel>) => {
+    loginSuccess: (state, action: PayloadAction<User>) => {
       state.user = action.payload
       state.isAuthenticated = true
-      state.loading = false
+      state.isLoading = false
     },
     loginFailure: (state) => {
       state.user = null
       state.isAuthenticated = false
-      state.loading = false
+      state.isLoading = false
     },
     logout: (state) => {
       state.user = null
       state.isAuthenticated = false
-      state.loading = false
+      state.isLoading = false
+    },
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload }
+      }
     },
   },
 })
 
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions
+export const { loginStart, loginSuccess, loginFailure, logout, updateUser } = authSlice.actions
 export default authSlice.reducer

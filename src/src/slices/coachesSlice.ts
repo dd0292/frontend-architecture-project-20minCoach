@@ -1,179 +1,200 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { Coach } from "../models/Coach"
+import type { Coach, Session, Review } from "../models/Coach"
 
 interface CoachesState {
   coaches: Coach[]
-  filteredCoaches: Coach[]
-  loading: boolean
-  searchQuery: string
-  selectedTags: string[]
+  sessions: Session[]
+  reviews: Review[]
+  favorites: string[]
+  searchResults: Coach[]
+  isLoading: boolean
 }
 
-// Mock data for coaches
-const mockCoaches: Coach[] = [
+// Hard-coded coaches data
+const hardCodedCoaches: Coach[] = [
   {
     id: "1",
-    name: "Dr. Sarah Johnson",
-    specialization: ["Psychology", "Life Coaching"],
-    bio: "Licensed psychologist with 10+ years of experience in cognitive behavioral therapy and personal development.",
+    name: "Dr. Maria Rodriguez",
+    title: "Clinical Psychologist",
+    specialization: ["Anxiety", "Depression", "Relationships"],
     rating: 4.9,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=SJ",
-    location: "New York, NY",
+    reviewCount: 156,
+    tags: ["Psychology", "Mental Health", "Therapy"],
+    profilePicture: "/professional-woman-psychologist.png",
     isAvailable: true,
+    bio: "Licensed clinical psychologist with 10+ years of experience helping people overcome anxiety and depression.",
     experience: "10+ years",
-    tags: ["psychology", "life-coaching"],
+    hourlyRate: 80,
+    coverPhoto: "/psychology-office-background.jpg",
   },
   {
     id: "2",
-    name: "Mike Chen",
-    specialization: ["Programming", "Cloud Services"],
-    bio: "Senior software engineer specializing in cloud architecture and full-stack development.",
+    name: "Carlos Mendoza",
+    title: "Auto Mechanic Specialist",
+    specialization: ["Engine Diagnostics", "BMW", "Mercedes"],
     rating: 4.8,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=MC",
-    location: "San Francisco, CA",
+    reviewCount: 128,
+    tags: ["Mechanics", "Automotive", "Diagnostics"],
+    profilePicture: "/professional-mechanic-man.jpg",
     isAvailable: true,
-    experience: "8 years",
-    tags: ["programming", "cloud", "tech"],
+    bio: "Expert automotive technician specializing in European cars with 15 years of experience.",
+    experience: "15+ years",
+    hourlyRate: 60,
+    coverPhoto: "/auto-repair-shop-background.jpg",
   },
   {
     id: "3",
-    name: "Emma Rodriguez",
-    specialization: ["Arts", "Creative Writing"],
-    bio: "Published author and creative writing instructor with expertise in storytelling and artistic expression.",
+    name: "Ana Silva",
+    title: "Senior Software Developer",
+    specialization: ["React", "Node.js", "Python"],
     rating: 4.7,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=ER",
-    location: "Austin, TX",
+    reviewCount: 89,
+    tags: ["Programming", "Web Development", "JavaScript"],
+    profilePicture: "/professional-woman-developer.png",
     isAvailable: false,
-    experience: "6 years",
-    tags: ["arts", "writing", "creativity"],
+    bio: "Full-stack developer with expertise in modern web technologies and 8 years of industry experience.",
+    experience: "8+ years",
+    hourlyRate: 90,
+    coverPhoto: "/modern-office-coding-setup.jpg",
   },
   {
     id: "4",
-    name: "James Wilson",
-    specialization: ["Mechanics", "Engineering"],
-    bio: "Mechanical engineer with extensive experience in automotive repair and industrial machinery.",
-    rating: 4.6,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=JW",
-    location: "Detroit, MI",
+    name: "Roberto Santos",
+    title: "Legal Advisor",
+    specialization: ["Contract Law", "Business Law", "Real Estate"],
+    rating: 4.9,
+    reviewCount: 203,
+    tags: ["Law", "Legal Advice", "Contracts"],
+    profilePicture: "/professional-lawyer-man.png",
     isAvailable: true,
-    experience: "12 years",
-    tags: ["mechanics", "engineering", "automotive"],
+    bio: "Experienced lawyer specializing in business and contract law with 12 years of practice.",
+    experience: "12+ years",
+    hourlyRate: 120,
+    coverPhoto: "/law-office-background.jpg",
   },
   {
     id: "5",
-    name: "Dr. Maria Santos",
-    specialization: ["Health", "Nutrition"],
-    bio: "Registered dietitian and wellness coach helping clients achieve optimal health through personalized nutrition plans.",
-    rating: 4.8,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=MS",
-    location: "Miami, FL",
+    name: "Isabella Martinez",
+    title: "Professional Artist",
+    specialization: ["Watercolor", "Oil Painting", "Digital Art"],
+    rating: 4.6,
+    reviewCount: 67,
+    tags: ["Arts", "Painting", "Creative"],
+    profilePicture: "/professional-woman-artist.jpg",
     isAvailable: true,
-    experience: "7 years",
-    tags: ["health", "fitness", "nutrition"],
+    bio: "Professional artist and art instructor with expertise in traditional and digital mediums.",
+    experience: "6+ years",
+    hourlyRate: 45,
+    coverPhoto: "/art-studio-background.jpg",
   },
   {
     id: "6",
-    name: "Robert Kim",
-    specialization: ["Business", "Finance"],
-    bio: "Former investment banker turned business consultant, specializing in startup strategy and financial planning.",
-    rating: 4.9,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=RK",
-    location: "Chicago, IL",
-    isAvailable: true,
-    experience: "15+ years",
-    tags: ["business", "finance", "entrepreneurship"],
-  },
-  {
-    id: "7",
-    name: "Lisa Thompson",
-    specialization: ["Law", "Legal Consulting"],
-    bio: "Corporate lawyer with expertise in contract law, intellectual property, and small business legal matters.",
-    rating: 4.7,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=LT",
-    location: "Boston, MA",
-    isAvailable: false,
-    experience: "9 years",
-    tags: ["law", "legal", "contracts"],
-  },
-  {
-    id: "8",
-    name: "Carlos Mendez",
-    specialization: ["Agriculture", "Sustainable Farming"],
-    bio: "Agricultural engineer and sustainable farming expert helping farmers optimize crop yields and implement eco-friendly practices.",
-    rating: 4.6,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=CM",
-    location: "Sacramento, CA",
-    isAvailable: true,
-    experience: "11 years",
-    tags: ["agriculture", "sustainability", "farming"],
-  },
-  {
-    id: "9",
-    name: "Dr. Jennifer Lee",
-    specialization: ["Psychology", "Therapy"],
-    bio: "Clinical psychologist specializing in anxiety disorders, depression, and relationship counseling using evidence-based approaches.",
-    rating: 4.9,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=JL",
-    location: "Seattle, WA",
-    isAvailable: true,
-    experience: "13 years",
-    tags: ["psychology", "therapy", "mental-health"],
-  },
-  {
-    id: "10",
-    name: "Alex Turner",
-    specialization: ["Programming", "Web Development"],
-    bio: "Full-stack developer and coding instructor with expertise in React, Node.js, and modern web technologies.",
+    name: "Diego Fernandez",
+    title: "Agricultural Engineer",
+    specialization: ["Crop Management", "Soil Analysis", "Organic Farming"],
     rating: 4.8,
-    profilePicture: "/placeholder.svg?height=100&width=100&text=AT",
-    location: "Portland, OR",
+    reviewCount: 94,
+    tags: ["Agriculture", "Farming", "Sustainability"],
+    profilePicture: "/professional-agricultural-engineer.jpg",
     isAvailable: true,
-    experience: "6 years",
-    tags: ["programming", "web-development", "react"],
+    bio: "Agricultural engineer with specialization in sustainable farming practices and crop optimization.",
+    experience: "9+ years",
+    hourlyRate: 55,
+    coverPhoto: "/farm-field-background.png",
+  },
+]
+
+// Hard-coded sessions data
+const hardCodedSessions: Session[] = [
+  {
+    id: "1",
+    coachId: "1",
+    userId: "user1",
+    problem: "Dealing with work anxiety and stress management",
+    tags: ["Psychology", "Anxiety", "Stress"],
+    scheduledTime: "2024-01-15T10:00:00Z",
+    status: "completed",
+    rating: 5,
+    review: "Dr. Rodriguez was incredibly helpful and provided practical strategies.",
+  },
+  {
+    id: "2",
+    coachId: "2",
+    userId: "user1",
+    problem: "Strange noise coming from car engine",
+    tags: ["Mechanics", "Engine", "Diagnostics"],
+    scheduledTime: "2024-01-20T14:30:00Z",
+    status: "completed",
+    rating: 4,
+    review: "Carlos quickly identified the issue and explained the solution clearly.",
+  },
+  {
+    id: "3",
+    coachId: "4",
+    userId: "user1",
+    problem: "Need help reviewing a rental contract",
+    tags: ["Law", "Contracts", "Real Estate"],
+    scheduledTime: "2024-01-25T16:00:00Z",
+    status: "upcoming",
+  },
+]
+
+// Hard-coded reviews data
+const hardCodedReviews: Review[] = [
+  {
+    id: "1",
+    userId: "user1",
+    userName: "John D.",
+    rating: 5,
+    comment: "Excellent advice and very professional approach. Highly recommended!",
+    date: "2024-01-15",
+  },
+  {
+    id: "2",
+    userId: "user2",
+    userName: "Sarah M.",
+    rating: 4,
+    comment: "Very knowledgeable and helped me solve my problem quickly.",
+    date: "2024-01-10",
   },
 ]
 
 const initialState: CoachesState = {
-  coaches: mockCoaches,
-  filteredCoaches: mockCoaches,
-  loading: false,
-  searchQuery: "",
-  selectedTags: [],
+  coaches: hardCodedCoaches,
+  sessions: hardCodedSessions,
+  reviews: hardCodedReviews,
+  favorites: ["1", "4"], // Hard-coded favorites
+  searchResults: [],
+  isLoading: false,
 }
 
 const coachesSlice = createSlice({
   name: "coaches",
   initialState,
   reducers: {
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload
-      state.filteredCoaches = filterCoaches(state.coaches, action.payload, state.selectedTags)
+    setSearchResults: (state, action: PayloadAction<Coach[]>) => {
+      state.searchResults = action.payload
     },
-    setSelectedTags: (state, action: PayloadAction<string[]>) => {
-      state.selectedTags = action.payload
-      state.filteredCoaches = filterCoaches(state.coaches, state.searchQuery, action.payload)
+    toggleFavorite: (state, action: PayloadAction<string>) => {
+      const coachId = action.payload
+      if (state.favorites.includes(coachId)) {
+        state.favorites = state.favorites.filter((id) => id !== coachId)
+      } else {
+        state.favorites.push(coachId)
+      }
     },
-    clearFilters: (state) => {
-      state.searchQuery = ""
-      state.selectedTags = []
-      state.filteredCoaches = state.coaches
+    addSession: (state, action: PayloadAction<Session>) => {
+      state.sessions.push(action.payload)
+    },
+    updateSession: (state, action: PayloadAction<{ id: string; updates: Partial<Session> }>) => {
+      const { id, updates } = action.payload
+      const sessionIndex = state.sessions.findIndex((session) => session.id === id)
+      if (sessionIndex !== -1) {
+        state.sessions[sessionIndex] = { ...state.sessions[sessionIndex], ...updates }
+      }
     },
   },
 })
 
-function filterCoaches(coaches: Coach[], query: string, tags: string[]): Coach[] {
-  return coaches.filter((coach) => {
-    const matchesQuery =
-      query === "" ||
-      coach.name.toLowerCase().includes(query.toLowerCase()) ||
-      coach.specialization.some((spec) => spec.toLowerCase().includes(query.toLowerCase())) ||
-      coach.bio.toLowerCase().includes(query.toLowerCase())
-
-    const matchesTags = tags.length === 0 || tags.some((tag) => coach.tags.includes(tag))
-
-    return matchesQuery || matchesTags
-  })
-}
-
-export const { setSearchQuery, setSelectedTags, clearFilters } = coachesSlice.actions
+export const { setSearchResults, toggleFavorite, addSession, updateSession } = coachesSlice.actions
 export default coachesSlice.reducer
