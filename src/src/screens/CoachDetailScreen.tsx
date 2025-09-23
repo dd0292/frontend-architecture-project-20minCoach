@@ -72,6 +72,7 @@ const CoachDetailScreen: React.FC = () => {
       bottom: -40,
       left: 24,
       width: 80,
+      zIndex: 10,
       height: 80,
       borderRadius: 40,
       borderWidth: 4,
@@ -181,7 +182,7 @@ const CoachDetailScreen: React.FC = () => {
     },
     specialtyText: {
       fontSize: 14,
-      color: "#4361EE",
+      color: "#3247a4ff",
       fontFamily: "Inter-Medium",
     },
     tagsContainer: {
@@ -253,6 +254,7 @@ const CoachDetailScreen: React.FC = () => {
       backgroundColor: colors.surface,
       paddingHorizontal: 24,
       paddingVertical: 16,
+      paddingBottom: 40,
       flexDirection: "row",
       alignItems: "center",
       borderTopWidth: 1,
@@ -273,7 +275,7 @@ const CoachDetailScreen: React.FC = () => {
       marginRight: 16,
     },
     connectButton: {
-      flex: 1,
+      flex: 15,
     },
   })
 
@@ -281,11 +283,11 @@ const CoachDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Image source={{ uri: coach.coverPhoto || "/professional-background.jpg" }} style={styles.coverPhoto} />
+          <Image source={coach.coverPhoto || "/professional-background.jpg"} style={styles.coverPhoto} />
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
           </TouchableOpacity>
-          <Image source={{ uri: coach.profilePicture }} style={styles.profilePicture} />
+          <Image source={coach.profilePicture} style={styles.profilePicture} />
         </View>
 
         <View style={styles.profileInfo}>
@@ -304,7 +306,6 @@ const CoachDetailScreen: React.FC = () => {
           <View style={styles.availabilitySection}>
             <View style={[styles.statusDot, { backgroundColor: coach.isAvailable ? "#10B981" : "#6B7280" }]} />
             <Text style={styles.statusText}>{coach.isAvailable ? "Available Now" : "Available Soon"}</Text>
-            <Text style={styles.hourlyRate}>${coach.hourlyRate}/hour</Text>
           </View>
         </View>
 
@@ -367,10 +368,10 @@ const CoachDetailScreen: React.FC = () => {
         </TouchableOpacity>
 
         <Button
-          title="Select Coach & Connect"
+          title="Select Coach"
           onPress={handleConnect}
           variant="primary"
-          size="large"
+          size="medium"
           style={styles.connectButton}
         />
       </View>

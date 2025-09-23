@@ -64,6 +64,7 @@ const UserHomeScreen: React.FC = () => {
     if (customTag.trim() && !selectedTags.includes(customTag.trim())) {
       setSelectedTags((prev) => [...prev, customTag.trim()])
       setCustomTag("")
+      setShowTagModal(false)
     }
   }
 
@@ -76,6 +77,7 @@ const UserHomeScreen: React.FC = () => {
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={styles.headerContent}>
           <View>
+            <Text> </Text>
             <Text style={[styles.greeting, { color: colors.text }]}>Hi, {user?.name}!</Text>
             <Text style={[styles.packageInfo, { color: colors.textSecondary }]}>
               {user?.packageType} • {user?.sessionsRemaining} sessions remaining
@@ -99,7 +101,7 @@ const UserHomeScreen: React.FC = () => {
               multiline
             />
             <TouchableOpacity style={styles.micButton}>
-              <Ionicons name="mic" size={20} color={colors.textSecondary} />
+              <Ionicons name="mic" size={28} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -143,14 +145,15 @@ const UserHomeScreen: React.FC = () => {
             variant="primary"
             size="large"
             style={styles.searchButton}
+            textStyle={styles.sectionTitle}
           />
         </View>
 
         <View style={styles.emptyState}>
-          <Image
-            source={{ uri: "/person-thinking-with-question-marks-illustration.jpg" }}
+          {/* <Image
+            source={require("../../assets/public/person-thinking-with-question-marks-illustration.jpg")}
             style={styles.emptyStateImage}
-          />
+          /> */}
           <Text style={[styles.emptyStateText, { color: colors.textSecondary }]}>What can we help you with today?</Text>
         </View>
 
@@ -205,7 +208,7 @@ const UserHomeScreen: React.FC = () => {
           <View style={[styles.customTagInput, { backgroundColor: colors.surface }]}>
             <TextInput
               style={[styles.tagInput, { borderColor: colors.border, color: colors.text }]}
-              placeholder="Add custom tag..."
+              placeholder="Add custom tag"
               placeholderTextColor={colors.textSecondary}
               value={customTag}
               onChangeText={setCustomTag}
@@ -365,7 +368,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-Regular",
   },
   searchButton: {
-    marginBottom: 32,
+    marginBottom: 16,
   },
   emptyState: {
     alignItems: "center",

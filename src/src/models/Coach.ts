@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from 'react-native';
+
 export interface Coach {
   id: string
   name: string
@@ -6,12 +8,12 @@ export interface Coach {
   rating: number
   reviewCount: number
   tags: string[]
-  profilePicture: string
+  profilePicture: ImageSourcePropType
   isAvailable: boolean
   bio: string
   experience: string
   hourlyRate: number
-  coverPhoto?: string
+  coverPhoto?: ImageSourcePropType
 }
 
 export interface Session {

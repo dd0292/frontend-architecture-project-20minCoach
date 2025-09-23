@@ -32,7 +32,7 @@ const CoachListingScreen: React.FC = () => {
       onPress={() => navigation.navigate("CoachDetail", { coach: item })}
     >
       <View style={styles.cardHeader}>
-        <Image source={{ uri: item.profilePicture }} style={styles.profilePicture} />
+        <Image source={item.profilePicture} style={styles.profilePicture} />
         <View style={styles.availabilityIndicator}>
           <View
             style={[styles.statusDot, { backgroundColor: item.isAvailable ? colors.success : colors.textSecondary }]}
@@ -78,6 +78,7 @@ const CoachListingScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
         <View style={styles.headerContent}>
+          <Text> </Text>
           <Text style={[styles.headerTitle, { color: colors.text }]}>Available Coaches</Text>
           <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
             We found {searchResults.length} coaches matching your search
