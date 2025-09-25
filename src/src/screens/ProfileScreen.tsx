@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons"
 import type { RootState } from "../state/store"
 import { updateUser } from "../slices/authSlice"
 import Button from "../components/common/Button"
-import { useTheme } from "../components/contexts/ThemeContext"
+import { useTheme } from "../components/styles/ThemeContext"
 
 const ProfileScreen: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth)

@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native"
 import { Ionicons } from "@expo/vector-icons"
 import type { RootState } from "../state/store"
 import type { Coach } from "../models/Coach"
-import { useTheme } from "../components/contexts/ThemeContext"
+import { useTheme } from "../components/styles/ThemeContext"
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../models/Navigation';
 

@@ -19,7 +19,7 @@ import { useNavigation } from "@react-navigation/native"
 import Button from "../components/common/Button"
 import { authenticateUser, validateEmail } from "../controllers/authController"
 import { loginStart, loginSuccess, loginFailure } from "../slices/authSlice"
-import { useTheme } from "../components/contexts/ThemeContext"
+import { useTheme } from "../components/styles/ThemeContext"
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState("")
