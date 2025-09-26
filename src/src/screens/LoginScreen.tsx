@@ -16,7 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient"
 import { useDispatch } from "react-redux"
 import { useNavigation } from "@react-navigation/native"
-import Button from "../components/common/Button"
+import Button from "../components/common/atoms/Button"
 import { authenticateUser, validateEmail } from "../controllers/authController"
 import { loginStart, loginSuccess, loginFailure } from "../slices/authSlice"
 import { useTheme } from "../components/styles/ThemeContext"
@@ -113,8 +113,6 @@ const LoginScreen: React.FC = () => {
                 <Button
                   title={isLogin ? "Sign Up" : "Log In"}
                   onPress={() => setIsLogin(!isLogin)}
-                  variant="text"
-                  style={styles.secondaryButton}
                 />
               </View>
 
