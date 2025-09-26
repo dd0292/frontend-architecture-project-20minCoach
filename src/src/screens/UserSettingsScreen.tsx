@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native"
 import { Ionicons } from "@expo/vector-icons"
 import { logout } from "../slices/authSlice"
 import { useTheme } from "../components/styles/ThemeContext"
+import { supabase } from "../utils/supabase"
 
 const UserSettingsScreen: React.FC = () => {
   const { themeMode, colors, setThemeMode } = useTheme()
@@ -15,19 +16,25 @@ const UserSettingsScreen: React.FC = () => {
   const dispatch = useDispatch()
   const navigation = useNavigation()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Logout",
         style: "destructive",
-        onPress: () => {
-          dispatch(logout())
-          navigation.navigate("Login" as never)
+        onPress: async () => {
+          try {
+            await supabase.auth.signOut();
+            dispatch(logout());
+            navigation.navigate("Login" as never);
+          } catch (error) {
+            Alert.alert("Error", "Failed to logout. Please try again.");
+            console.error("Logout error:", error);
+          }
         },
       },
-    ])
-  }
+    ]);
+  };
 
   const SettingsItem = ({
     icon,
