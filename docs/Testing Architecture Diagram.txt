@@ -1,0 +1,232 @@
+# Diagrama de Arquitectura de Testing - 20minCoach
+
+## Testing Stack Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    TESTING LAYER ARCHITECTURE                  │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   UNIT TESTS    │    │ INTEGRATION     │    │   E2E TESTS     │
+│                 │    │     TESTS       │    │                 │
+│ • Models        │    │ • API Flows     │    │ • User Flows    │
+│ • Controllers   │    │ • Component     │    │ • Navigation    │
+│ • Utils         │    │   Integration   │    │ • Real Device   │
+│ • Pure Functions│    │ • State Mgmt    │    │ • Performance   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│                    TESTING FRAMEWORK LAYER                     │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│      JEST       │    │ TESTING LIBRARY │    │   MOCKING       │
+│                 │    │                 │    │                 │
+│ • Test Runner   │    │ • React Native  │    │ • Jest Mocks    │
+│ • Assertions    │    │   Testing       │    │ • Manual Mocks  │
+│ • Coverage      │    │ • Component     │    │ • API Mocks     │
+│ • Snapshots     │    │   Testing       │    │ • Service Mocks │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│                    APPLICATION LAYER                           │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│     MODELS      │    │  CONTROLLERS    │    │   COMPONENTS    │
+│                 │    │                 │    │                 │
+│ • UserModel     │    │ • AuthController│    │ • Button        │
+│ • CoachModel    │    │ • SearchController│  │ • NavigationBar │
+│ • Business Logic│    │ • Business Logic│    │ • TagSelector   │
+│ • Validation    │    │ • API Integration│   │ • Screens       │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│                    INFRASTRUCTURE LAYER                        │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   EXTERNAL      │    │   STATE MGMT    │    │   UTILITIES     │
+│   SERVICES      │    │                 │    │                 │
+│                 │    │ • Redux Store   │    │ • Logger        │
+│ • API Services  │    │ • Slices        │    │ • Validators    │
+│ • Auth Provider │    │ • Actions       │    │ • Helpers       │
+│ • Database      │    │ • Reducers      │    │ • Constants     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## Testing Data Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    TESTING DATA FLOW                           │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   TEST      │───▶│   MOCK      │───▶│  COMPONENT  │───▶│   ASSERT    │
+│   INPUT     │    │   DATA      │    │   UNDER     │    │   RESULT    │
+│             │    │             │    │    TEST     │    │             │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+       │                   │                   │                   │
+       ▼                   ▼                   ▼                   ▼
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ • Test Data │    │ • API Mocks │    │ • Business  │    │ • Expected  │
+│ • Fixtures  │    │ • Service   │    │   Logic     │    │   Output    │
+│ • Builders  │    │   Mocks     │    │ • State     │    │ • Behavior  │
+│             │    │ • External  │    │   Changes   │    │ • Side      │
+│             │    │   Mocks     │    │             │    │   Effects   │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+## Testing Coverage Strategy
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    COVERAGE STRATEGY                           │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   UNIT TESTS    │    │ INTEGRATION     │    │   E2E TESTS     │
+│   (80% Lines)   │    │   TESTS         │    │   (Critical     │
+│                 │    │   (85% Lines)   │    │    Paths)       │
+│ • Models: 95%   │    │ • API Flows     │    │ • Login Flow    │
+│ • Controllers:  │    │ • State Mgmt    │    │ • Search Flow   │
+│   85%           │    │ • Component     │    │ • Booking Flow  │
+│ • Utils: 90%    │    │   Integration   │    │ • Payment Flow  │
+│ • Components:   │    │ • Navigation    │    │                 │
+│   70%           │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│                    COVERAGE REPORTING                          │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   HTML REPORT   │    │   JSON REPORT   │    │   CI INTEGRATION│
+│                 │    │                 │    │                 │
+│ • Visual        │    │ • Machine       │    │ • GitHub Actions│
+│   Coverage      │    │   Readable      │    │ • GitLab CI     │
+│ • Line by Line  │    │ • Thresholds    │    │ • Coverage      │
+│ • Branch        │    │ • Metrics       │    │   Gates         │
+│   Analysis      │    │ • Trends        │    │ • Quality Gates │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## Testing Tools Integration
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    TESTING TOOLS INTEGRATION                   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   JEST CORE     │    │   TESTING       │    │   MOCKING       │
+│                 │    │   LIBRARIES     │    │   TOOLS         │
+│ • Test Runner   │    │                 │    │                 │
+│ • Assertions    │    │ • @testing-     │    │ • jest.fn()     │
+│ • Coverage      │    │   library/      │    │ • jest.mock()   │
+│ • Snapshots     │    │   react-native  │    │ • jest.spyOn()  │
+│ • Watch Mode    │    │ • @testing-     │    │ • Manual Mocks  │
+│ • Parallel      │    │   library/      │    │ • Service Mocks │
+│   Execution     │    │   jest-native   │    │ • API Mocks     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│                    DEVELOPMENT TOOLS                           │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   VS CODE       │    │   CI/CD         │    │   MONITORING    │
+│   INTEGRATION   │    │   PIPELINE      │    │                 │
+│                 │    │                 │    │                 │
+│ • Jest Extension│    │ • GitHub Actions│    │ • Coverage      │
+│ • Debug Support │    │ • GitLab CI     │    │   Tracking      │
+│ • Test Explorer │    │ • Quality Gates │    │ • Performance   │
+│ • Coverage      │    │ • Auto Reports  │    │   Metrics       │
+│   Visualization │    │ • Notifications │    │ • Test Trends   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## Testing Patterns Implementation
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    TESTING PATTERNS                            │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   AAA PATTERN   │    │   TEST DOUBLES  │    │   DATA BUILDERS │
+│                 │    │                 │    │                 │
+│ • Arrange       │    │ • Mocks         │    │ • UserBuilder   │
+│ • Act           │    │ • Stubs         │    │ • CoachBuilder  │
+│ • Assert        │    │ • Spies         │    │ • TestData      │
+│                 │    │ • Fakes         │    │   Factories     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│                    TESTING STRATEGIES                          │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   TEST FIRST    │    │   MOCK FIRST    │    │   COVERAGE      │
+│   DEVELOPMENT   │    │   APPROACH      │    │   DRIVEN        │
+│                 │    │                 │    │                 │
+│ • Red Test      │    │ • External      │    │ • Line Coverage │
+│ • Green Test    │    │   Dependencies  │    │ • Branch        │
+│ • Refactor      │    │ • Fast Tests    │    │   Coverage      │
+│ • Repeat        │    │ • Isolated      │    │ • Function      │
+│                 │    │   Tests         │    │   Coverage      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## Testing Quality Gates
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    QUALITY GATES                               │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   COVERAGE      │    │   PERFORMANCE   │    │   RELIABILITY   │
+│   GATES         │    │   GATES         │    │   GATES         │
+│                 │    │                 │    │                 │
+│ • Lines: 80%    │    │ • Test Time     │    │ • Flaky Tests   │
+│ • Functions:    │    │   < 30s         │    │   < 1%          │
+│   90%           │    │ • Memory Usage  │    │ • Test Success  │
+│ • Branches:     │    │   < 100MB       │    │   Rate > 99%    │
+│   75%           │    │ • Parallel      │    │ • No Skipped    │
+│ • Statements:   │    │   Execution     │    │   Tests         │
+│   80%           │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│                    CONTINUOUS INTEGRATION                      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   PRE-COMMIT    │    │   PULL REQUEST  │    │   DEPLOYMENT    │
+│   HOOKS         │    │   CHECKS        │    │   GATES         │
+│                 │    │                 │    │                 │
+│ • Lint Tests    │    │ • All Tests     │    │ • Production    │
+│ • Unit Tests    │    │   Pass          │    │   Tests Pass    │
+│ • Coverage      │    │ • Coverage      │    │ • Performance   │
+│   Check         │    │   Maintained    │    │   Tests Pass    │
+│ • No Console    │    │ • No Regression │    │ • Security      │
+│   Logs          │    │ • Code Review   │    │   Tests Pass    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```

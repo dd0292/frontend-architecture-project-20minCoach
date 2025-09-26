@@ -18,8 +18,8 @@ import { useNavigation } from "@react-navigation/native"
 import { Ionicons } from "@expo/vector-icons"
 import type { RootState } from "../state/store"
 import { updateUser } from "../slices/authSlice"
-import Button from "../components/common/Button"
-import { useTheme } from "../components/contexts/ThemeContext"
+import Button from "../components/common/atoms/Button"
+import { useTheme } from "../components/styles/ThemeContext"
 
 const ProfileScreen: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth)

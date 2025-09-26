@@ -9,7 +9,7 @@ import type { RootState } from "../state/store"
 import { toggleFavorite } from "../slices/coachesSlice"
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../models/Navigation';
-import { useTheme } from "../components/contexts/ThemeContext"
+import { useTheme } from "../components/styles/ThemeContext"
 
 const FavoritesScreen: React.FC = () => {
   const { coaches, favorites } = useSelector((state: RootState) => state.coaches)

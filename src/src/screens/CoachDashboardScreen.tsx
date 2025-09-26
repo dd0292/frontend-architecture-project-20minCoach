@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux"
 import { useNavigation } from "@react-navigation/native"
 import { Ionicons } from "@expo/vector-icons"
 import { logout } from "../slices/authSlice"
-import { useTheme } from "../components/contexts/ThemeContext"
+import { useTheme } from "../components/styles/ThemeContext"
 
 const CoachDashboardScreen: React.FC = () => {
   const [isOnline, setIsOnline] = useState(true)

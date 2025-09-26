@@ -20,8 +20,8 @@ import { Ionicons } from "@expo/vector-icons"
 import type { RootState } from "../state/store"
 import { setSearchResults } from "../slices/coachesSlice"
 import { searchCoaches } from "../controllers/searchController"
-import Button from "../components/common/Button"
-import { useTheme } from "../components/contexts/ThemeContext"
+import Button from "../components/common/atoms/Button"
+import { useTheme } from "../components/styles/ThemeContext"
 
 const POPULAR_CATEGORIES = [
   "Psychology",

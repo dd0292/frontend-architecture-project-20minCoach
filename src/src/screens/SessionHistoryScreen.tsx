@@ -6,7 +6,7 @@ import { useSelector } from "react-redux"
 import { useNavigation } from "@react-navigation/native"
 import { Ionicons } from "@expo/vector-icons"
 import type { RootState } from "../state/store"
-import { useTheme } from "../components/contexts/ThemeContext"
+import { useTheme } from "../components/styles/ThemeContext"
 
 const SessionHistoryScreen: React.FC = () => {
   const { sessions, coaches } = useSelector((state: RootState) => state.coaches)
@@ -255,7 +255,7 @@ const SessionHistoryScreen: React.FC = () => {
     return (
       <View style={styles.sessionCard}>
         <View style={styles.sessionHeader}>
-          <Image source={{ uri: coach.profilePicture }} style={styles.coachImage} />
+          <Image source={coach.profilePicture} style={styles.coachImage} />
           <View style={styles.sessionInfo}>
             <Text style={styles.coachName}>{coach.name}</Text>
             <Text style={styles.coachTitle}>{coach.title}</Text>
