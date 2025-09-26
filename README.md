@@ -24,7 +24,8 @@ A React Native mobile application prototype for connecting users with expert coa
 
 ## Technical Architecture
 
-### Folder Structure
+
+### Folder Structure old version 
 ``` bash
 src/
   assets/         # Images, icons, fonts
@@ -38,6 +39,38 @@ src/
   components/     # Reusable components
     common/       # Common components (Button, NavigationBar)
 ```
+
+### Folder Structure newest version 
+```bash
+│   └── src
+│       ├── components
+│       │   └── common
+│       ├── controllers
+│       ├── models
+│       ├── screens
+│       ├── slices
+│       ├── state
+│       └── utils
+└── src
+    ├── components
+    │   ├── auth
+    │   ├── common
+    │   │   ├── atoms
+    │   │   ├── molecules
+    │   │   └── organisms
+    │   └── styles
+    ├── controllers
+    ├── models
+    ├── screens
+    ├── slices
+    ├── state
+    ├── tests
+    │   ├── fixtures
+    │   ├── mocks
+    │   └── utils
+    └── utils
+```
+
 
 ### Technologies Used
 - React Native with Expo
