@@ -1,13 +1,4 @@
 // Jest setup file for React Native testing
-const jest = require("jest")
-import "react-native-gesture-handler/jestSetup"
-
-// Mock React Native modules
-jest.mock("react-native-reanimated", () => {
-  const Reanimated = require("react-native-reanimated/mock")
-  Reanimated.default.call = () => {}
-  return Reanimated
-})
 
 // Mock navigation
 jest.mock("@react-navigation/native", () => ({
@@ -32,6 +23,3 @@ jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
   Provider: ({ children }: any) => children,
 }))
-
-// Silence the warning: Animated: `useNativeDriver` is not supported
-jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper")
