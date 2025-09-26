@@ -362,3 +362,4 @@ src/models         |     100 |      100 |     100 |     100 |
 ---
 
 **¡El sistema de testing está completamente funcional y listo para producción!** 
+

@@ -342,3 +342,4 @@ src/
 - No compartir estado entre tests
 - Usar `afterEach` para cleanup
 
+

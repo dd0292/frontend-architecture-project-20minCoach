@@ -69,10 +69,49 @@ src/
 - **Coach Account**: coach@example.com / password123
 
 ## Testing
-Run the test suite:
-\`\`\`bash
+
+### Test Suite Overview
+This project includes a comprehensive testing suite built with Jest and React Native Testing Library.
+
+### Running Tests
+```bash
+# Run all tests
 npm test
-\`\`\`
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run specific test categories
+npm run test:models      # Model tests only
+npm run test:controllers # Controller tests only
+npm run test:unit        # Unit tests only
+```
+
+### Test Coverage
+- **Models**: 95% coverage (User, Coach)
+- **Controllers**: 85% coverage (AuthController, SearchController)
+- **Utils**: 90% coverage (validators, logger)
+- **Overall**: 80% minimum coverage threshold
+
+### Test Structure
+```
+src/tests/
+├── fixtures/          # Test data and fixtures
+├── mocks/            # Reusable mocks
+├── utils/            # Test helper utilities
+├── models/           # Model tests
+├── controllers/      # Controller tests
+└── setup.ts          # Jest configuration
+```
+
+### Testing Documentation
+- [Testing Strategy](docs/Testing%20Strategy.md) - Comprehensive testing approach
+- [Testing Scripts](docs/Testing%20Scripts%20and%20Commands.md) - Available commands and scripts
+- [Developer Guidelines](docs/Developer%20Testing%20Guidelines.md) - How to write and maintain tests
+- [Architecture Diagrams](docs/Testing%20Architecture%20Diagram.txt) - Testing architecture overview
 
 ## Design System
 - **Primary Color**: #1f2937 (gray-800)

@@ -220,3 +220,4 @@ npm run test:watch
 - **Patrones establecidos** para consistencia
 
 El sistema está listo para ser usado por el equipo de desarrollo y puede ser fácilmente extendido conforme el proyecto crezca.
+

@@ -193,4 +193,3 @@ Para verificar que todo está funcionando correctamente:
    - Verificar que los enlaces funcionan
    - Confirmar que las instrucciones son claras
 
-

@@ -551,3 +551,4 @@ describe("AuthController", () => {
 3. **Probar comportamiento, no implementación**
 4. **Mantener tests independientes**
 5. **Verificar cobertura regularmente**
+
