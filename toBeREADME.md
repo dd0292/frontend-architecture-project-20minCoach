@@ -37,9 +37,10 @@ repo-root/
 │── src/                      # Source code (PoCs + architecture implementation)
 │   ├── App.tsx               # App bootstrap
 │   ├── components/           # Visual components
+│   │   ├── auth/
 │   │   ├── common/           # Atoms, Molecules, Organisms
-│   │   └── auth/
-│   ├──  coverage/
+│   │   └── styles/
+│   ├── coverage/
 │   ├── controllers/          # Controllers (Auth, Search, etc.)
 │   ├── models/               # Models (User, Coach, etc.)
 │   ├── screens/              # Screens (Login, Search, Results, Profile)
@@ -49,7 +50,6 @@ repo-root/
 │   ├── business/             # Business logic services
 │   ├── middleware/           # Middlewares (logging, validation, error handler)
 │   ├── validators/           # Validation rules
-│   ├── dto/                  # DTO transformations
 │   ├── utils/                # Helpers (logger, formatters, singletons)
 │   └── tests/                # Unit tests (fixtures, mocks, utils)
 ├── App.tsx     

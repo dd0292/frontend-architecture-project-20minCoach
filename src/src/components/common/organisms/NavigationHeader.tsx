@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { View, TouchableOpacity, SafeAreaView } from "react-native"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 import { Heading3, Caption } from "../atoms/Typography"
 import { Icon } from "../atoms/Icon"
 

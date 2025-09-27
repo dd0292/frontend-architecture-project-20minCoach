@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { View, TouchableOpacity } from "react-native"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 import { SmallText } from "../atoms/Typography"
 import { Icon } from "../atoms/Icon"
 
@@ -11,9 +11,10 @@ interface TagChipProps {
   onRemove?: () => void
   variant?: "default" | "selected" | "removable"
   onPress?: () => void
+  fontSize?: number
 }
 
-export const TagChip: React.FC<TagChipProps> = ({ label, onRemove, variant = "default", onPress }) => {
+export const TagChip: React.FC<TagChipProps> = ({ label, onRemove, variant = "default", onPress, fontSize = 14}) => {
   const { colors } = useTheme()
 
   const getBackgroundColor = () => {
@@ -48,13 +49,13 @@ export const TagChip: React.FC<TagChipProps> = ({ label, onRemove, variant = "de
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 16,
-        gap: 4,
+        gap: 9,
       }}
     >
-      <SmallText style={{ color: getTextColor() }}>{label}</SmallText>
-      {onRemove && (
+      <SmallText style={{ color: getTextColor(), fontSize: fontSize}}>{label}</SmallText>
+      {variant=="removable" && (
         <TouchableOpacity onPress={onRemove}>
-          <Icon name="close" size={14} color={getTextColor()} />
+          <Icon name="close" size={16} color={getTextColor()} />
         </TouchableOpacity>
       )}
     </View>

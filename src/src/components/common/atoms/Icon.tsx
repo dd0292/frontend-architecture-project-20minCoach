@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { Ionicons } from "@expo/vector-icons"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 
 interface IconProps {
   name: keyof typeof Ionicons.glyphMap

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { Text, type TextStyle } from "react-native"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 
 interface TypographyProps {
   children: React.ReactNode

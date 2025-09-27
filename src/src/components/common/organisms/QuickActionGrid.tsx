@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { View, TouchableOpacity } from "react-native"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 import { BodyText } from "../atoms/Typography"
 import { Icon } from "../atoms/Icon"
 import { Ionicons } from "@expo/vector-icons"

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { View, Image, type ImageStyle, type ViewStyle, ImageSourcePropType } from "react-native"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 import { BodyText } from "./Typography"
 
 interface AvatarProps {
@@ -25,6 +25,7 @@ export const Avatar: React.FC<AvatarProps> = ({ source, size = 48, initials, sty
             width: size,
             height: size,
             borderRadius: size / 2,
+            zIndex: 10,
           },
           style,
         ]}

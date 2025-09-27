@@ -53,7 +53,7 @@ const darkTheme: ThemeColors = {
   warning: "#EAB308",
 }
 
-interface ThemeContextType {
+export interface ThemeContextType {
   themeMode: ThemeMode
   colorScheme: ColorScheme
   colors: ThemeColors

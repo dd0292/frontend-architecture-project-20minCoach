@@ -2,30 +2,26 @@
 
 import type React from "react"
 import { useState } from "react"
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  SafeAreaView,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-} from "react-native"
+import { View, Image, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, Alert } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useDispatch } from "react-redux"
 import { useNavigation } from "@react-navigation/native"
 import Button from "../components/common/atoms/Button"
+import { Input } from "../components/common/atoms/Input"
+import { Typography } from "../components/common/atoms/Typography"
 import { authenticateUser, validateEmail } from "../controllers/authController"
 import { loginStart, loginSuccess, loginFailure } from "../slices/authSlice"
 import { useTheme } from "../components/styles/ThemeContext"
+import { createGlobalStyles } from "../components/styles/GlobalStyles"
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLogin, setIsLogin] = useState(true)
-  const { colors } = useTheme()
+
+  const theme = useTheme()
+  const styles = createGlobalStyles(theme)
+
   const dispatch = useDispatch()
   const navigation = useNavigation()
 
@@ -63,13 +59,15 @@ const LoginScreen: React.FC = () => {
   }
 
   return (
-    <LinearGradient colors={[colors.background, colors.border]} style={styles.container}>
+    <LinearGradient colors={[theme.colors.background, theme.colors.border]} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
           <View style={styles.content}>
-            <View style={[styles.card, { backgroundColor: colors.surface }]}>
+            <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
               <View style={styles.logoContainer}>
-                <Text style={[styles.logo, { color: colors.primary }]}>20minCoach</Text>
+                <Typography variant="h1" color={theme.colors.primary} style={styles.logo}>
+                  20minCoach
+                </Typography>
               </View>
 
               <Image
@@ -78,28 +76,28 @@ const LoginScreen: React.FC = () => {
                 resizeMode="contain"
               />
 
-              <Text style={[styles.headline, { color: colors.text }]}>Connect with an expert in 20 minutes.</Text>
-              <Text style={[styles.subheading, { color: colors.textSecondary }]}>
+              <Typography variant="h2" color={theme.colors.text} style={styles.headline}>
+                Connect with an expert in 20 minutes.
+              </Typography>
+              <Typography variant="body" color={theme.colors.textSecondary} style={styles.subheading}>
                 Get instant help from vetted professionals in law, health, tech, arts, and more.
-              </Text>
+              </Typography>
 
               <View style={styles.form}>
-                <TextInput
-                  style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+                <Input
                   placeholder="Email"
-                  placeholderTextColor={colors.textSecondary}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  style={styles.input}
                 />
-                <TextInput
-                  style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+                <Input
                   placeholder="Password"
-                  placeholderTextColor={colors.textSecondary}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
+                  style={styles.input}
                 />
 
                 <Button
@@ -113,12 +111,14 @@ const LoginScreen: React.FC = () => {
                 <Button
                   title={isLogin ? "Sign Up" : "Log In"}
                   onPress={() => setIsLogin(!isLogin)}
+                  variant="secondary"
+                  style={styles.secondaryButton}
                 />
               </View>
 
-              <Text style={[styles.footer, { color: colors.textSecondary }]}>
+              <Typography variant="caption" color={theme.colors.textSecondary} style={styles.footer}>
                 By continuing, you agree to our Terms of Service and Privacy Policy.
-              </Text>
+              </Typography>
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -126,83 +126,5 @@ const LoginScreen: React.FC = () => {
     </LinearGradient>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 24,
-  },
-  card: {
-    borderRadius: 12,
-    padding: 32,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  logo: {
-    fontSize: 32,
-    fontWeight: "bold",
-    fontFamily: "Inter-Bold",
-  },
-  illustration: {
-    width: "100%",
-    height: 150,
-    marginBottom: 24,
-  },
-  headline: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 8,
-    fontFamily: "Inter-Bold",
-  },
-  subheading: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 32,
-    lineHeight: 24,
-    fontFamily: "Inter-Regular",
-  },
-  form: {
-    marginBottom: 24,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    marginBottom: 16,
-    fontFamily: "Inter-Regular",
-  },
-  primaryButton: {
-    marginBottom: 16,
-  },
-  secondaryButton: {
-    marginTop: 8,
-  },
-  footer: {
-    fontSize: 12,
-    textAlign: "center",
-    lineHeight: 18,
-    fontFamily: "Inter-Regular",
-  },
-})
 
 export default LoginScreen

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { TextInput, type TextInputProps, type ViewStyle } from "react-native"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 
 interface InputProps extends TextInputProps {
   containerStyle?: ViewStyle

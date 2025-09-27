@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { View, TouchableOpacity, Modal } from "react-native"
-import { useTheme } from "../../../contexts/ThemeContext"
+import { useTheme } from "../../styles/ThemeContext"
 import { SearchBar } from "../molecules/SearchBar"
 import { TagChip } from "../molecules/TagChip"
 import { BodyText, Heading3 } from "../atoms/Typography"

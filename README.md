@@ -4,6 +4,10 @@ A React Native mobile application prototype for connecting users with expert coa
 
 ## Features
 
+
+### NOTE:
+Vercel hace un mal paatron de atoic en el ui, lo estoy debugeadno
+
 ### Authentication
 - Login screen for both users and coaches
 - Demo accounts for testing

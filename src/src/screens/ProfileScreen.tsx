@@ -2,17 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  Alert,
-} from "react-native"
+import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert } from "react-native"
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigation } from "@react-navigation/native"
 import { Ionicons } from "@expo/vector-icons"
@@ -20,12 +10,19 @@ import type { RootState } from "../state/store"
 import { updateUser } from "../slices/authSlice"
 import Button from "../components/common/atoms/Button"
 import { useTheme } from "../components/styles/ThemeContext"
+import { Typography } from "../components/common/atoms/Typography"
+import { Input } from "../components/common/atoms/Input"
+import { Avatar } from "../components/common/atoms/Avatar"
+import { NavigationHeader } from "../components/common/organisms/NavigationHeader"
+import { createGlobalStyles } from "../components/styles/GlobalStyles"
 
 const ProfileScreen: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth)
   const dispatch = useDispatch()
   const navigation = useNavigation()
-  const { colors } = useTheme()
+  
+  const theme = useTheme()
+  const styles = createGlobalStyles(theme)
 
   const [isEditing, setIsEditing] = useState(false)
   const [name, setName] = useState(user?.name || "")
@@ -86,280 +83,23 @@ const ProfileScreen: React.FC = () => {
     })
   }
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    header: {
-      backgroundColor: colors.surface,
-      paddingHorizontal: 24,
-      paddingVertical: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    backButton: {
-      width: 40,
-      height: 40,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerTitle: {
-      fontSize: 18,
-      fontWeight: "600",
-      color: colors.text,
-      fontFamily: "Inter-SemiBold",
-    },
-    editButton: {
-      width: 40,
-      height: 40,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    content: {
-      flex: 1,
-    },
-    profileSection: {
-      backgroundColor: colors.surface,
-      paddingHorizontal: 24,
-      paddingVertical: 32,
-      marginBottom: 16,
-    },
-    profileImageContainer: {
-      alignItems: "center",
-      marginBottom: 24,
-      position: "relative",
-    },
-    profileImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-    },
-    changePhotoButton: {
-      position: "absolute",
-      bottom: 0,
-      right: "35%",
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: "#4361EE",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    profileInfo: {
-      alignItems: "center",
-    },
-    userName: {
-      fontSize: 24,
-      fontWeight: "bold",
-      color: colors.text,
-      marginBottom: 4,
-      fontFamily: "Inter-Bold",
-    },
-    userEmail: {
-      fontSize: 16,
-      color: colors.textSecondary,
-      marginBottom: 24,
-      fontFamily: "Inter-Regular",
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      fontSize: 16,
-      marginBottom: 16,
-      width: "100%",
-      fontFamily: "Inter-Regular",
-      backgroundColor: colors.surface,
-      color: colors.text,
-    },
-    userStats: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: colors.background,
-      borderRadius: 12,
-      paddingVertical: 16,
-      paddingHorizontal: 24,
-      width: "100%",
-    },
-    statItem: {
-      flex: 1,
-      alignItems: "center",
-    },
-    statValue: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color: colors.text,
-      marginBottom: 4,
-      fontFamily: "Inter-Bold",
-    },
-    statLabel: {
-      fontSize: 12,
-      color: colors.textSecondary,
-      textAlign: "center",
-      fontFamily: "Inter-Regular",
-    },
-    statDivider: {
-      width: 1,
-      height: 32,
-      backgroundColor: colors.border,
-      marginHorizontal: 16,
-    },
-    editActions: {
-      flexDirection: "row",
-      marginTop: 24,
-      gap: 12,
-    },
-    cancelButton: {
-      flex: 1,
-      backgroundColor: colors.border,
-    },
-    saveButton: {
-      flex: 1,
-    },
-    ratingsSection: {
-      backgroundColor: colors.surface,
-      paddingHorizontal: 24,
-      paddingVertical: 20,
-      marginBottom: 16,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color: colors.text,
-      marginBottom: 16,
-      fontFamily: "Inter-Bold",
-    },
-    ratingCard: {
-      backgroundColor: colors.background,
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 12,
-    },
-    ratingHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 12,
-    },
-    coachImage: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      marginRight: 12,
-    },
-    coachInfo: {
-      flex: 1,
-    },
-    coachName: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: colors.text,
-      marginBottom: 2,
-      fontFamily: "Inter-SemiBold",
-    },
-    coachTitle: {
-      fontSize: 12,
-      color: colors.textSecondary,
-      marginBottom: 2,
-      fontFamily: "Inter-Regular",
-    },
-    ratingDate: {
-      fontSize: 11,
-      color: colors.textSecondary,
-      fontFamily: "Inter-Regular",
-    },
-    ratingStars: {
-      flexDirection: "row",
-    },
-    reviewText: {
-      fontSize: 14,
-      color: colors.textSecondary,
-      lineHeight: 20,
-      fontStyle: "italic",
-      fontFamily: "Inter-Regular",
-    },
-    emptyRatings: {
-      alignItems: "center",
-      paddingVertical: 32,
-    },
-    emptyRatingsText: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: colors.textSecondary,
-      marginTop: 12,
-      marginBottom: 4,
-      fontFamily: "Inter-SemiBold",
-    },
-    emptyRatingsSubtext: {
-      fontSize: 14,
-      color: colors.textSecondary,
-      textAlign: "center",
-      fontFamily: "Inter-Regular",
-    },
-    accountSection: {
-      backgroundColor: colors.surface,
-      paddingHorizontal: 24,
-      paddingVertical: 20,
-      marginBottom: 16,
-    },
-    infoCard: {
-      backgroundColor: colors.background,
-      borderRadius: 12,
-      padding: 16,
-    },
-    infoRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-    },
-    infoLabel: {
-      fontSize: 14,
-      color: colors.textSecondary,
-      fontFamily: "Inter-Regular",
-    },
-    infoValue: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: colors.text,
-      fontFamily: "Inter-SemiBold",
-    },
-    averageRating: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    stars: {
-      flexDirection: "row",
-      marginRight: 8,
-    },
-    bottomPadding: {
-      height: 32,
-    },
-  })
-
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity style={styles.editButton} onPress={() => setIsEditing(!isEditing)}>
-          <Ionicons name={isEditing ? "close" : "pencil"} size={20} color="#4361EE" />
-        </TouchableOpacity>
-      </View>
+      <NavigationHeader
+        title="Profile"
+        showBackButton
+        onBackPress={() => navigation.goBack()}
+        rightComponent={
+          <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
+            <Ionicons name={isEditing ? "close" : "pencil"} size={20} color={theme.colors.primary} />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
           <View style={styles.profileImageContainer}>
-            <Image source={{ uri: user?.profilePicture }} style={styles.profileImage} />
+            <Avatar source={{uri:user?.profilePicture}} size={100} />
             {isEditing && (
               <TouchableOpacity style={styles.changePhotoButton}>
                 <Ionicons name="camera" size={20} color="#FFFFFF" />
@@ -370,37 +110,58 @@ const ProfileScreen: React.FC = () => {
           <View style={styles.profileInfo}>
             {isEditing ? (
               <>
-                <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Full Name" />
-                <TextInput
-                  style={styles.input}
+                <Input
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Full Name"
+                  style={{ marginBottom: 16, width: "100%" }}
+                />
+                <Input
                   value={email}
                   onChangeText={setEmail}
                   placeholder="Email"
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  style={{ marginBottom: 24, width: "100%" }}
                 />
               </>
             ) : (
               <>
-                <Text style={styles.userName}>{user?.name}</Text>
-                <Text style={styles.userEmail}>{user?.email}</Text>
+                <Typography variant="h1" color={theme.colors.text} style={{ marginBottom: 4 }}>
+                  {user?.name}
+                </Typography>
+                <Typography variant="body" color={theme.colors.textSecondary} style={{ marginBottom: 24 }}>
+                  {user?.email}
+                </Typography>
               </>
             )}
 
             <View style={styles.userStats}>
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{user?.sessionsRemaining}</Text>
-                <Text style={styles.statLabel}>Sessions Left</Text>
+                <Typography variant="h3" color={theme.colors.text}>
+                  {user?.sessionsRemaining}
+                </Typography>
+                <Typography variant="caption" color={theme.colors.textSecondary}>
+                  Sessions Left
+                </Typography>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{user?.packageType}</Text>
-                <Text style={styles.statLabel}>Current Package</Text>
+                <Typography variant="h3" color={theme.colors.text}>
+                  {user?.packageType}
+                </Typography>
+                <Typography variant="caption" color={theme.colors.textSecondary}>
+                  Current Package
+                </Typography>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{user?.role}</Text>
-                <Text style={styles.statLabel}>Account Type</Text>
+                <Typography variant="h3" color={theme.colors.text}>
+                  {user?.role}
+                </Typography>
+                <Typography variant="caption" color={theme.colors.textSecondary}>
+                  Account Type
+                </Typography>
               </View>
             </View>
           </View>
@@ -426,52 +187,84 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <View style={styles.ratingsSection}>
-          <Text style={styles.sectionTitle}>My Ratings & Reviews</Text>
+          <Typography variant="h3" color={theme.colors.text} style={styles.sectionTitle}>
+            My Ratings & Reviews
+          </Typography>
 
           {myRatings.map((rating) => (
             <View key={rating.id} style={styles.ratingCard}>
               <View style={styles.ratingHeader}>
-                <Image source={{ uri: rating.coachImage }} style={styles.coachImage} />
+                <Avatar source={{uri:rating.coachImage}} size={40} />
                 <View style={styles.coachInfo}>
-                  <Text style={styles.coachName}>{rating.coachName}</Text>
-                  <Text style={styles.coachTitle}>{rating.coachTitle}</Text>
-                  <Text style={styles.ratingDate}>{formatDate(rating.date)}</Text>
+                  <Typography variant="body" color={theme.colors.text} style={{ fontWeight: "600", marginBottom: 2 }}>
+                    {rating.coachName}
+                  </Typography>
+                  <Typography variant="caption" color={theme.colors.textSecondary} style={{ marginBottom: 2 }}>
+                    {rating.coachTitle}
+                  </Typography>
+                  <Typography variant="caption" color={theme.colors.textSecondary}>
+                    {formatDate(rating.date)}
+                  </Typography>
                 </View>
                 <View style={styles.ratingStars}>{renderStars(rating.rating)}</View>
               </View>
 
-              <Text style={styles.reviewText}>"{rating.review}"</Text>
+              <Typography variant="body" color={theme.colors.textSecondary} style={styles.reviewText}>
+                "{rating.review}"
+              </Typography>
             </View>
           ))}
 
           {myRatings.length === 0 && (
             <View style={styles.emptyRatings}>
-              <Ionicons name="star-outline" size={48} color="#D1D5DB" />
-              <Text style={styles.emptyRatingsText}>No ratings yet</Text>
-              <Text style={styles.emptyRatingsSubtext}>Complete sessions to leave ratings and reviews</Text>
+              <Ionicons name="star-outline" size={48} color={theme.colors.border} />
+              <Typography
+                variant="body"
+                color={theme.colors.textSecondary}
+                style={{ marginTop: 12, marginBottom: 4, fontWeight: "600" }}
+              >
+                No ratings yet
+              </Typography>
+              <Typography variant="caption" color={theme.colors.textSecondary}>
+                Complete sessions to leave ratings and reviews
+              </Typography>
             </View>
           )}
         </View>
 
         <View style={styles.accountSection}>
-          <Text style={styles.sectionTitle}>Account Information</Text>
+          <Typography variant="h3" color={theme.colors.text} style={styles.sectionTitle}>
+            Account Information
+          </Typography>
 
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Member Since</Text>
-              <Text style={styles.infoValue}>January 2024</Text>
+              <Typography variant="body" color={theme.colors.textSecondary}>
+                Member Since
+              </Typography>
+              <Typography variant="body" color={theme.colors.text} style={{ fontWeight: "600" }}>
+                January 2024
+              </Typography>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Total Sessions</Text>
-              <Text style={styles.infoValue}>12</Text>
+              <Typography variant="body" color={theme.colors.textSecondary}>
+                Total Sessions
+              </Typography>
+              <Typography variant="body" color={theme.colors.text} style={{ fontWeight: "600" }}>
+                12
+              </Typography>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Average Rating Given</Text>
+              <Typography variant="body" color={theme.colors.textSecondary}>
+                Average Rating Given
+              </Typography>
               <View style={styles.averageRating}>
                 <View style={styles.stars}>{renderStars(4)}</View>
-                <Text style={styles.infoValue}>4.5</Text>
+                <Typography variant="body" color={theme.colors.text} style={{ fontWeight: "600" }}>
+                  4.5
+                </Typography>
               </View>
             </View>
           </View>
