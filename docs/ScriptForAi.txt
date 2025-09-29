@@ -23,7 +23,7 @@ Make the seccion of "Choose Your Categories" when the user is describing the pro
     Custom Tag Input: An optional TextInput field that allows users to type a custom tag. Pressing a "Add" button would add the custom tag to the state array.
     Tag Chips: Each selected tag should be displayed as a deletable "Chip" component (a rounded rectangle with the tag text and an 'X' icon). Tapping the 'X' should remove the tag from the state array. The entire selection should be visually distinct.
 
-It MUST be a mobile application using React Native framework and...
+It MUST be a mobile application using React Native framework and.:
 Framework: React Native (using Expo for streamlined development and testing).
 Data: All data (user profile, list of coaches, session history) will be hard-coded as JavaScript objects or arrays within the application. No API calls are to be implemented.
 Real-Time Features: The video call functionality is out of scope. The "Request Help" flow should end with a static confirmation screen simulating a successful connection.
