@@ -38,8 +38,7 @@ repo-root/
 │── README.md                 # This documentation
 │── docs/                     # Documentation files & diagrams
 │   ├── diagrams/             # Architecture & UML diagrams
-│   ├── Testing Strategy.md
-│   ├── Developer Guidelines.md
+│   ├── Testing Guide.md      # Complete testing documentation
 │   └── ...
 │── src/                      # Source code (PoCs + architecture implementation)
 │   ├── App.tsx               # App bootstrap
@@ -227,15 +226,17 @@ npm start # Run the app
 
 ---
 
-### Testing Strategy  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-- Unit tests (Models, Controllers, Utils).  
-- Testing library: **Jest + React Native Testing Library**.  
-
 ## Testing
- TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-### 🏃 Running Tests  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+### 🧪 Testing Strategy
+- **Framework**: Jest 29.7.0 + React Native Testing Library
+- **Cobertura**: 80% líneas, 90% funciones, 75% ramas
+- **Tests implementados**: 52 tests unitarios pasando
+- **Documentación completa**: Ver [Testing Guide](docs/Testing%20Guide.md)
+
+### 🏃 Running Tests
 ```bash
+cd src
 npm test                 # Run all tests
 npm run test:watch       # Watch mode
 npm run test:coverage    # Coverage report
@@ -243,16 +244,26 @@ npm run test:models      # Only model tests
 npm run test:controllers # Only controllers
 ```
 
-### 📂 Test Structure  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+### 📊 Test Coverage
+- **UserModel**: 6 tests (roles, validaciones, acceso premium)
+- **CoachModel**: 15 tests (constructor, búsqueda, especialización)
+- **AuthController**: 8 tests (login, validaciones, roles)
+- **SearchController**: 23 tests (búsqueda, filtros, validaciones)
+
+### 📂 Test Structure
 ```bash
 src/tests/
 ├── fixtures/        # Test data
 ├── mocks/           # Reusable mocks
 ├── utils/           # Helpers
-├── models/          # Unit tests for models
-├── controllers/     # Unit tests for controllers
+├── user.test.ts     # UserModel tests
+├── coach.test.ts    # CoachModel tests
+├── authController.test.ts    # AuthController tests
+├── searchController.test.ts  # SearchController tests
 └── setup.ts         # Jest config
 ```
+
+**📖 Para más detalles, consulta la [Guía Completa de Testing](docs/Testing%20Guide.md)**
 
 ---
 
