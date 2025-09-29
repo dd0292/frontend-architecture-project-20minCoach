@@ -5,7 +5,7 @@
 > Jose David Chaves Mena, <no olvidar nombre>, <no olvidar nombre> 
 
 ---
-=## Project Overview
+### Project Overview
 
 **20minCoach** is a real-time coaching platform that connects users with experts across multiple fields (health, psychology, law, mechanics, programming, arts, agriculture, and more) through on-demand **20-minute video sessions**.  
 
@@ -42,10 +42,17 @@ repo-root/
 │   └── ...
 │── src/                      # Source code (PoCs + architecture implementation)
 │   ├── App.tsx               # App bootstrap
-│   ├── pocs/  
+│   ├── pocs/                 # PRUEBAS DE CONCEPTO FUNCIONALES !!!!!!!!~
+│   │   ├── video-call/
+│   │   ├── auth-roles/
+│   │   ├── real-time-search/
+│   │   └── notifications/
 │   ├── components/           # Visual components
 │   │   ├── auth/
 │   │   ├── common/           # Atoms, Molecules, Organisms
+│   │   │   ├── atoms/        # Componentes básicos
+│   │   │   ├── molecules/    # Componentes compuestos
+│   │   │   └── organisms/    # Componentes complejos
 │   │   └── styles/
 │   ├── controllers/          # Controllers (Auth, Search, etc.)
 │   ├── models/               # Models (User, Coach, etc.)
@@ -64,146 +71,6 @@ repo-root/
 │── .gitignore
 └── ...
 ```
-
-## ideal repo architecture
-```bash
-repo-root/
-│
-├── README.md                          # ✅ DOCUMENTACIÓN PRINCIPAL UNIFICADA
-├── docs/                              
-│   ├── diagrams/                         # Diagrama N-Layer claro
-│   ├── ux-test-results.pdf           # Evidencia de testing con usuarios
-│   └── technical-decisions.md        # Justificación de tecnologías
-├── src/                              # ✅ TODO el código fuente
-│   ├── App.tsx                       # Bootstrap principal de la app
-│   ├── pocs/                         # ✅ PRUEBAS DE CONCEPTO FUNCIONALES
-│   │   ├── video-call/
-│   │   │   ├── VideoCallPoC.tsx         # Componente de video llamada
-│   │   │   ├── useVideoCall.ts          # Hook para WebRTC
-│   │   │   └── session-timer.ts         # Timer de 20 minutos
-│   │   ├── auth-roles/
-│   │   │   ├── RoleBasedAccessPoC.tsx   # Demo roles BasicUser/PremiumUser
-│   │   │   ├── useAuthPoC.ts            # Hook de autenticación
-│   │   │   └── permissions-config.ts    # Configuración de permisos
-│   │   ├── real-time-search/
-│   │   │   ├── SearchPoC.tsx            # Búsqueda con filtros
-│   │   │   ├── useSearchPoC.ts          # Hook de búsqueda
-│   │   │   └── mock-coaches-data.ts     # Datos de prueba
-│   │   └── notifications/
-│   │       ├── NotificationsPoC.tsx     # Sistema de notificaciones
-│   │       └── useNotificationsPoC.ts   # Hook para WebSockets
-│   ├── components/                   # ✅ COMPONENTES VISUALES
-│   │   ├── auth/
-│   │   │   ├── LoginForm.tsx            # Formulario de login
-│   │   │   ├── ProtectedRoute.tsx       # Ruta protegida por roles
-│   │   │   └── RoleGuard.tsx            # Guard de permisos
-│   │   ├── common/
-│   │   │   ├── atoms/                   # Componentes básicos
-│   │   │   ├── molecules/               # Componentes compuestos
-│   │   │   └── organisms/               # Componentes complejos
-│   │   └── styles/
-│   │       ├── ThemeProvider.tsx        # Proveedor de tema
-│   │       ├── GlobalStyles.tsx         # Estilos globales
-│   │       └── responsive-rules.ts      # Reglas responsive
-│   ├── controllers/                  # ✅ CONTROLADORES
-│   │   ├── AuthController.ts            # Lógica de autenticación
-│   │   ├── SearchController.ts          # Lógica de búsqueda
-│   │   ├── SessionController.ts         # Lógica de sesiones
-│   │   └── CoachController.ts           # Lógica de coaches
-│   ├── models/                       # ✅ MODELOS
-│   │   ├── User.ts                      # Interface IUser
-│   │   ├── Coach.ts                     # Interface ICoach
-│   │   └── Session.ts                   # Interface ISession
-│   ├── screens/                      # ✅ PANTALLAS
-│   │   ├── auth/
-│   │   └── user/
-│   ├── api/                          # ✅ PROXY/CLIENT LAYER
-│   │   ├── clients/
-│   │   │   ├── auth-client.ts           # Cliente de autenticación
-│   │   │   ├── coaches-client.ts        # Cliente de coaches
-│   │   │   └── sessions-client.ts       # Cliente de sesiones
-│   │   ├── dtos/                        # DATA TRANSFER OBJECTS
-│   │   │   └── auth-dtos.ts             # DTOs de autenticación
-│   │   └── transformers/                # TRANSFORMADORES
-│   │       └──auth-transformer.ts      # Transforma datos de auth
-│   ├── business/                     # ✅ BUSINESS LAYER
-│   │   ├── services/
-│   │   ├── rules/                       # REGLAS DE NEGOCIO
-│   │   └── validators/                  # VALIDACIONES DE NEGOCIO
-│   │       ├── session-validator.ts     # Valida sesiones
-│   │       └── coach-validator.ts       # Valida coaches
-│   ├── middleware/                   # ✅ MIDDLEWARE LAYER
-│   │   ├── auth-middleware.ts           # Middleware de autenticación
-│   │   ├── error-middleware.ts          # Manejo de errores
-│   │   ├── logging-middleware.ts        # Logging de eventos
-│   │   ├── validation-middleware.ts     # Validación de requests
-│   │   └── rate-limit-middleware.ts     # Limitación de rate
-│   ├── hooks/                        # ✅ CUSTOM HOOKS
-│   │   ├── useAuth.ts                   # Hook de autenticación
-│   │   ├── useSearch.ts                 # Hook de búsqueda
-│   │   ├── useSession.ts                # Hook de sesiones
-│   │   ├── useWebRTC.ts                 # Hook para video llamadas
-│   │   └── usePermissions.ts            # Hook para permisos
-│   ├── store/                        # ✅ STATE MANAGEMENT
-│   │   ├── slices/
-│   │   ├── selectors/                   # SELECTORES
-│   │   └── store.ts                     # Configuración del store
-│   ├── utils/                        # ✅ UTILITIES
-│   │   ├── logger/                      # SISTEMA DE LOGGING
-│   │   │   ├── Logger.ts                # Clase Logger (Strategy Pattern)
-│   │   │   ├── console-logger.ts        # Logger para consola
-│   │   │   └── file-logger.ts           # Logger para archivos
-│   │   ├── formatters/                  # FORMATEADORES
-│   │   │   ├── date-formatter.ts        # Formateo de fechas
-│   │   │   ├── price-formatter.ts       # Formateo de precios
-│   │   │   └── rating-formatter.ts      # Formateo de ratings
-│   │   ├── validators/                  # VALIDADORES
-│   │   │   ├── auth-validators.ts       # Validación de auth
-│   │   │   ├── coach-validators.ts      # Validación de coaches
-│   │   │   └── session-validators.ts    # Validación de sesiones
-│   │   └── constants/                   # CONSTANTES
-│   │       ├── app-constants.ts         # Constantes de la app
-│   │       ├── role-permissions.ts      # Permisos por rol
-│   │       └── error-messages.ts        # Mensajes de error
-│   └── __tests__/                    # ✅ TESTS UNITARIOS
-│       ├── controllers/
-│       │   ├── AuthController.test.ts   # 3 tests PARA AUTH
-│       │   └── SearchController.test.ts # 3 tests PARA SEARCH
-│       ├── services/
-│       │   ├── AuthService.test.ts      # Tests de servicios
-│       │   └── SessionService.test.ts   # Tests de sesiones
-│       ├── components/
-│       │   ├── CoachCard.test.tsx       # Tests de componentes
-│       │   └── SearchBar.test.tsx       # Tests de componentes
-│       ├── utils/
-│       │   ├── logger.test.ts           # Tests de utilities
-│       │   └── validators.test.ts       # Tests de validadores
-│       ├── fixtures/                    # DATOS DE PRUEBA
-│       │   ├── mock-users.ts            # Usuarios mock
-│       │   ├── mock-coaches.ts          # Coaches mock
-│       │   └── mock-sessions.ts         # Sesiones mock
-│       ├── mocks/                       # MOCKS
-│       │   ├── api-mocks.ts             # Mocks de API
-│       │   └── auth-mocks.ts            # Mocks de auth
-│       └── setup.ts                     # CONFIGURACIÓN DE TESTS
-├── config/                          # ✅ CONFIGURACIONES
-│   ├── eslint/                         
-│   │   ├── .eslintrc.js                 # Config ESLint + 1 regla custom
-│   │   └── eslint-rules/                # Reglas personalizadas
-│   ├── jest.config.js                   # Configuración de Jest
-│   ├── tailwind.config.js               # Configuración de Tailwind
-│   └── next.config.js                   # Configuración de Next.js
-├── assets/                          # ✅ ASSETS PÚBLICOS
-│   ├── images/
-│   └── prototypes/
-│       └── ux-prototype-link.txt        # URL del prototipo Figma
-├── package.json                     # ✅ DEPENDENCIAS
-├── tsconfig.json                    # ✅ CONFIG TYPESCRIPT
-├── .env.example                     # ✅ VARIABLES ENTORNO
-├── .gitignore                       # ✅ GIT IGNORE
-└── .eslintignore                    # ✅ ESLINT IGNORE
-```
-
 
 ---
 ## Getting Started
