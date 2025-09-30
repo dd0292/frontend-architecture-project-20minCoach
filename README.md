@@ -219,6 +219,56 @@ All diagrams are stored in `/docs/diagrams/` and exported as **PDF** and editabl
 
 ---
 
+## Linter configuration
+
+This project uses [ESLint](https://eslint.org/) as the linting tool to ensure clean, consistent, and error-free code. ESLint is configured with support for TypeScript, React, React Hooks, and Prettier integration for formatting. Also other pluggins used are:
+- `@typescript-eslint/eslint-plugin` — TypeScript support.
+- `eslint-plugin-react` — React-specific rules.
+- `eslint-plugin-react-hooks` — Rules for hooks best practices.
+- `eslint-plugin-prettier` — Enforces Prettier formatting rules. 
+
+### Rules/conventions
+
+#### Base JavaScript Rules (from `@eslint/js`)
+
+Standard best practices for JavaScript, including:
+- Disallow unused variables
+- Disallow unreachable code
+- Warn about confusing arrow functions or misuse of == vs ===
+- Enforce curly braces for blocks
+- Encourage === over ==
+
+#### TypeScript Rules (from `@typescript-eslint`)
+
+- `@typescript-eslint/no-unused-vars`: Disallow unused variables (Error)
+- `@typescript-eslint/no-explicit-any`: Discourages using any type (Warning)
+- Enforces strict typing and clean, maintainable TypeScript code
+- Checks function return types, parameter consistency, and type safety
+
+#### React Rules (from `eslint-plugin-react`)
+
+- Enforces best practices in React components
+- Validates JSX syntax
+- Warns if component props aren’t used properly
+- Helps avoid unnecessary re-renders or unsafe lifecycle methods
+
+#### Prettier Formatting Rules (from `eslint-plugin-prettier`)
+
+- All code must follow Prettier formatting
+- Any formatting issues (indentation, spacing, quotes, etc.) are treated as errors
+- Helps keep consistent code style across the entire team
+
+#### Custom Rules
+- `no-console`: Warn when using console.log
+- `prefer-const`: Prefer const over let if possible
+- `no-var`: Disallow use of var
+
+### Running ESLint
+```bash
+npm run lint # to check your code
+npm run lint --fix # to automatically fix problems
+```
+
 ## Deliverables Checklist  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 1. DIAGRAMAS FALTANTES

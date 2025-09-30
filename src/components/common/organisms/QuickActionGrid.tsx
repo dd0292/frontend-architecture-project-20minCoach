@@ -1,27 +1,30 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { View, TouchableOpacity } from "react-native"
-import { useTheme } from "../../styles/ThemeContext"
-import { BodyText } from "../atoms/Typography"
-import { Icon } from "../atoms/Icon"
-import { Ionicons } from "@expo/vector-icons"
+import type React from "react";
+import { View, TouchableOpacity } from "react-native";
+import { useTheme } from "../../styles/ThemeContext";
+import { BodyText } from "../atoms/Typography";
+import { Icon } from "../atoms/Icon";
+import { Ionicons } from "@expo/vector-icons";
 
 interface QuickAction {
-  id: string
-  title: string
-  icon: keyof typeof Ionicons.glyphMap
-  onPress: () => void
-  color?: string
+  id: string;
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  onPress: () => void;
+  color?: string;
 }
 
 interface QuickActionGridProps {
-  actions: QuickAction[]
-  columns?: number
+  actions: QuickAction[];
+  columns?: number;
 }
 
-export const QuickActionGrid: React.FC<QuickActionGridProps> = ({ actions, columns = 2 }) => {
-  const { colors } = useTheme()
+export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
+  actions,
+  columns = 2,
+}) => {
+  const { colors } = useTheme();
 
   return (
     <View
@@ -50,7 +53,11 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({ actions, colum
             elevation: 3,
           }}
         >
-          <Icon name={action.icon as keyof typeof Ionicons.glyphMap} size={32} color={action.color || colors.primary} />
+          <Icon
+            name={action.icon as keyof typeof Ionicons.glyphMap}
+            size={32}
+            color={action.color || colors.primary}
+          />
           <BodyText
             style={{
               marginTop: 8,
@@ -63,5 +70,5 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({ actions, colum
         </TouchableOpacity>
       ))}
     </View>
-  )
-}
+  );
+};

@@ -1,39 +1,38 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { View, TouchableOpacity, type TextInputProps } from "react-native"
-import { useTheme } from "../../styles/ThemeContext"
-import { Input } from "../atoms/Input"
-import { Icon } from "../atoms/Icon"
-import { useState } from 'react'
+import type React from "react";
+import { View, TouchableOpacity, type TextInputProps } from "react-native";
+import { useTheme } from "../../styles/ThemeContext";
+import { Input } from "../atoms/Input";
+import { Icon } from "../atoms/Icon";
+import { useState } from "react";
 
 interface SearchBarProps extends TextInputProps {
-  onMicPress?: () => void
-  showMicButton?: boolean
-  multiline?: boolean
-  maxLines?: number
+  onMicPress?: () => void;
+  showMicButton?: boolean;
+  multiline?: boolean;
+  maxLines?: number;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ 
-  onMicPress, 
-  showMicButton = true, 
+export const SearchBar: React.FC<SearchBarProps> = ({
+  onMicPress,
+  showMicButton = true,
   multiline = true,
-  maxLines = 4,
-  ...inputProps 
+  ...inputProps
 }) => {
-  const { colors } = useTheme()
-  const [bio, setBio] = useState('');
-  const [height, setHeight] = useState(multiline ? 80 : 48)
+  const { colors } = useTheme();
+  const [bio, setBio] = useState("");
+  const [, setHeight] = useState(multiline ? 80 : 48);
 
   const handleContentSizeChange = (event: any) => {
     if (multiline) {
-      const newHeight = Math.max(0, event.nativeEvent.contentSize.height)
-      setHeight(Math.max(80, newHeight))
+      const newHeight = Math.max(0, event.nativeEvent.contentSize.height);
+      setHeight(Math.max(80, newHeight));
     }
-  }
+  };
 
   return (
-    <View style={{ position: "relative"}}>
+    <View style={{ position: "relative" }}>
       <Input
         {...inputProps}
         multiline={multiline}
@@ -68,5 +67,5 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         </TouchableOpacity>
       )}
     </View>
-  )
-}
+  );
+};

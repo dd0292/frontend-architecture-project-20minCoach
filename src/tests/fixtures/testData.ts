@@ -5,21 +5,21 @@ export const mockUsers = {
     id: "1",
     email: "basic@example.com",
     role: "BasicUser" as const,
-    name: "Basic User"
+    name: "Basic User",
   },
   premiumUser: {
     id: "2",
     email: "premium@example.com",
     role: "PremiumUser" as const,
-    name: "Premium User"
+    name: "Premium User",
   },
   coach: {
     id: "3",
     email: "coach@example.com",
     role: "Coach" as const,
-    name: "Coach User"
-  }
-}
+    name: "Coach User",
+  },
+};
 
 export const mockCoaches = [
   {
@@ -32,7 +32,7 @@ export const mockCoaches = [
     location: "Bogotá, Colombia",
     isAvailable: true,
     experience: "10 years",
-    tags: ["psychology", "therapy", "cbt", "anxiety", "depression"]
+    tags: ["psychology", "therapy", "cbt", "anxiety", "depression"],
   },
   {
     id: "coach-2",
@@ -44,7 +44,7 @@ export const mockCoaches = [
     location: "São Paulo, Brazil",
     isAvailable: true,
     experience: "8 years",
-    tags: ["programming", "react", "javascript", "web-development"]
+    tags: ["programming", "react", "javascript", "web-development"],
   },
   {
     id: "coach-3",
@@ -56,7 +56,7 @@ export const mockCoaches = [
     location: "Medellín, Colombia",
     isAvailable: false,
     experience: "6 years",
-    tags: ["fitness", "nutrition", "health", "training"]
+    tags: ["fitness", "nutrition", "health", "training"],
   },
   {
     id: "coach-4",
@@ -68,48 +68,49 @@ export const mockCoaches = [
     location: "Buenos Aires, Argentina",
     isAvailable: true,
     experience: "15 years",
-    tags: ["law", "legal", "contracts", "corporate"]
-  }
-]
+    tags: ["law", "legal", "contracts", "corporate"],
+  },
+];
 
 export const mockProblemDescriptions = {
-  valid: "I am experiencing significant anxiety and stress related to my work situation. I have been having trouble sleeping, concentrating, and making decisions. I feel overwhelmed by my responsibilities and deadlines. I would like to speak with a mental health professional who can help me develop coping strategies and better manage my stress levels. I am particularly interested in cognitive behavioral therapy techniques.",
+  valid:
+    "I am experiencing significant anxiety and stress related to my work situation. I have been having trouble sleeping, concentrating, and making decisions. I feel overwhelmed by my responsibilities and deadlines. I would like to speak with a mental health professional who can help me develop coping strategies and better manage my stress levels. I am particularly interested in cognitive behavioral therapy techniques.",
   tooShort: "I need help with anxiety.",
   empty: "",
-  whitespace: "   \n\t   "
-}
+  whitespace: "   \n\t   ",
+};
 
 export const mockSearchQueries = {
   byName: "María",
   bySpecialization: "programming",
   byBio: "cognitive",
   nonExistent: "nonexistent",
-  empty: ""
-}
+  empty: "",
+};
 
 export const mockTags = {
   psychology: ["psychology", "therapy", "cbt", "anxiety", "depression"],
   programming: ["programming", "react", "javascript", "web-development"],
   health: ["fitness", "nutrition", "health", "training"],
-  legal: ["law", "legal", "contracts", "corporate"]
-}
+  legal: ["law", "legal", "contracts", "corporate"],
+};
 
 export const mockApiResponses = {
   loginSuccess: {
     success: true,
     user: mockUsers.basicUser,
-    token: "mock-jwt-token"
+    token: "mock-jwt-token",
   },
   loginError: {
     success: false,
-    error: "Invalid credentials"
+    error: "Invalid credentials",
   },
   coachesList: {
     success: true,
     coaches: mockCoaches,
-    total: mockCoaches.length
-  }
-}
+    total: mockCoaches.length,
+  },
+};
 
 export const mockErrorMessages = {
   emailRequired: "Email and password are required",
@@ -117,5 +118,5 @@ export const mockErrorMessages = {
   passwordTooShort: "Password must be at least 6 characters",
   invalidEmail: "Invalid email format",
   networkError: "Network error occurred",
-  serverError: "Internal server error"
-}
+  serverError: "Internal server error",
+};

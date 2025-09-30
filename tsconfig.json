@@ -2,5 +2,12 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true
-  }
+  },
+  "include": [
+    "src/**/*",
+    "utils/**/*" 
+  ],
+  "files": [
+    "src/utils/assets.d.ts" 
+  ]
 }

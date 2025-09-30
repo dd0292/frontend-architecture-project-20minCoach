@@ -1,23 +1,23 @@
-import type React from "react"
-import { View } from "react-native"
+import type React from "react";
+import { View } from "react-native";
 
 interface StatusDotProps {
-  status: "online" | "offline" | "busy"
-  size?: number
+  status: "online" | "offline" | "busy";
+  size?: number;
 }
 
 export const StatusDot: React.FC<StatusDotProps> = ({ status, size = 12 }) => {
   const getStatusColor = () => {
     switch (status) {
       case "online":
-        return "#10B981"
+        return "#10B981";
       case "busy":
-        return "#F59E0B"
+        return "#F59E0B";
       case "offline":
       default:
-        return "#6B7280"
+        return "#6B7280";
     }
-  }
+  };
 
   return (
     <View
@@ -28,5 +28,5 @@ export const StatusDot: React.FC<StatusDotProps> = ({ status, size = 12 }) => {
         backgroundColor: getStatusColor(),
       }}
     />
-  )
-}
+  );
+};

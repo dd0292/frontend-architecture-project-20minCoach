@@ -1,13 +1,13 @@
-import { jest } from "@jest/globals"
-import "react-native-gesture-handler/jestSetup"
+import { jest } from "@jest/globals";
+import "react-native-gesture-handler/jestSetup";
 
 jest.mock("react-native-reanimated", () => {
-  const Reanimated = require("react-native-reanimated/mock")
-  Reanimated.default.call = () => {}
-  return Reanimated
-})
+  const Reanimated = require("react-native-reanimated/mock");
+  Reanimated.default.call = () => {};
+  return Reanimated;
+});
 
-jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper")
+jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
 
 /*
 // Jest setup file for React Native testing
@@ -36,4 +36,3 @@ jest.mock("react-redux", () => ({
   Provider: ({ children }: any) => children,
 }))
 */
-

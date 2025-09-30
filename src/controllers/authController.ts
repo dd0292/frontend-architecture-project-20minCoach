@@ -1,4 +1,4 @@
-import type { User } from "../models/User"
+import type { User } from "../models/User";
 
 // Hard-coded users for testing
 const hardCodedUsers: User[] = [
@@ -29,23 +29,26 @@ const hardCodedUsers: User[] = [
     sessionsRemaining: 0,
     packageType: "Coach Account",
   },
-]
+];
 
-export const authenticateUser = async (email: string, password: string): Promise<User | null> => {
+export const authenticateUser = async (
+  email: string,
+  password: string,
+): Promise<User | null> => {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Mock authentication - in real app, this would validate against backend
-  const user = hardCodedUsers.find((u) => u.email === email)
+  const user = hardCodedUsers.find((u) => u.email === email);
 
   if (user && password.length > 0) {
-    return user
+    return user;
   }
 
-  return null
-}
+  return null;
+};
 
 export const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};

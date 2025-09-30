@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { View, TouchableOpacity, SafeAreaView } from "react-native"
-import { useTheme } from "../../styles/ThemeContext"
-import { Heading3, Caption } from "../atoms/Typography"
-import { Icon } from "../atoms/Icon"
+import type React from "react";
+import { View, TouchableOpacity, SafeAreaView } from "react-native";
+import { useTheme } from "../../styles/ThemeContext";
+import { Heading3, Caption } from "../atoms/Typography";
+import { Icon } from "../atoms/Icon";
 
 interface NavigationHeaderProps {
-  title: string
-  subtitle?: string
-  onBackPress?: () => void
-  rightComponent?: React.ReactNode
-  showBackButton?: boolean
+  title: string;
+  subtitle?: string;
+  onBackPress?: () => void;
+  rightComponent?: React.ReactNode;
+  showBackButton?: boolean;
 }
 
 export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
@@ -21,7 +21,7 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
   rightComponent,
   showBackButton = true,
 }) => {
-  const { colors } = useTheme()
+  const { colors } = useTheme();
 
   return (
     <SafeAreaView style={{ backgroundColor: colors.background }}>
@@ -52,5 +52,5 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
         {rightComponent && <View>{rightComponent}</View>}
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};

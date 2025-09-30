@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { Ionicons } from "@expo/vector-icons"
-import { useTheme } from "../../styles/ThemeContext"
+import type React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../../styles/ThemeContext";
 
 interface IconProps {
-  name: keyof typeof Ionicons.glyphMap
-  size?: number
-  color?: string
+  name: keyof typeof Ionicons.glyphMap;
+  size?: number;
+  color?: string;
 }
 
 export const Icon: React.FC<IconProps> = ({ name, size = 24, color }) => {
-  const { colors } = useTheme()
+  const { colors } = useTheme();
 
-  return <Ionicons name={name} size={size} color={color || colors.text} />
-}
+  return <Ionicons name={name} size={size} color={color || colors.text} />;
+};

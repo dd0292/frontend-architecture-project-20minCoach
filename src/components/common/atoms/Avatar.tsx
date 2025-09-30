@@ -1,20 +1,32 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { View, Image, type ImageStyle, type ViewStyle, ImageSourcePropType } from "react-native"
-import { useTheme } from "../../styles/ThemeContext"
-import { BodyText } from "./Typography"
+import type React from "react";
+import {
+  View,
+  Image,
+  type ImageStyle,
+  type ViewStyle,
+  ImageSourcePropType,
+} from "react-native";
+import { useTheme } from "../../styles/ThemeContext";
+import { BodyText } from "./Typography";
 
 interface AvatarProps {
-  source?: ImageSourcePropType 
-  size?: number
-  initials?: string
-  style?: ImageStyle
-  containerStyle?: ViewStyle
+  source?: ImageSourcePropType;
+  size?: number;
+  initials?: string;
+  style?: ImageStyle;
+  containerStyle?: ViewStyle;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ source, size = 48, initials, style, containerStyle }) => {
-  const { colors } = useTheme()
+export const Avatar: React.FC<AvatarProps> = ({
+  source,
+  size = 48,
+  initials,
+  style,
+  containerStyle,
+}) => {
+  const { colors } = useTheme();
 
   if (source) {
     return (
@@ -30,7 +42,7 @@ export const Avatar: React.FC<AvatarProps> = ({ source, size = 48, initials, sty
           style,
         ]}
       />
-    )
+    );
   }
 
   return (
@@ -47,7 +59,9 @@ export const Avatar: React.FC<AvatarProps> = ({ source, size = 48, initials, sty
         containerStyle,
       ]}
     >
-      <BodyText style={{ color: "white", fontSize: size * 0.4 }}>{initials}</BodyText>
+      <BodyText style={{ color: "white", fontSize: size * 0.4 }}>
+        {initials}
+      </BodyText>
     </View>
-  )
-}
+  );
+};

@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { TextInput, type TextInputProps, type ViewStyle } from "react-native"
-import { useTheme } from "../../styles/ThemeContext"
+import type React from "react";
+import { TextInput, type TextInputProps, type ViewStyle } from "react-native";
+import { useTheme } from "../../styles/ThemeContext";
 
 interface InputProps extends TextInputProps {
-  containerStyle?: ViewStyle
+  containerStyle?: ViewStyle;
 }
 
-export const Input: React.FC<InputProps> = ({ style, containerStyle, ...props }) => {
-  const { colors } = useTheme()
+export const Input: React.FC<InputProps> = ({ style, ...props }) => {
+  const { colors } = useTheme();
 
   return (
     <TextInput
@@ -30,5 +30,5 @@ export const Input: React.FC<InputProps> = ({ style, containerStyle, ...props })
       placeholderTextColor={colors.textSecondary}
       {...props}
     />
-  )
-}
+  );
+};

@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { View, TouchableOpacity, Modal } from "react-native"
-import { useTheme } from "../../styles/ThemeContext"
-import { SearchBar } from "../molecules/SearchBar"
-import { TagChip } from "../molecules/TagChip"
-import { BodyText, Heading3 } from "../atoms/Typography"
-import { Icon } from "../atoms/Icon"
+import type React from "react";
+import { useState } from "react";
+import { View, TouchableOpacity, Modal } from "react-native";
+import { useTheme } from "../../styles/ThemeContext";
+import { SearchBar } from "../molecules/SearchBar";
+import { TagChip } from "../molecules/TagChip";
+import { BodyText, Heading3 } from "../atoms/Typography";
+import { Icon } from "../atoms/Icon";
 
 interface FilterPanelProps {
-  searchValue: string
-  onSearchChange: (value: string) => void
-  selectedFilters: string[]
-  onFilterToggle: (filter: string) => void
-  availableFilters: string[]
-  onMicPress?: () => void
-  placeholder?: string
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  selectedFilters: string[];
+  onFilterToggle: (filter: string) => void;
+  availableFilters: string[];
+  onMicPress?: () => void;
+  placeholder?: string;
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({
@@ -28,17 +28,36 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   onMicPress,
   placeholder = "Search...",
 }) => {
-  const { colors } = useTheme()
-  const [showFilters, setShowFilters] = useState(false)
+  const { colors } = useTheme();
+  const [showFilters, setShowFilters] = useState(false);
 
   return (
     <View style={{ padding: 20, backgroundColor: colors.background }}>
-      <SearchBar value={searchValue} onChangeText={onSearchChange} placeholder={placeholder} onMicPress={onMicPress} />
+      <SearchBar
+        value={searchValue}
+        onChangeText={onSearchChange}
+        placeholder={placeholder}
+        onMicPress={onMicPress}
+      />
 
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 16 }}>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, flex: 1 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: 16,
+        }}
+      >
+        <View
+          style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, flex: 1 }}
+        >
           {selectedFilters.map((filter, index) => (
-            <TagChip key={index} label={filter} variant="selected" onRemove={() => onFilterToggle(filter)} />
+            <TagChip
+              key={index}
+              label={filter}
+              variant="selected"
+              onRemove={() => onFilterToggle(filter)}
+            />
           ))}
         </View>
 
@@ -59,10 +78,21 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         </TouchableOpacity>
       </View>
 
-      <Modal visible={showFilters} animationType="slide" presentationStyle="pageSheet">
-        <View style={{ flex: 1, backgroundColor: colors.background, padding: 20 }}>
+      <Modal
+        visible={showFilters}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View
+          style={{ flex: 1, backgroundColor: colors.background, padding: 20 }}
+        >
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
           >
             <Heading3>Filters</Heading3>
             <TouchableOpacity onPress={() => setShowFilters(false)}>
@@ -75,7 +105,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               <TagChip
                 key={index}
                 label={filter}
-                variant={selectedFilters.includes(filter) ? "selected" : "default"}
+                variant={
+                  selectedFilters.includes(filter) ? "selected" : "default"
+                }
                 onPress={() => onFilterToggle(filter)}
               />
             ))}
@@ -83,5 +115,5 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         </View>
       </Modal>
     </View>
-  )
-}
+  );
+};

@@ -1,26 +1,32 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { Appearance } from "react-native"
+import type React from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Appearance } from "react-native";
 
-export type ThemeMode = "light" | "dark" | "system"
-export type ColorScheme = "light" | "dark"
+export type ThemeMode = "light" | "dark" | "system";
+export type ColorScheme = "light" | "dark";
 
 interface ThemeColors {
-  background: string
-  surface: string
-  primary: string
-  secondary: string
-  accent: string
-  text: string
-  textSecondary: string
-  border: string
-  card: string
-  error: string
-  success: string
-  warning: string
+  background: string;
+  surface: string;
+  primary: string;
+  secondary: string;
+  accent: string;
+  text: string;
+  textSecondary: string;
+  border: string;
+  card: string;
+  error: string;
+  success: string;
+  warning: string;
 }
 
 const lightTheme: ThemeColors = {
@@ -36,7 +42,7 @@ const lightTheme: ThemeColors = {
   error: "#FF375F",
   success: "#10B981",
   warning: "#F59E0B",
-}
+};
 
 const darkTheme: ThemeColors = {
   background: "#0F172A",
@@ -51,73 +57,80 @@ const darkTheme: ThemeColors = {
   error: "#EF4444",
   success: "#22C55E",
   warning: "#EAB308",
-}
+};
 
 export interface ThemeContextType {
-  themeMode: ThemeMode
-  colorScheme: ColorScheme
-  colors: ThemeColors
-  setThemeMode: (mode: ThemeMode) => void
+  themeMode: ThemeMode;
+  colorScheme: ColorScheme;
+  colors: ThemeColors;
+  setThemeMode: (mode: ThemeMode) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = "@20mincoach_theme"
+const THEME_STORAGE_KEY = "@20mincoach_theme";
 
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [themeMode, setThemeModeState] = useState<ThemeMode>("system")
+export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [themeMode, setThemeModeState] = useState<ThemeMode>("system");
   const [systemColorScheme, setSystemColorScheme] = useState<ColorScheme>(
     Appearance.getColorScheme() === "dark" ? "dark" : "light",
-  )
+  );
 
   // Load theme from storage on app start
   useEffect(() => {
     const loadTheme = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY)
+        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
         if (savedTheme && ["light", "dark", "system"].includes(savedTheme)) {
-          setThemeModeState(savedTheme as ThemeMode)
+          setThemeModeState(savedTheme as ThemeMode);
         }
       } catch (error) {
-        console.log("Error loading theme:", error)
+        console.log("Error loading theme:", error);
       }
-    }
-    loadTheme()
-  }, [])
+    };
+    loadTheme();
+  }, []);
 
   // Listen to system theme changes
   useEffect(() => {
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-      setSystemColorScheme(colorScheme === "dark" ? "dark" : "light")
-    })
-    return () => subscription?.remove()
-  }, [])
+      setSystemColorScheme(colorScheme === "dark" ? "dark" : "light");
+    });
+    return () => subscription?.remove();
+  }, []);
 
   // Save theme to storage when changed
   const setThemeMode = async (mode: ThemeMode) => {
     try {
-      await AsyncStorage.setItem(THEME_STORAGE_KEY, mode)
-      setThemeModeState(mode)
+      await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
+      setThemeModeState(mode);
     } catch (error) {
-      console.log("Error saving theme:", error)
+      console.log("Error saving theme:", error);
     }
-  }
+  };
 
   // Determine current color scheme
-  const colorScheme: ColorScheme = themeMode === "system" ? systemColorScheme : themeMode
+  const colorScheme: ColorScheme =
+    themeMode === "system" ? systemColorScheme : themeMode;
 
   // Get current theme colors
-  const colors = colorScheme === "dark" ? darkTheme : lightTheme
+  const colors = colorScheme === "dark" ? darkTheme : lightTheme;
 
   return (
-    <ThemeContext.Provider value={{ themeMode, colorScheme, colors, setThemeMode }}>{children}</ThemeContext.Provider>
-  )
-}
+    <ThemeContext.Provider
+      value={{ themeMode, colorScheme, colors, setThemeMode }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  );
+};
 
 export const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext)
+  const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider")
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
-  return context
-}
+  return context;
+};

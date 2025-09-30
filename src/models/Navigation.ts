@@ -1,5 +1,5 @@
 // src/models/navigation.ts
-import { Coach } from './Coach';
+import { Coach } from "./Coach";
 
 export type RootStackParamList = {
   CoachDetail: { coach: Coach };

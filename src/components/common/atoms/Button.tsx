@@ -1,17 +1,22 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { TouchableOpacity, Text, type ViewStyle, type TextStyle } from "react-native"
-import { useTheme } from "../../styles/ThemeContext"
+import type React from "react";
+import {
+  TouchableOpacity,
+  Text,
+  type ViewStyle,
+  type TextStyle,
+} from "react-native";
+import { useTheme } from "../../styles/ThemeContext";
 
 interface ButtonProps {
-  title: string
-  onPress: () => void
-  variant?: "primary" | "secondary" | "outline" | "ghost"
-  size?: "small" | "medium" | "large"
-  disabled?: boolean
-  style?: ViewStyle
-  textStyle?: TextStyle
+  title: string;
+  onPress: () => void;
+  variant?: "primary" | "secondary" | "outline" | "ghost";
+  size?: "small" | "medium" | "large";
+  disabled?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -23,7 +28,7 @@ const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
 }) => {
-  const { colors } = useTheme()
+  const { colors } = useTheme();
 
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
@@ -31,7 +36,7 @@ const Button: React.FC<ButtonProps> = ({
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "row",
-    }
+    };
 
     // Size styles
     const sizeStyles = {
@@ -50,7 +55,7 @@ const Button: React.FC<ButtonProps> = ({
         paddingVertical: 12,
         minHeight: 48,
       },
-    }
+    };
 
     // Variant styles
     const variantStyles = {
@@ -70,20 +75,20 @@ const Button: React.FC<ButtonProps> = ({
       ghost: {
         backgroundColor: "transparent",
       },
-    }
+    };
 
     return {
       ...baseStyle,
       ...sizeStyles[size],
       ...variantStyles[variant],
-    }
-  }
+    };
+  };
 
   const getTextStyle = (): TextStyle => {
     const baseTextStyle: TextStyle = {
       fontFamily: "Inter-SemiBold",
       fontWeight: "600",
-    }
+    };
 
     // Size text styles
     const sizeTextStyles = {
@@ -96,7 +101,7 @@ const Button: React.FC<ButtonProps> = ({
       large: {
         fontSize: 18,
       },
-    }
+    };
 
     // Variant text styles
     const variantTextStyles = {
@@ -112,20 +117,25 @@ const Button: React.FC<ButtonProps> = ({
       ghost: {
         color: disabled ? colors.textSecondary : colors.primary,
       },
-    }
+    };
 
     return {
       ...baseTextStyle,
       ...sizeTextStyles[size],
       ...variantTextStyles[variant],
-    }
-  }
+    };
+  };
 
   return (
-    <TouchableOpacity style={[getButtonStyle(), style]} onPress={onPress} disabled={disabled} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={[getButtonStyle(), style]}
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.7}
+    >
       <Text style={[getTextStyle(), textStyle]}>{title}</Text>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
-export default Button
+export default Button;

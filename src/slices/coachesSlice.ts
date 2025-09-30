@@ -1,13 +1,31 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { Coach, Session, Review } from "../models/Coach"
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { Coach, Session, Review } from "../models/Coach";
+
+import profilePicture1 from "../../assets/public/professional-woman-psychologist.png";
+import coverPhoto1 from "../../assets/public//psychology-office-background.png";
+
+import profilePicture2 from "../../assets/public//professional-mechanic-man.jpg";
+import coverPhoto2 from "../../assets/public//auto-repair-shop-background.jpg";
+
+import profilePicture3 from "../../assets/public//professional-woman-developer.jpg";
+import coverPhoto3 from "../../assets/public//modern-office-coding-setup.jpg";
+
+import profilePicture4 from "../../assets/public//professional-lawyer-man.jpg";
+import coverPhoto4 from "../../assets/public//law-office-background.jpeg";
+
+import profilePicture5 from "../../assets/public//professional-woman-artist.jpg";
+import coverPhoto5 from "../../assets/public//art-studio-background.jpg";
+
+import profilePicture6 from "../../assets/public//professional-agricultural-engineer.jpg";
+import coverPhoto6 from "../../assets/public//farm-field-background.jpg";
 
 interface CoachesState {
-  coaches: Coach[]
-  sessions: Session[]
-  reviews: Review[]
-  favorites: string[]
-  searchResults: Coach[]
-  isLoading: boolean
+  coaches: Coach[];
+  sessions: Session[];
+  reviews: Review[];
+  favorites: string[];
+  searchResults: Coach[];
+  isLoading: boolean;
 }
 
 // Hard-coded coaches data
@@ -20,12 +38,12 @@ const hardCodedCoaches: Coach[] = [
     rating: 4.9,
     reviewCount: 156,
     tags: ["Psychology", "Mental Health", "Therapy"],
-    profilePicture: require("../../assets/public//professional-woman-psychologist.png"),
+    profilePicture: profilePicture1,
     isAvailable: true,
     bio: "Licensed clinical psychologist with 10+ years of experience helping people overcome anxiety and depression.",
     experience: "10+ years",
     hourlyRate: 80,
-    coverPhoto: require("../../assets/public//psychology-office-background.png"),
+    coverPhoto: coverPhoto1,
   },
   {
     id: "2",
@@ -35,12 +53,12 @@ const hardCodedCoaches: Coach[] = [
     rating: 4.8,
     reviewCount: 128,
     tags: ["Mechanics", "Automotive", "Diagnostics"],
-    profilePicture: require("../../assets/public//professional-mechanic-man.jpg"),
+    profilePicture: profilePicture2,
     isAvailable: true,
     bio: "Expert automotive technician specializing in European cars with 15 years of experience.",
     experience: "15+ years",
     hourlyRate: 60,
-    coverPhoto: require("../../assets/public//auto-repair-shop-background.jpg"),
+    coverPhoto: coverPhoto2,
   },
   {
     id: "3",
@@ -50,12 +68,12 @@ const hardCodedCoaches: Coach[] = [
     rating: 4.7,
     reviewCount: 89,
     tags: ["Programming", "Web Development", "JavaScript"],
-    profilePicture: require("../../assets/public//professional-woman-developer.jpg"),
+    profilePicture: profilePicture3,
     isAvailable: false,
     bio: "Full-stack developer with expertise in modern web technologies and 8 years of industry experience.",
     experience: "8+ years",
     hourlyRate: 90,
-    coverPhoto: require("../../assets/public//modern-office-coding-setup.jpg"),
+    coverPhoto: coverPhoto3,
   },
   {
     id: "4",
@@ -65,12 +83,12 @@ const hardCodedCoaches: Coach[] = [
     rating: 4.9,
     reviewCount: 203,
     tags: ["Law", "Legal Advice", "Contracts"],
-    profilePicture: require("../../assets/public//professional-lawyer-man.jpg"),
+    profilePicture: profilePicture4,
     isAvailable: true,
     bio: "Experienced lawyer specializing in business and contract law with 12 years of practice.",
     experience: "12+ years",
     hourlyRate: 120,
-    coverPhoto: require("../../assets/public//law-office-background.jpeg"),
+    coverPhoto: coverPhoto4,
   },
   {
     id: "5",
@@ -80,12 +98,12 @@ const hardCodedCoaches: Coach[] = [
     rating: 4.6,
     reviewCount: 67,
     tags: ["Arts", "Painting", "Creative"],
-    profilePicture: require("../../assets/public//professional-woman-artist.jpg"),
+    profilePicture: profilePicture5,
     isAvailable: true,
     bio: "Professional artist and art instructor with expertise in traditional and digital mediums.",
     experience: "6+ years",
     hourlyRate: 45,
-    coverPhoto: require("../../assets/public//art-studio-background.jpg"),
+    coverPhoto: coverPhoto5,
   },
   {
     id: "6",
@@ -95,14 +113,14 @@ const hardCodedCoaches: Coach[] = [
     rating: 4.8,
     reviewCount: 94,
     tags: ["Agriculture", "Farming", "Sustainability"],
-    profilePicture: require("../../assets/public//professional-agricultural-engineer.jpg"),
+    profilePicture: profilePicture6,
     isAvailable: true,
     bio: "Agricultural engineer with specialization in sustainable farming practices and crop optimization.",
     experience: "9+ years",
     hourlyRate: 55,
-    coverPhoto: require("../../assets/public//farm-field-background.jpg"),
+    coverPhoto: coverPhoto6,
   },
-]
+];
 
 // Hard-coded sessions data
 const hardCodedSessions: Session[] = [
@@ -115,7 +133,8 @@ const hardCodedSessions: Session[] = [
     scheduledTime: "2024-01-15T10:00:00Z",
     status: "completed",
     rating: 5,
-    review: "Dr. Rodriguez was incredibly helpful and provided practical strategies.",
+    review:
+      "Dr. Rodriguez was incredibly helpful and provided practical strategies.",
   },
   {
     id: "2",
@@ -126,7 +145,8 @@ const hardCodedSessions: Session[] = [
     scheduledTime: "2024-01-20T14:30:00Z",
     status: "completed",
     rating: 4,
-    review: "Carlos quickly identified the issue and explained the solution clearly.",
+    review:
+      "Carlos quickly identified the issue and explained the solution clearly.",
   },
   {
     id: "3",
@@ -137,7 +157,7 @@ const hardCodedSessions: Session[] = [
     scheduledTime: "2024-01-25T16:00:00Z",
     status: "upcoming",
   },
-]
+];
 
 // Hard-coded reviews data
 const hardCodedReviews: Review[] = [
@@ -146,7 +166,8 @@ const hardCodedReviews: Review[] = [
     userId: "user1",
     userName: "John D.",
     rating: 5,
-    comment: "Excellent advice and very professional approach. Highly recommended!",
+    comment:
+      "Excellent advice and very professional approach. Highly recommended!",
     date: "2024-01-15",
   },
   {
@@ -157,7 +178,7 @@ const hardCodedReviews: Review[] = [
     comment: "Very knowledgeable and helped me solve my problem quickly.",
     date: "2024-01-10",
   },
-]
+];
 
 const initialState: CoachesState = {
   coaches: hardCodedCoaches,
@@ -166,35 +187,44 @@ const initialState: CoachesState = {
   favorites: ["1", "4"],
   searchResults: [],
   isLoading: false,
-}
+};
 
 const coachesSlice = createSlice({
   name: "coaches",
   initialState,
   reducers: {
     setSearchResults: (state, action: PayloadAction<Coach[]>) => {
-      state.searchResults = action.payload
+      state.searchResults = action.payload;
     },
     toggleFavorite: (state, action: PayloadAction<string>) => {
-      const coachId = action.payload
+      const coachId = action.payload;
       if (state.favorites.includes(coachId)) {
-        state.favorites = state.favorites.filter((id) => id !== coachId)
+        state.favorites = state.favorites.filter((id) => id !== coachId);
       } else {
-        state.favorites.push(coachId)
+        state.favorites.push(coachId);
       }
     },
     addSession: (state, action: PayloadAction<Session>) => {
-      state.sessions.push(action.payload)
+      state.sessions.push(action.payload);
     },
-    updateSession: (state, action: PayloadAction<{ id: string; updates: Partial<Session> }>) => {
-      const { id, updates } = action.payload
-      const sessionIndex = state.sessions.findIndex((session) => session.id === id)
+    updateSession: (
+      state,
+      action: PayloadAction<{ id: string; updates: Partial<Session> }>,
+    ) => {
+      const { id, updates } = action.payload;
+      const sessionIndex = state.sessions.findIndex(
+        (session) => session.id === id,
+      );
       if (sessionIndex !== -1) {
-        state.sessions[sessionIndex] = { ...state.sessions[sessionIndex], ...updates }
+        state.sessions[sessionIndex] = {
+          ...state.sessions[sessionIndex],
+          ...updates,
+        };
       }
     },
   },
-})
+});
 
-export const { setSearchResults, toggleFavorite, addSession, updateSession } = coachesSlice.actions
-export default coachesSlice.reducer
+export const { setSearchResults, toggleFavorite, addSession, updateSession } =
+  coachesSlice.actions;
+export default coachesSlice.reducer;
