@@ -1,5 +1,6 @@
 import type React from "react";
 import { View } from "react-native";
+import { createStatusDotStyles } from "../../styles/atoms/StatusDot.styles";
 
 interface StatusDotProps {
   status: "online" | "offline" | "busy";
@@ -7,6 +8,8 @@ interface StatusDotProps {
 }
 
 export const StatusDot: React.FC<StatusDotProps> = ({ status, size = 12 }) => {
+  const styles = createStatusDotStyles(size);
+
   const getStatusColor = () => {
     switch (status) {
       case "online":
@@ -18,15 +21,7 @@ export const StatusDot: React.FC<StatusDotProps> = ({ status, size = 12 }) => {
         return "#6B7280";
     }
   };
-
   return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-        backgroundColor: getStatusColor(),
-      }}
-    />
+    <View style={{ ...styles.baseStyle, backgroundColor: getStatusColor() }} />
   );
 };

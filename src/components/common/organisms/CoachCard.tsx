@@ -9,6 +9,7 @@ import { TagChip } from "../molecules/TagChip";
 import { BodyText, Caption } from "../atoms/Typography";
 import { Icon } from "../atoms/Icon";
 import type { Coach } from "../../../models/Coach";
+import { createCardStyles } from "../../styles/organisms/CoachCard.styles";
 
 interface CoachCardProps {
   coach: Coach;
@@ -23,23 +24,11 @@ export const CoachCard: React.FC<CoachCardProps> = ({
   onFavoritePress,
   isFavorite = false,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = createCardStyles(theme);
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        backgroundColor: colors.surface,
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 16,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
-      }}
-    >
+    <TouchableOpacity onPress={onPress} style={{ ...styles.baseStyle }}>
       <View
         style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}
       >
@@ -55,7 +44,9 @@ export const CoachCard: React.FC<CoachCardProps> = ({
           <Icon
             size={25}
             name={isFavorite ? "heart" : "heart-outline"}
-            color={isFavorite ? colors.accent : colors.textSecondary}
+            color={
+              isFavorite ? theme.colors.accent : theme.colors.textSecondary
+            }
           />
         </TouchableOpacity>
       </View>

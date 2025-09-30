@@ -6,6 +6,7 @@ import { useTheme } from "../../styles/ThemeContext";
 import { BodyText } from "../atoms/Typography";
 import { Icon } from "../atoms/Icon";
 import { Ionicons } from "@expo/vector-icons";
+import { createQAGtyles } from "../../styles/organisms/QuickActionGrid.styles";
 
 interface QuickAction {
   id: string;
@@ -24,49 +25,23 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
   actions,
   columns = 2,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = createQAGtyles(theme, columns);
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 16,
-      }}
-    >
+    <View style={{ ...styles.generalView }}>
       {actions.map((action) => (
         <TouchableOpacity
           key={action.id}
           onPress={action.onPress}
-          style={{
-            flex: 1,
-            minWidth: `${100 / columns - 2}%`,
-            backgroundColor: colors.surface,
-            borderRadius: 16,
-            padding: 20,
-            alignItems: "center",
-            justifyContent: "center",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 8,
-            elevation: 3,
-          }}
+          style={{ ...styles.touchable }}
         >
           <Icon
             name={action.icon as keyof typeof Ionicons.glyphMap}
             size={32}
-            color={action.color || colors.primary}
+            color={action.color || theme.colors.primary}
           />
-          <BodyText
-            style={{
-              marginTop: 8,
-              textAlign: "center",
-              fontWeight: "600",
-            }}
-          >
-            {action.title}
-          </BodyText>
+          <BodyText style={{ ...styles.bodyText }}>{action.title}</BodyText>
         </TouchableOpacity>
       ))}
     </View>

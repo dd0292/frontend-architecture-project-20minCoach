@@ -64,6 +64,5 @@
     "setupFilesAfterEnv": [
       "<rootDir>/src/tests/setup.ts"
     ]
-  },
-  "type": "module"
+  }
 }

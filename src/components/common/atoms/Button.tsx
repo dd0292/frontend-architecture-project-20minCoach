@@ -8,6 +8,7 @@ import {
   type TextStyle,
 } from "react-native";
 import { useTheme } from "../../styles/ThemeContext";
+import { createButtonStyles } from "../../styles/atoms/Button.styles";
 
 interface ButtonProps {
   title: string;
@@ -28,53 +29,25 @@ const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = createButtonStyles(theme, disabled);
 
   const getButtonStyle = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      borderRadius: 8,
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "row",
-    };
+    const baseStyle: ViewStyle = { ...styles.baseStyle };
 
     // Size styles
     const sizeStyles = {
-      small: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        minHeight: 32,
-      },
-      medium: {
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        minHeight: 40,
-      },
-      large: {
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        minHeight: 48,
-      },
+      small: { ...styles.smallButton },
+      medium: { ...styles.mediumButton },
+      large: { ...styles.largeButton },
     };
 
     // Variant styles
     const variantStyles = {
-      primary: {
-        backgroundColor: disabled ? colors.border : colors.primary,
-      },
-      secondary: {
-        backgroundColor: disabled ? colors.border : colors.surface,
-        borderWidth: 1,
-        borderColor: disabled ? colors.border : colors.border,
-      },
-      outline: {
-        backgroundColor: "transparent",
-        borderWidth: 1,
-        borderColor: disabled ? colors.border : colors.primary,
-      },
-      ghost: {
-        backgroundColor: "transparent",
-      },
+      primary: { ...styles.primaryStyle },
+      secondary: { ...styles.secondaryStyle },
+      outline: { ...styles.outlineStyle },
+      ghost: { ...styles.ghostStyle },
     };
 
     return {
@@ -85,38 +58,21 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const getTextStyle = (): TextStyle => {
-    const baseTextStyle: TextStyle = {
-      fontFamily: "Inter-SemiBold",
-      fontWeight: "600",
-    };
+    const baseTextStyle: TextStyle = { ...styles.baseTextStyle };
 
     // Size text styles
     const sizeTextStyles = {
-      small: {
-        fontSize: 14,
-      },
-      medium: {
-        fontSize: 16,
-      },
-      large: {
-        fontSize: 18,
-      },
+      small: { ...styles.smallText },
+      medium: { ...styles.mediumText },
+      large: { ...styles.largeText },
     };
 
     // Variant text styles
     const variantTextStyles = {
-      primary: {
-        color: disabled ? colors.textSecondary : "#FFFFFF",
-      },
-      secondary: {
-        color: disabled ? colors.textSecondary : colors.text,
-      },
-      outline: {
-        color: disabled ? colors.textSecondary : colors.primary,
-      },
-      ghost: {
-        color: disabled ? colors.textSecondary : colors.primary,
-      },
+      primary: { ...styles.primaryTextStyles },
+      secondary: { ...styles.secondaryTextStyles },
+      outline: { ...styles.outlineTextStyles },
+      ghost: { ...styles.ghostTextStyles },
     };
 
     return {

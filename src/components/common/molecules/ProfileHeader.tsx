@@ -3,6 +3,7 @@ import { ImageSourcePropType, View } from "react-native";
 import { Avatar } from "../atoms/Avatar";
 import { StatusDot } from "../atoms/StatusDot";
 import { BodyText, Caption } from "../atoms/Typography";
+import { createMoleculesStyles } from "../../styles/molecules/Molecules.styles";
 
 interface ProfileHeaderProps {
   name: string;
@@ -36,16 +37,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   };
 
   const avatarSize = getAvatarSize();
+  const styles = createMoleculesStyles();
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        marginBottom: 12,
-      }}
-    >
+    <View style={{ ...styles.profileHeaderBaseStyle }}>
       <View style={{ position: "relative" }}>
         <Avatar
           source={avatarSource}
@@ -56,17 +51,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             .join("")}
         />
         {showStatus && (
-          <View
-            style={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-              backgroundColor: "white",
-              borderRadius: 8,
-              padding: 2,
-              zIndex: 10,
-            }}
-          >
+          <View style={{ ...styles.profileHeaderShowStatus }}>
             <StatusDot status={status} size={12} />
           </View>
         )}
