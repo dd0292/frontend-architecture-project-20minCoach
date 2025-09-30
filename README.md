@@ -61,7 +61,7 @@ repo-root/
 │   ├── state/                # Store config
 │   ├── api/                  # Proxy/Client layer [TODO]
 │   ├── business/             # Business logic services [TODO]
-│   ├── middleware/           # Middlewares (logging, validation, error handler) [TODO]
+│   ├── middleware/           # Middlewares (logging, validation, error handler)
 │   ├── validators/           # Validation rules [TODO]
 │   ├── utils/                # Helpers (logger, formatters, singletons)
 │   └── tests/                # Unit tests (fixtures, mocks, utils)
@@ -188,7 +188,7 @@ Diagrams stored in `/docs/diagrams/`.
 
 ---
 
-### 3. Detailed Layer Design Requirements  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+### 3. Detailed Layer Design Requirements
 
 Each of these subsections must describe **responsibilities, examples, templates, and outputs** for developers:
 
@@ -206,7 +206,416 @@ Each of these subsections must describe **responsibilities, examples, templates,
 - **Utilities** — helpers, singletons.  
 - **Exception Handling** — friendly error handling + logging.  
 - **Logging** — strategy-pattern logger with pluggable providers.  
-- **Security** — auth integration with roles.  
+- **Security** — auth integration with roles.
+
+---
+
+## 4. Middleware Layer - Error Handling & Logging
+
+### 4.1 Flow and General Purpose
+
+The middleware acts as an interception layer that allows keeping business logic clean and focused. Its main purpose is:
+
+- **Intercept** errors and convert them to a standardized format
+- **Log** events and errors consistently
+- **Provide** user-friendly messages
+- **Keep** business logic free from cross-cutting concerns
+
+```mermaid
+graph TD
+    A[UI Component] --> B[Controller/Service]
+    B --> C[Middleware Wrapper]
+    C --> D[Business Logic]
+    D --> E[Error/Log Event]
+    E --> F[Error Adapter]
+    F --> G[AppError]
+    G --> H[User Message]
+    H --> I[UI Display]
+```
+
+### 4.2 Middleware System Architecture
+
+#### Directory Structure
+```
+src/middleware/
+├── types/
+│   └── AppError.ts              # Master error class
+├── adapters/
+│   └── ErrorAdapter.ts          # Adapter for error conversion
+├── logging/
+│   └── LoggingStrategy.ts       # Logging system with Strategy pattern
+├── wrappers/
+│   └── MiddlewareWrappers.ts    # Reusable wrappers
+├── clients/
+│   ├── HttpClient.ts            # Resilient HTTP client
+│   ├── WebSocketClient.ts       # WebSocket client with reconnection
+│   └── WebRTCClient.ts          # WebRTC client for video calls
+├── examples/
+│   ├── ExceptionHandlingExamples.ts  # Usage examples
+│   └── ErrorBoundaryExample.tsx      # Error Boundary for React
+└── index.ts                     # Main entry point
+```
+
+### 4.3 Main Components
+
+#### 4.3.1 Master AppError Class
+
+**Responsibility**: Centralize all application errors in a standard format.
+
+```typescript
+import { AppError, ERROR_CODES } from '@/middleware';
+
+// Create an error
+const error = new AppError(
+  ERROR_CODES.AUTH_FAILED,
+  'Login credentials invalid',
+  { component: 'AuthController', userId: '123' }
+);
+
+// Get user-friendly message
+const userMessage = error.getMessage(); // "Incorrect email or password."
+
+// Get technical information for logging
+const techInfo = error.getTechnicalInfo();
+```
+
+**Predefined Error Codes**:
+- `NETWORK_TIMEOUT`, `NETWORK_ERROR`
+- `HTTP_400`, `HTTP_401`, `HTTP_403`, `HTTP_404`, `HTTP_500`
+- `VALIDATION_ERROR`, `EMAIL_INVALID`, `PASSWORD_WEAK`
+- `AUTH_FAILED`, `AUTH_TOKEN_EXPIRED`, `AUTH_PERMISSION_DENIED`
+- `WS_DISCONNECTED`, `WS_RECONNECT_FAILED`
+- `RTC_DEVICE`, `RTC_PERMISSION_DENIED`, `RTC_DEVICE_UNAVAILABLE`
+
+#### 4.3.2 Error Adapter
+
+**Responsibility**: Convert any error to AppError and generate user-friendly messages.
+
+```typescript
+import { ErrorAdapter } from '@/middleware';
+
+// Convert raw error to AppError
+const appError = ErrorAdapter.toAppError(error, { component: 'MyComponent' });
+
+// Get user-friendly message
+const userMessage = ErrorAdapter.toUserMessage(appError);
+
+// Convert specific errors
+const supabaseError = ErrorAdapter.fromSupabaseError(supabaseError);
+const httpError = ErrorAdapter.fromHttpError(response);
+```
+
+#### 4.3.3 Logging System (Strategy Pattern)
+
+**Responsibility**: Log events consistently with multiple providers.
+
+```typescript
+import { logger, SupabaseLoggingProvider } from '@/middleware';
+
+// Configure providers
+logger.addProvider(new SupabaseLoggingProvider(supabaseClient));
+
+// Log events
+logger.info('User logged in', { userId: '123' }, 'AuthController');
+logger.error('Login failed', { error: 'Invalid credentials' }, 'AuthController');
+logger.warn('API response slow', { duration: 5000 }, 'ApiClient');
+```
+
+**Available Providers**:
+- `ConsoleLoggingProvider` - Basic console logging
+- `SupabaseLoggingProvider` - Structured logging in Supabase
+- `SentryLoggingProvider` - Error tracking with Sentry
+
+### 4.4 Middleware Wrappers
+
+#### 4.4.1 Basic Wrappers
+
+**withAppError**: Captures errors and converts them to AppError
+```typescript
+import { withAppError } from '@/middleware';
+
+const safeFunction = withAppError(myFunction, { component: 'MyComponent' });
+```
+
+**withLogging**: Logs operation duration and status
+```typescript
+import { withLogging } from '@/middleware';
+
+const loggedFunction = withLogging(myFunction, { component: 'MyComponent' });
+```
+
+**withMiddleware**: Combines both wrappers
+```typescript
+import { withMiddleware } from '@/middleware';
+
+const wrappedFunction = withMiddleware(myFunction, { component: 'MyComponent' });
+```
+
+#### 4.4.2 Specialized Wrappers
+
+**withPermissionCheck**: Validates permissions before executing
+```typescript
+import { withPermissionCheck } from '@/middleware';
+
+const protectedFunction = withPermissionCheck(
+  myFunction, 
+  'COACH_BOOKING',
+  { component: 'BookingService' }
+);
+```
+
+**withAuthentication**: Verifies authentication
+```typescript
+import { withAuthentication } from '@/middleware';
+
+const authenticatedFunction = withAuthentication(myFunction, { component: 'MyComponent' });
+```
+
+**withRetry**: Implements automatic retries
+```typescript
+import { withRetry } from '@/middleware';
+
+const resilientFunction = withRetry(myFunction, 3, 1000, { component: 'MyComponent' });
+```
+
+### 4.5 Resilient Clients
+
+#### 4.5.1 HttpClient
+
+**Features**:
+- Automatic retry with exponential backoff
+- Circuit breaker to prevent saturation
+- Robust timeout handling
+- Automatic authentication headers
+
+```typescript
+import { httpClient } from '@/middleware';
+
+// Set authentication token
+httpClient.setAuthToken('bearer-token');
+
+// Make requests
+const coaches = await httpClient.get('/api/coaches');
+const newCoach = await httpClient.post('/api/coaches', coachData);
+```
+
+#### 4.5.2 WebSocketClient
+
+**Features**:
+- Automatic reconnection with exponential backoff
+- Heartbeat to keep connection alive
+- Connection state handling
+- Typed event handlers
+
+```typescript
+import { WebSocketClient } from '@/middleware';
+
+const wsClient = new WebSocketClient({
+  url: 'wss://api.20mincoach.com/ws',
+  reconnectAttempts: 5,
+  reconnectDelay: 1000
+});
+
+wsClient.onMessage('coach_available', (message) => {
+  console.log('Coach available:', message.data);
+});
+
+await wsClient.connect();
+```
+
+#### 4.5.3 WebRTCClient
+
+**Features**:
+- Device permission handling
+- Automatic device switching
+- Configurable connection timeouts
+- Event handlers for connection states
+
+```typescript
+import { WebRTCClient } from '@/middleware';
+
+const rtcClient = new WebRTCClient({
+  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+});
+
+await rtcClient.initialize();
+const stream = await rtcClient.requestMediaAccess();
+```
+
+### 4.6 Usage Patterns
+
+#### 4.6.1 Form A: Direct Error Handling
+
+**When to use**: Complex business logic that requires granular control.
+
+```typescript
+// In a controller
+export class AuthController {
+  static async loginUser(email: string, password: string): Promise<any> {
+    const context = { component: 'AuthController', action: 'loginUser' };
+    
+    try {
+      const response = await httpClient.post('/api/auth/login', { email, password });
+      return response.user;
+    } catch (error) {
+      const appError = ErrorAdapter.toAppError(error, context);
+      logger.error('Login failed', { error: appError.getTechnicalInfo() });
+      throw appError;
+    }
+  }
+}
+
+// In a component
+const handleLogin = async () => {
+  try {
+    const user = await AuthController.loginUser(email, password);
+    // Navigate to next screen
+  } catch (error) {
+    const appError = ErrorAdapter.toAppError(error);
+    const userMessage = ErrorAdapter.toUserMessage(appError);
+    Alert.alert('Error', userMessage);
+  }
+};
+```
+
+#### 4.6.2 Form B: Middleware Wrappers
+
+**When to use**: CRUD operations and standard API calls.
+
+```typescript
+// Base function (clean)
+private static async _searchCoaches(query: string): Promise<Coach[]> {
+  const response = await httpClient.get(`/api/coaches/search?q=${query}`);
+  return response.coaches;
+}
+
+// Wrapped function (automatic handling)
+static searchCoaches = withMiddleware(
+  CoachService._searchCoaches,
+  { component: 'CoachService', action: 'searchCoaches' }
+);
+
+// Usage in component
+const searchCoaches = async () => {
+  try {
+    const coaches = await CoachService.searchCoaches(query);
+    setCoaches(coaches);
+  } catch (error) {
+    // Error is already converted and logged automatically
+    const userMessage = ErrorAdapter.toUserMessage(error as AppError);
+    showToast(userMessage);
+  }
+};
+```
+
+### 4.7 Error Boundary for React
+
+**Responsibility**: Capture rendering errors and show user-friendly error UI.
+
+```typescript
+import { ErrorBoundary } from '@/middleware';
+
+function App() {
+  return (
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        // Send to monitoring service
+        logger.error('React error boundary', { error: error.getTechnicalInfo() });
+      }}
+    >
+      <MyApp />
+    </ErrorBoundary>
+  );
+}
+```
+
+### 4.8 Developer Guide
+
+#### 4.8.1 Golden Rules
+
+1. **Never allow "raw" errors** from libraries to propagate
+2. **Always convert** errors to AppError using ErrorAdapter
+3. **UI never decides** error texts, only requests the message
+4. **Always log** errors using the logging system
+5. **Use middleware wrappers** for standard operations
+
+#### 4.8.2 Workflow
+
+1. **Identify** the layer where the error occurs
+2. **Determine** whether to use direct handling or middleware wrapper
+3. **Convert** the error to AppError
+4. **Log** the error with appropriate context
+5. **Show** user-friendly message
+
+#### 4.8.3 Integration Examples
+
+**In Controllers**:
+```typescript
+export const useSearchCoachesController = () => {
+  const [uiError, setUiError] = useState<string | null>(null);
+  
+  const searchCoaches = async (query: string) => {
+    try {
+      setUiError(null);
+      const coaches = await CoachService.searchCoaches(query);
+      return coaches;
+    } catch (error) {
+      const appError = ErrorAdapter.toAppError(error);
+      const userMessage = ErrorAdapter.toUserMessage(appError);
+      setUiError(userMessage);
+      throw appError;
+    }
+  };
+  
+  return { searchCoaches, uiError };
+};
+```
+
+**In Screens**:
+```typescript
+export function CoachSearchScreen() {
+  const { searchCoaches, uiError } = useSearchCoachesController();
+  
+  return (
+    <View>
+      <SearchBar onSearch={searchCoaches} />
+      {uiError && <Text style={styles.errorText}>{uiError}</Text>}
+    </View>
+  );
+}
+```
+
+### 4.9 Testing
+
+**Requirements**: Unit tests for key middleware system components.
+
+```typescript
+// Tests for ErrorAdapter
+describe('ErrorAdapter', () => {
+  it('should convert generic error to AppError', () => {
+    const error = new Error('Test error');
+    const appError = ErrorAdapter.toAppError(error);
+    expect(appError).toBeInstanceOf(AppError);
+    expect(appError.code).toBe('UNKNOWN_ERROR');
+  });
+  
+  it('should generate user-friendly messages', () => {
+    const appError = new AppError('AUTH_FAILED', 'Auth failed');
+    const userMessage = ErrorAdapter.toUserMessage(appError);
+    expect(userMessage).toBe('Email o contraseña incorrectos.');
+  });
+});
+
+// Tests for HttpClient
+describe('HttpClient', () => {
+  it('should handle network errors gracefully', async () => {
+    // Mock fetch to throw network error
+    global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
+    
+    await expect(httpClient.get('/test')).rejects.toThrow(AppError);
+  });
+});
+```  
 
 ---
 
