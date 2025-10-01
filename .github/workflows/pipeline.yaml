@@ -11,7 +11,7 @@ permissions:
   deployments: write
 
 jobs:
-  ci/cd:
+  ci-cd:
     name: CI/CD
     runs-on: ubuntu-latest
     steps:
@@ -36,18 +36,22 @@ jobs:
       - name: Unit tests coverage
         run: npm run test:ci -- --coverage
 
-    deploy:
-      steps:    
-        - name: Login to GitHub Container Registry
-          uses: docker/login-action@v3
-          with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
+  deploy:
+    needs: ci-cd
+    runs-on: ubuntu-latest
+    steps:    
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Build and push
-          uses: docker/build-push-action@v6
-          with:
-            push: true
-            tags: ghcr.io/dd0292/20mincoach:latest
-    
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ghcr.io/dd0292/20mincoach:latest
