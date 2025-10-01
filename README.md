@@ -61,7 +61,6 @@ repo-root/
 │   ├── api/                  # Proxy/Client layer [TODO]
 │   ├── business/             # Business logic services [TODO]
 │   ├── middleware/           # Middlewares (logging, validation, error handler)
-│   ├── validators/           # Validation rules [TODO]
 │   ├── utils/                # Helpers (logger, formatters, singletons)
 │   └── tests/                # Unit tests (fixtures, mocks, utils)
 ├── App.tsx     
