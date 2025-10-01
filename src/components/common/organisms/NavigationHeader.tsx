@@ -5,6 +5,7 @@ import { View, TouchableOpacity, SafeAreaView } from "react-native";
 import { useTheme } from "../../styles/ThemeContext";
 import { Heading3, Caption } from "../atoms/Typography";
 import { Icon } from "../atoms/Icon";
+import { createNavigationHeadertyles } from "../../styles/organisms/NavigationHeader.styles";
 
 interface NavigationHeaderProps {
   title: string;
@@ -21,22 +22,13 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
   rightComponent,
   showBackButton = true,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = createNavigationHeadertyles(theme);
 
   return (
-    <SafeAreaView style={{ backgroundColor: colors.background }}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          paddingHorizontal: 20,
-          paddingVertical: 16,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-        }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+    <SafeAreaView style={{ ...styles.backGround }}>
+      <View style={{ ...styles.basicStyle }}>
+        <View style={{ ...styles.contentDisplay }}>
           {showBackButton && (
             <TouchableOpacity onPress={onBackPress} style={{ marginRight: 16 }}>
               <Icon name="arrow-back" size={24} />

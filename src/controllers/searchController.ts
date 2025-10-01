@@ -5,33 +5,21 @@ export const searchCoaches = (
   query: string,
   tags: string[],
 ): Coach[] => {
-  if (!query && tags.length === 0) {
-    return coaches;
-  }
-
   return coaches.filter((coach) => {
     const matchesQuery =
       !query ||
       coach.name.toLowerCase().includes(query.toLowerCase()) ||
-      coach.title.toLowerCase().includes(query.toLowerCase()) ||
-      coach.specialization.some((spec) =>
-        spec.toLowerCase().includes(query.toLowerCase()),
-      ) ||
-      coach.bio.toLowerCase().includes(query.toLowerCase());
+      coach.title.toLowerCase().includes(query.toLowerCase());
 
     const matchesTags =
       tags.length === 0 ||
-      tags.some(
-        (tag) =>
-          coach.tags.some((coachTag) =>
-            coachTag.toLowerCase().includes(tag.toLowerCase()),
-          ) ||
-          coach.specialization.some((spec) =>
-            spec.toLowerCase().includes(tag.toLowerCase()),
-          ),
+      tags.some((tag) =>
+        coach.tags.some((coachTag) =>
+          coachTag.toLowerCase().includes(tag.toLowerCase()),
+        ),
       );
 
-    return matchesQuery && matchesTags;
+    return matchesQuery || matchesTags;
   });
 };
 

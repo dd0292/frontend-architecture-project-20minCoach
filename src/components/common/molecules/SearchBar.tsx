@@ -6,6 +6,7 @@ import { useTheme } from "../../styles/ThemeContext";
 import { Input } from "../atoms/Input";
 import { Icon } from "../atoms/Icon";
 import { useState } from "react";
+import { createMoleculesStyles } from "../../styles/molecules/Molecules.styles";
 
 interface SearchBarProps extends TextInputProps {
   onMicPress?: () => void;
@@ -20,7 +21,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   multiline = true,
   ...inputProps
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = createMoleculesStyles(showMicButton, multiline);
   const [bio, setBio] = useState("");
   const [, setHeight] = useState(multiline ? 80 : 48);
 
@@ -39,31 +41,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         value={bio}
         onChangeText={setBio}
         onContentSizeChange={handleContentSizeChange}
-        style={[
-          {
-            paddingLeft: 48,
-            paddingRight: showMicButton ? 48 : 16,
-            ...(multiline && {
-              textAlignVertical: "center",
-              paddingTop: 12,
-            }),
-          },
-          inputProps.style,
-        ]}
+        style={[{ ...styles.searchBarInput }, inputProps.style]}
       />
 
       {showMicButton && (
         <TouchableOpacity
           onPress={onMicPress}
-          style={{
-            position: "absolute",
-            right: 16,
-            top: multiline ? 12 : 12,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={{ ...styles.searchBarIcon }}
         >
-          <Icon name="mic" size={20} color={colors.textSecondary} />
+          <Icon name="mic" size={20} color={theme.colors.textSecondary} />
         </TouchableOpacity>
       )}
     </View>

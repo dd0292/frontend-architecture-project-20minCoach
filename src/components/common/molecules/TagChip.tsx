@@ -5,6 +5,7 @@ import { View, TouchableOpacity } from "react-native";
 import { useTheme } from "../../styles/ThemeContext";
 import { SmallText } from "../atoms/Typography";
 import { Icon } from "../atoms/Icon";
+import { createMoleculesStyles } from "../../styles/molecules/Molecules.styles";
 
 interface TagChipProps {
   label: string;
@@ -22,6 +23,7 @@ export const TagChip: React.FC<TagChipProps> = ({
   fontSize = 14,
 }) => {
   const { colors } = useTheme();
+  const styles = createMoleculesStyles();
 
   const getBackgroundColor = () => {
     switch (variant) {
@@ -49,13 +51,8 @@ export const TagChip: React.FC<TagChipProps> = ({
   const content = (
     <View
       style={{
-        flexDirection: "row",
-        alignItems: "center",
+        ...styles.tagChipBaseStyle,
         backgroundColor: getBackgroundColor(),
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
-        gap: 9,
       }}
     >
       <SmallText style={{ color: getTextColor(), fontSize: fontSize }}>

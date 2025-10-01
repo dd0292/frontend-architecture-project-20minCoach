@@ -41,7 +41,6 @@ repo-root/
 │   ├── Testing Guide.md      # Complete testing documentation
 │   └── ...
 │── src/                      # Source code (PoCs + architecture implementation)
-│   ├── App.tsx               # App bootstrap
 │   ├── pocs/                 # PRUEBAS DE CONCEPTO FUNCIONALES !!!!!!!!~
 │   │   ├── video-call/
 │   │   ├── auth-roles/
@@ -62,7 +61,6 @@ repo-root/
 │   ├── api/                  # Proxy/Client layer [TODO]
 │   ├── business/             # Business logic services [TODO]
 │   ├── middleware/           # Middlewares (logging, validation, error handler)
-│   ├── validators/           # Validation rules [TODO]
 │   ├── utils/                # Helpers (logger, formatters, singletons)
 │   └── tests/                # Unit tests (fixtures, mocks, utils)
 ├── App.tsx     
@@ -93,9 +91,7 @@ npm start # Run the app
 
 ---
 
-## Testing
-
-### 🧪 Testing Strategy
+## Testing Strategy
 - **Framework**: Jest 29.7.0 + React Native Testing Library
 - **Cobertura**: 80% líneas, 90% funciones, 75% ramas
 - **Tests implementados**: 52 tests unitarios pasando
@@ -137,16 +133,17 @@ src/tests/
 ## UX & Security Proof of Concepts
 
 ### 1. Prototype Screen
-- AI tool used: Vercel's `v0` [https://v0.app/]
+- AI tool used: Vercel's [v0](https://v0.app/)
 - Prototype created for: **Search Screen + Coach Results**.  
 - Stored under: `src/screens`  
 
 ### 2. UX Testing
-- Tool: `Maze`  
+- Tool: [Maze](https://maze.co/)  
 - Tasks:  
-  1. Search for a coach specialized in `<PLACEHOLDER: Fitness>`.    TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  2. Accept suggested coach.   TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-- Participants: 3–5 testers 
+  1. Search for a specific coach
+  2. Booking a Session
+- Participants: 4 testers 
+- Test link: [UX Testing 20min Coach](https://t.maze.co/447054949)
 - Results stored in: `/docs/ux-tests/`  
 
 ### 3. Authentication & Authorization  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -906,6 +903,137 @@ All diagrams are stored in `/docs/diagrams/` and exported as **PDF** and editabl
 1. **N-Layer Architecture Diagram** - Muestra las capas de la aplicación
 2. **Class Diagram (UML)** - Diagrama de clases con patrones de diseño
 3. **Component Hierarchy** - Estructura de componentes React Native
+
+---
+## Visual Components
+
+### Visual component architecture
+This project follows an atomic design architecture, structured into three levels of UI components:
+
+```bash
+src/components/
+├── common/
+│   ├── atoms/        # Basic, reusable UI elements (Button, Input, etc.)
+│   ├── molecules/    # Groupings of atoms (SearchBar, ProfileHeader, etc.)
+│   └── organisms/    # Larger composites (CoachCard, FilterPanel, etc.)
+├── auth/             # Screens and flows related to authentication
+└── styles/           # Modularized style files for each component
+```
+Each component has a corresponding .styles.ts file located in the styles/ directory under its appropriate level (atoms, molecules, organisms).
+
+### Reusability & scalability
+
+All UI components are:
+- 1. Reusably designed with props for flexibility.
+- 2. Separated into visual `(*.tsx)` and styling `(*.styles.ts)` layers.
+- 3. Easily themable via a central `ThemeContext`.
+
+Example: `Button.tsx` receives props like disabled, with all visuals defined in `Button.styles.ts.`
+ 
+ ``` tsx
+ // src/components/common/atoms/Button.tsx
+ interface ButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: "primary" | "secondary" | "outline" | "ghost";
+  size?: "small" | "medium" | "large";
+  disabled?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+}
+```
+
+``` ts
+// src/components/styles/atoms/Button.styles.tsx
+export const createButtonStyles = (theme: ThemeContextType, disabled = false) =>
+  StyleSheet.create({
+    baseStyle: {
+      borderRadius: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+    },
+    // ...
+    ghostTextStyles: {
+      color: disabled ? theme.colors.textSecondary : theme.colors.primary,
+  },
+});
+ ```
+
+### Responsive design guidelines
+
+Responsiveness is managed via:
+- **Flexbox** layouts for dynamic resizing.
+- **StyleSheet** composition for base, responsive, and conditional styles.
+- Shared layout patterns in `GlobalStyles.tsx`.
+
+---
+## Styles
+
+## Theme Strategy
+
+Dark and light themes are implemented via:
+- A global [ThemeContext](src/components/styles/ThemeContext.tsx). This helps to centralized theme values.
+- All styles reference the active theme from context.
+
+**How it Works**
+
+A `ThemeProvider` wraps the application and manages theme state.
+The theme preference (light, dark, or system) is stored persistently using `AsyncStorage`. Theme colors are defined in a consistent shape via a `ThemeColors` interface for strong typing and reusability.
+
+Each theme (light and dark) defines values for:
+```tsx
+interface ThemeColors {
+  background: string;
+  surface: string;
+  primary: string;
+  secondary: string;
+  accent: string;
+  text: string;
+  textSecondary: string;
+  border: string;
+  card: string;
+  error: string;
+  success: string;
+  warning: string;
+}
+```
+
+Example
+```tsx
+import { useTheme } from '../styles/ThemeContext';
+
+const MyComponent = () => {
+  const { colors } = useTheme();
+
+  return (
+    <View style={{ backgroundColor: colors.background }}>
+      <Text style={{ color: colors.text }}>Hello Theme!</Text>
+    </View>
+  );
+};
+```
+
+### Styling strategy
+
+|**Principle**	| **Pecommended practice**	| 
+| --- | --- |
+|Modular styles	| One style file per component (`*.styles.ts`)	| 
+|Theme support	| Central `ThemeContext` with light/dark toggling	| 
+|Responsive rules	| Flexbox layout, % widths 	| 
+|Layout styles	| Stored in `GlobalStyles.tsx`	| 
+
+All style files use `StyleSheet.create()` to enable React Native optimization.
+
+### Developer instructions
+
+These rules must be followed by the development team when contributing in the UI:
+- When creating a new reusable component, select the appropriate level (atom, molecule, or organism).
+- Create a new style file when building a new component (e.g. `NewButton.styles.ts`) in the corresponding level folder.
+- Use the theme context to apply colors, spacing, and font sizes (recommended to maintain consistency with the app’s overall design).
+- Avoid hardcoding styles directly in `.tsx` files; place all styles in a corresponding `*.styles.ts` file. (Only very specific or unlikely-to-change details can be exceptions.)
+- Ensure mobile responsiveness using flex, percentages (%), Dimensions, etc.
+- Test both light and dark modes before submitting changes.
 
 ---
 

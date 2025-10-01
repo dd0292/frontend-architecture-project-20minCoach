@@ -8,6 +8,7 @@ import { SearchBar } from "../molecules/SearchBar";
 import { TagChip } from "../molecules/TagChip";
 import { BodyText, Heading3 } from "../atoms/Typography";
 import { Icon } from "../atoms/Icon";
+import { createFilterPanelStyles } from "../../styles/organisms/FilterPanel.styles";
 
 interface FilterPanelProps {
   searchValue: string;
@@ -28,11 +29,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   onMicPress,
   placeholder = "Search...",
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = createFilterPanelStyles(theme);
   const [showFilters, setShowFilters] = useState(false);
 
   return (
-    <View style={{ padding: 20, backgroundColor: colors.background }}>
+    <View style={{ ...styles.panelDisplay }}>
       <SearchBar
         value={searchValue}
         onChangeText={onSearchChange}
@@ -40,14 +42,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         onMicPress={onMicPress}
       />
 
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: 16,
-        }}
-      >
+      <View style={{ ...styles.baseStyle }}>
         <View
           style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, flex: 1 }}
         >
@@ -63,15 +58,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
         <TouchableOpacity
           onPress={() => setShowFilters(true)}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: colors.surface,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            borderRadius: 8,
-            gap: 4,
-          }}
+          style={{ ...styles.Touchable }}
         >
           <Icon name="options" size={16} />
           <BodyText>Filters</BodyText>
@@ -83,17 +70,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         animationType="slide"
         presentationStyle="pageSheet"
       >
-        <View
-          style={{ flex: 1, backgroundColor: colors.background, padding: 20 }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
+        <View style={{ ...styles.panelDisplay }}>
+          <View style={{ ...styles.body }}>
             <Heading3>Filters</Heading3>
             <TouchableOpacity onPress={() => setShowFilters(false)}>
               <Icon name="close" size={24} />

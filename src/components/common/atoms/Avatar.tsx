@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useTheme } from "../../styles/ThemeContext";
 import { BodyText } from "./Typography";
+import { createAvatarStyles } from "../../styles/atoms/Avatar.styles";
 
 interface AvatarProps {
   source?: ImageSourcePropType;
@@ -26,39 +27,17 @@ export const Avatar: React.FC<AvatarProps> = ({
   style,
   containerStyle,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = createAvatarStyles(theme, size);
 
   if (source) {
     return (
-      <Image
-        source={source}
-        style={[
-          {
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            zIndex: 10,
-          },
-          style,
-        ]}
-      />
+      <Image source={source} style={[{ ...styles.imageBaseStyle }, style]} />
     );
   }
 
   return (
-    <View
-      style={[
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: colors.primary,
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        containerStyle,
-      ]}
-    >
+    <View style={[{ ...styles.containerStyle }, containerStyle]}>
       <BodyText style={{ color: "white", fontSize: size * 0.4 }}>
         {initials}
       </BodyText>

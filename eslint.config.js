@@ -104,6 +104,7 @@ export default [
       "coverage/",
       "*.min.js",
       "src/tests/",
+      "*.config.js",
     ],
   },
 ];

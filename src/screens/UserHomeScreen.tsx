@@ -25,6 +25,7 @@ import { TagChip } from "../components/common/molecules/TagChip";
 import { ProfileHeader } from "../components/common/molecules/ProfileHeader";
 import { useTheme } from "../components/styles/ThemeContext";
 import { createGlobalStyles } from "../components/styles/GlobalStyles";
+import { pocSearchCoaches } from "../pocs/real-time-search/pocSearchCoaches";
 
 const POPULAR_CATEGORIES = [
   "Psychology",
@@ -54,9 +55,13 @@ const UserHomeScreen: React.FC = () => {
   const { coaches } = useSelector((state: RootState) => state.coaches);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const USE_POC = process.env.REACT_APP_USE_POC === "true";
 
-  const handleSearch = () => {
-    const results = searchCoaches(coaches, searchQuery, selectedTags);
+  const handleSearch = async () => {
+    const results = USE_POC
+      ? await pocSearchCoaches(coaches, searchQuery, selectedTags)
+      : searchCoaches(coaches, searchQuery, selectedTags);
+
     dispatch(setSearchResults(results));
     navigation.navigate("CoachListing" as never);
   };
