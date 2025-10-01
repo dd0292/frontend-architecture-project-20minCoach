@@ -619,12 +619,293 @@ describe('HttpClient', () => {
 
 ---
 
-## Required Diagrams  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## 5. Logging System
+
+### 5.1 Strategy Pattern Implementation
+
+El sistema de logging utiliza el **Strategy Pattern** para permitir múltiples proveedores de logging sin modificar la lógica central.
+
+```typescript
+// Configuración de proveedores
+import { logger, SupabaseLoggingProvider, SentryLoggingProvider } from '@/middleware';
+
+// Agregar proveedores
+logger.addProvider(new SupabaseLoggingProvider(supabaseClient));
+logger.addProvider(new SentryLoggingProvider(sentryClient));
+
+// Uso del logger
+logger.info('User logged in', { userId: '123' }, 'AuthController');
+logger.error('Login failed', { error: 'Invalid credentials' }, 'AuthController');
+```
+
+### 5.2 Available Providers
+
+- **ConsoleLoggingProvider**: Logging básico en consola
+- **SupabaseLoggingProvider**: Logging estructurado en Supabase
+- **SentryLoggingProvider**: Tracking de errores con Sentry
+
+### 5.3 Log Entry Structure
+
+```typescript
+interface LogEntry {
+  level: 'info' | 'warn' | 'error' | 'debug';
+  message: string;
+  context?: Record<string, any>;
+  timestamp: Date;
+  component?: string;
+  userId?: string;
+  action?: string;
+  duration?: number;
+}
+```
+
+---
+
+## 6. Exception Handling System
+
+### 6.1 Centralized Error Management
+
+**Regla de Oro**: Nunca permitir errores "crudos" de librerías externas. Siempre convertir a `AppError`.
+
+```typescript
+import { AppError, ERROR_CODES, ErrorAdapter } from '@/middleware';
+
+// Crear un error
+const error = new AppError(
+  ERROR_CODES.AUTH_FAILED,
+  'Login credentials invalid',
+  { component: 'AuthController', userId: '123' }
+);
+
+// Obtener mensaje amigable para el usuario
+const userMessage = error.getMessage(); // "Email o contraseña incorrectos."
+
+// Obtener información técnica para logging
+const techInfo = error.getTechnicalInfo();
+```
+
+### 6.2 Error Adapter
+
+Convierte cualquier error a `AppError` y genera mensajes amigables:
+
+```typescript
+// Convertir error genérico a AppError
+const appError = ErrorAdapter.toAppError(error, { component: 'MyComponent' });
+
+// Obtener mensaje amigable
+const userMessage = ErrorAdapter.toUserMessage(appError);
+
+// Convertir errores específicos
+const supabaseError = ErrorAdapter.fromSupabaseError(supabaseError);
+const httpError = ErrorAdapter.fromHttpError(response);
+```
+
+### 6.3 Predefined Error Codes
+
+- **Network**: `NETWORK_TIMEOUT`, `NETWORK_ERROR`, `HTTP_400`, `HTTP_401`, etc.
+- **Validation**: `VALIDATION_ERROR`, `EMAIL_INVALID`, `PASSWORD_WEAK`
+- **Authentication**: `AUTH_FAILED`, `AUTH_TOKEN_EXPIRED`, `AUTH_PERMISSION_DENIED`
+- **WebSocket**: `WS_DISCONNECTED`, `WS_RECONNECT_FAILED`
+- **WebRTC**: `RTC_DEVICE`, `RTC_PERMISSION_DENIED`, `RTC_DEVICE_UNAVAILABLE`
+
+---
+
+## 7. Utilities & Helpers
+
+### 7.1 Validation Utilities
+
+```typescript
+import { validateEmail, validatePassword, validateName, validatePhoneNumber } from '@/utils/validator';
+
+// Validaciones disponibles
+const isValidEmail = validateEmail('user@example.com');
+const isValidPassword = validatePassword('password123');
+const isValidName = validateName('John Doe');
+const isValidPhone = validatePhoneNumber('+1234567890');
+```
+
+### 7.2 Logger Utility
+
+```typescript
+import { Logger } from '@/utils/logger';
+
+// Logger básico para desarrollo
+Logger.log('Operation completed', { data: result });
+Logger.error('Operation failed', error);
+Logger.warn('Slow operation detected', { duration: 5000 });
+```
+
+### 7.3 Supabase Configuration
+
+```typescript
+import { supabase } from '@/utils/supabase';
+
+// Cliente configurado de Supabase
+const { data, error } = await supabase.auth.signInWithPassword({
+  email: 'user@example.com',
+  password: 'password123'
+});
+```
+
+---
+
+## 8. Background Jobs & Listeners
+
+### 8.1 WebSocket Client
+
+Maneja conexiones en tiempo real con reconexión automática:
+
+```typescript
+import { WebSocketClient } from '@/middleware';
+
+const wsClient = new WebSocketClient({
+  url: 'wss://api.20mincoach.com/ws',
+  reconnectAttempts: 5,
+  reconnectDelay: 1000
+});
+
+// Escuchar eventos
+wsClient.onMessage('coach_available', (message) => {
+  console.log('Coach available:', message.data);
+});
+
+await wsClient.connect();
+```
+
+### 8.2 WebRTC Client
+
+Maneja videollamadas con manejo de permisos:
+
+```typescript
+import { WebRTCClient } from '@/middleware';
+
+const rtcClient = new WebRTCClient({
+  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+});
+
+await rtcClient.initialize();
+const stream = await rtcClient.requestMediaAccess();
+```
+
+### 8.3 HTTP Client
+
+Cliente HTTP resiliente con retry automático:
+
+```typescript
+import { httpClient } from '@/middleware';
+
+// Configurar token de autenticación
+httpClient.setAuthToken('bearer-token');
+
+// Realizar peticiones
+const coaches = await httpClient.get('/api/coaches');
+const newCoach = await httpClient.post('/api/coaches', coachData);
+```
+
+---
+
+## 9. Middleware System
+
+### 9.1 Middleware Wrappers
+
+Sistema de wrappers para interceptar y procesar operaciones:
+
+```typescript
+import { withAppError, withLogging, withMiddleware } from '@/middleware';
+
+// Wrapper básico
+const safeFunction = withAppError(myFunction, { component: 'MyComponent' });
+
+// Wrapper con logging
+const loggedFunction = withLogging(myFunction, { component: 'MyComponent' });
+
+// Wrapper combinado
+const wrappedFunction = withMiddleware(myFunction, { component: 'MyComponent' });
+```
+
+### 9.2 Specialized Wrappers
+
+```typescript
+import { withPermissionCheck, withAuthentication, withRetry } from '@/middleware';
+
+// Verificar permisos
+const protectedFunction = withPermissionCheck(
+  myFunction, 
+  'COACH_BOOKING',
+  { component: 'BookingService' }
+);
+
+// Verificar autenticación
+const authenticatedFunction = withAuthentication(myFunction, { component: 'MyComponent' });
+
+// Implementar reintentos
+const resilientFunction = withRetry(myFunction, 3, 1000, { component: 'MyComponent' });
+```
+
+---
+
+## 10. Proof of Concepts (PoCs)
+
+### 10.1 Video Call PoC (`pocs/video-call/`)
+
+**Objetivo**: Demostrar funcionalidad de videollamadas de 20 minutos
+
+**Implementación**:
+- WebRTC para comunicación peer-to-peer
+- Timer de 20 minutos con notificaciones
+- Manejo de permisos de cámara/micrófono
+- Interfaz de usuario para controles de llamada
+
+### 10.2 Notifications PoC (`pocs/notifications/`)
+
+**Objetivo**: Demostrar sistema de notificaciones en tiempo real
+
+**Implementación**:
+- Notificaciones push nativas
+- Notificaciones in-app
+- Sistema de suscripción a eventos
+- Manejo de estados de notificación
+
+---
+
+## 11. Class Diagram & Design Patterns
+
+### 11.1 Main Classes
+
+El diagrama de clases muestra la arquitectura del sistema con los siguientes componentes principales:
+
+- **User & Coach**: Modelos de dominio
+- **Controllers**: Lógica de control (AuthController, SearchController)
+- **Slices**: Estado Redux (AuthSlice, CoachesSlice)
+- **Services**: Lógica de negocio (CoachService)
+- **Clients**: Comunicación externa (ApiClient, WebSocketClient)
+- **Middleware**: Interceptores (Logger, ErrorHandler)
+
+### 11.2 Design Patterns Implemented
+
+1. **Strategy Pattern**: Sistema de logging con múltiples proveedores
+2. **Singleton Pattern**: Store de Redux, Logger global
+3. **Adapter Pattern**: ErrorAdapter para conversión de errores
+4. **Factory Pattern**: Creación de diferentes tipos de booking
+5. **Observer Pattern**: Sistema de notificaciones y WebSocket
+6. **Mediator Pattern**: UIMediator para comunicación entre pantallas
+
+### 11.3 Class Relationships
+
+- **Composition**: User contiene Coach[] (favorites)
+- **Inheritance**: AbstractBooking → PremiumBooking, BasicBooking
+- **Dependency**: Controllers dependen de Services
+- **Association**: Services usan ApiClient
+
+---
+
+## Required Diagrams
 
 All diagrams are stored in `/docs/diagrams/` and exported as **PDF** and editable source files:
 
-1. **N-Layer Architecture Diagram**   TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-2. **Class Diagram (UML)**   TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+1. **N-Layer Architecture Diagram** - Muestra las capas de la aplicación
+2. **Class Diagram (UML)** - Diagrama de clases con patrones de diseño
+3. **Component Hierarchy** - Estructura de componentes React Native
 
 ---
 
