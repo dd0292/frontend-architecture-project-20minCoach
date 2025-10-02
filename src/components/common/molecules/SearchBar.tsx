@@ -1,7 +1,12 @@
 "use client";
 
 import type React from "react";
-import { View, TouchableOpacity, type TextInputProps } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  type TextInputProps,
+  TextInputContentSizeChangeEvent,
+} from "react-native";
 import { useTheme } from "../../styles/ThemeContext";
 import { Input } from "../atoms/Input";
 import { Icon } from "../atoms/Icon";
@@ -26,7 +31,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [bio, setBio] = useState("");
   const [, setHeight] = useState(multiline ? 80 : 48);
 
-  const handleContentSizeChange = (event: any) => {
+  const handleContentSizeChange = (event: TextInputContentSizeChangeEvent) => {
     if (multiline) {
       const newHeight = Math.max(0, event.nativeEvent.contentSize.height);
       setHeight(Math.max(80, newHeight));

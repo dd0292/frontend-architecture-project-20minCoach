@@ -18,6 +18,7 @@ import { NavigationHeader } from "../components/common/organisms/NavigationHeade
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../models/Navigation";
 import { createGlobalStyles } from "../components/styles/GlobalStyles";
+import { Coach } from "../models/Coach";
 
 const FavoritesScreen: React.FC = () => {
   const { coaches, favorites } = useSelector(
@@ -37,7 +38,7 @@ const FavoritesScreen: React.FC = () => {
     dispatch(toggleFavorite(coachId));
   };
 
-  const renderCoachCard = ({ item }: { item: any }) => (
+  const renderCoachCard = ({ item }: { item: Coach }) => (
     <View style={styles.coachCard}>
       <TouchableOpacity
         style={styles.cardContent}
@@ -68,7 +69,7 @@ const FavoritesScreen: React.FC = () => {
           />
 
           <View style={styles.availabilityContainer}>
-            <StatusDot status={item.isAvailable} />
+            <StatusDot status={`${item.isAvailable}`} />
             <Typography
               variant="caption"
               color={theme.colors.textSecondary}

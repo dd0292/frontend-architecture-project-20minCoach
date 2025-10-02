@@ -10,6 +10,8 @@ import {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Appearance } from "react-native";
+import { ErrorAdapter } from "../../middleware/adapters/ErrorAdapter";
+import { logger } from "../../middleware";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ColorScheme = "light" | "dark";
@@ -87,7 +89,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
           setThemeModeState(savedTheme as ThemeMode);
         }
       } catch (error) {
-        console.log("Error loading theme:", error);
+        const appError = ErrorAdapter.toAppError(error);
+        logger.error(
+          "Failed to load Theme",
+          { error: appError.getTechnicalInfo() },
+          `setThemeMode`,
+        );
+        throw appError;
       }
     };
     loadTheme();
@@ -107,7 +115,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
       await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
       setThemeModeState(mode);
     } catch (error) {
-      console.log("Error saving theme:", error);
+      const appError = ErrorAdapter.toAppError(error);
+      logger.error(
+        "Failed to load Theme",
+        { error: appError.getTechnicalInfo() },
+        `setThemeMode`,
+      );
+      throw appError;
     }
   };
 

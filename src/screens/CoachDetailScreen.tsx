@@ -22,12 +22,13 @@ import { StatusDot } from "../components/common/atoms/StatusDot";
 import { RatingDisplay } from "../components/common/molecules/RatingDisplay";
 import { TagChip } from "../components/common/molecules/TagChip";
 import { createGlobalStyles } from "../components/styles/GlobalStyles";
+import { Coach } from "../models/Coach";
 
 const CoachDetailScreen: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { coach } = route.params as any;
+  const coach = route.params as Coach;
   const { favorites } = useSelector((state: RootState) => state.coaches);
 
   const theme = useTheme();
@@ -109,7 +110,7 @@ const CoachDetailScreen: React.FC = () => {
           </View>
 
           <View style={styles.availabilitySection}>
-            <StatusDot status={coach.isAvailable} />
+            <StatusDot status={`${coach.isAvailable}`} />
             <Typography
               variant="body"
               color={theme.colors.textSecondary}
@@ -155,7 +156,7 @@ const CoachDetailScreen: React.FC = () => {
                   | boolean
                   | React.ReactElement<
                       unknown,
-                      string | React.JSXElementConstructor<any>
+                      string | React.JSXElementConstructor<unknown>
                     >
                   | Iterable<React.ReactNode>
                   | React.ReactPortal
@@ -167,7 +168,7 @@ const CoachDetailScreen: React.FC = () => {
                       | React.ReactPortal
                       | React.ReactElement<
                           unknown,
-                          string | React.JSXElementConstructor<any>
+                          string | React.JSXElementConstructor<unknown>
                         >
                       | Iterable<React.ReactNode>
                       | null

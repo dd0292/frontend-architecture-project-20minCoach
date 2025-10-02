@@ -7,7 +7,7 @@ import { AppError, ErrorContext, ERROR_CODES } from '../types/AppError';
 import { ErrorAdapter } from '../adapters/ErrorAdapter';
 import { logger } from '../logging/LoggingStrategy';
 import { withMiddleware, withAuthentication } from '../wrappers/MiddlewareWrappers';
-import { httpClient } from '../clients/HttpClient';
+import { httpClient } from '../../clients/HttpClient';
 
 // Importar el controlador existente
 import { authenticateUser, validateEmail } from '../../controllers/authController';
@@ -124,7 +124,7 @@ export function useEnhancedAuthController() {
 
       return user;
     } catch (error) {
-      const appError = ErrorAdapter.toAppError(error, { ...context, email });
+      const appError = ErrorAdapter.toAppError(error, { ...context});
       const userMessage = ErrorAdapter.toUserMessage(appError);
       
       logger.error(
@@ -219,7 +219,7 @@ export class EnhancedAuthComponent {
       }
 
       // Simulate registration API call
-      const response = await httpClient.post('/api/auth/register', {
+      const response = await httpClient.post<>('/api/auth/register', {
         email,
         password
       });

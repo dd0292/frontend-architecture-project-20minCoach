@@ -3,7 +3,12 @@
  * Implements the Adapter pattern to standardize errors from different sources
  */
 
-import { AppError, ErrorContext, ErrorCode, ERROR_CODES } from '../types/AppError';
+import {
+  AppError,
+  ErrorContext,
+  ErrorCode,
+  ERROR_CODES,
+} from "../types/AppError";
 
 export class ErrorAdapter {
   /**
@@ -13,7 +18,7 @@ export class ErrorAdapter {
   static toAppError(
     error: unknown,
     context: ErrorContext = {},
-    defaultCode: ErrorCode = ERROR_CODES.UNKNOWN_ERROR
+    defaultCode: ErrorCode = ERROR_CODES.UNKNOWN_ERROR,
   ): AppError {
     // If it's already an AppError, return it as is
     if (error instanceof AppError) {
@@ -23,29 +28,16 @@ export class ErrorAdapter {
     // If it's a standard Error
     if (error instanceof Error) {
       const code = this.detectErrorCode(error);
-      return new AppError(
-        code,
-        error.message,
-        context,
-        error
-      );
+      return new AppError(code, error.message, context, error);
     }
 
     // If it's a string
-    if (typeof error === 'string') {
-      return new AppError(
-        defaultCode,
-        error,
-        context
-      );
+    if (typeof error === "string") {
+      return new AppError(defaultCode, error, context);
     }
 
     // For any other type
-    return new AppError(
-      defaultCode,
-      'Error desconocido',
-      context
-    );
+    return new AppError(defaultCode, "Error desconocido", context);
   }
 
   /**
@@ -64,40 +56,49 @@ export class ErrorAdapter {
     const name = error.name.toLowerCase();
 
     // Network errors
-    if (name.includes('network') || message.includes('network')) {
+    if (name.includes("network") || message.includes("network")) {
       return ERROR_CODES.NETWORK_ERROR;
     }
 
-    if (message.includes('timeout') || name.includes('timeout')) {
+    if (message.includes("timeout") || name.includes("timeout")) {
       return ERROR_CODES.NETWORK_TIMEOUT;
     }
 
     // HTTP errors
-    if (message.includes('400')) return ERROR_CODES.HTTP_400;
-    if (message.includes('401')) return ERROR_CODES.HTTP_401;
-    if (message.includes('403')) return ERROR_CODES.HTTP_403;
-    if (message.includes('404')) return ERROR_CODES.HTTP_404;
-    if (message.includes('500')) return ERROR_CODES.HTTP_500;
-    if (message.includes('502')) return ERROR_CODES.HTTP_502;
-    if (message.includes('503')) return ERROR_CODES.HTTP_503;
+    if (message.includes("400")) return ERROR_CODES.HTTP_400;
+    if (message.includes("401")) return ERROR_CODES.HTTP_401;
+    if (message.includes("403")) return ERROR_CODES.HTTP_403;
+    if (message.includes("404")) return ERROR_CODES.HTTP_404;
+    if (message.includes("500")) return ERROR_CODES.HTTP_500;
+    if (message.includes("502")) return ERROR_CODES.HTTP_502;
+    if (message.includes("503")) return ERROR_CODES.HTTP_503;
 
     // Validation errors
-    if (name.includes('validation') || message.includes('validation')) {
+    if (name.includes("validation") || message.includes("validation")) {
       return ERROR_CODES.VALIDATION_ERROR;
     }
 
     // Authentication errors
-    if (message.includes('auth') || message.includes('login') || message.includes('password')) {
+    if (
+      message.includes("auth") ||
+      message.includes("login") ||
+      message.includes("password")
+    ) {
       return ERROR_CODES.AUTH_FAILED;
     }
 
     // WebSocket errors
-    if (message.includes('websocket') || message.includes('ws')) {
+    if (message.includes("websocket") || message.includes("ws")) {
       return ERROR_CODES.WS_DISCONNECTED;
     }
 
     // WebRTC errors
-    if (message.includes('webrtc') || message.includes('rtc') || message.includes('camera') || message.includes('microphone')) {
+    if (
+      message.includes("webrtc") ||
+      message.includes("rtc") ||
+      message.includes("camera") ||
+      message.includes("microphone")
+    ) {
       return ERROR_CODES.RTC_DEVICE;
     }
 
@@ -108,43 +109,49 @@ export class ErrorAdapter {
   /**
    * Converts specific Supabase errors to AppError
    */
-  static fromSupabaseError(supabaseError: any, context: ErrorContext = {}): AppError {
+  static fromSupabaseError(
+    supabaseError: Error,
+    context: ErrorContext = {},
+  ): AppError {
     const code = this.mapSupabaseErrorCode(supabaseError);
     return new AppError(
       code,
-      supabaseError.message || 'Error de autenticación',
+      supabaseError.message || "Error de autenticación",
       context,
-      supabaseError
+      supabaseError,
     );
   }
 
   /**
    * Maps Supabase error codes to our codes
    */
-  private static mapSupabaseErrorCode(supabaseError: any): ErrorCode {
-    const message = supabaseError.message?.toLowerCase() || '';
-    
-    if (message.includes('invalid login credentials')) {
+  private static mapSupabaseErrorCode(supabaseError: Error): ErrorCode {
+    const message = supabaseError.message?.toLowerCase() || "";
+
+    if (message.includes("invalid login credentials")) {
       return ERROR_CODES.AUTH_FAILED;
     }
-    
-    if (message.includes('email not confirmed')) {
+
+    if (message.includes("email not confirmed")) {
       return ERROR_CODES.AUTH_FAILED;
     }
-    
-    if (message.includes('token')) {
+
+    if (message.includes("token")) {
       return ERROR_CODES.AUTH_TOKEN_EXPIRED;
     }
-    
+
     return ERROR_CODES.AUTH_FAILED;
   }
 
   /**
    * Converts fetch/HTTP errors to AppError
    */
-  static fromHttpError(response: Response, context: ErrorContext = {}): AppError {
+  static fromHttpError(
+    response: Response,
+    context: ErrorContext = {},
+  ): AppError {
     let code: ErrorCode;
-    
+
     switch (response.status) {
       case 400:
         code = ERROR_CODES.HTTP_400;
@@ -170,11 +177,11 @@ export class ErrorAdapter {
       default:
         code = ERROR_CODES.UNKNOWN_ERROR;
     }
-    
+
     return new AppError(
       code,
       `HTTP ${response.status}: ${response.statusText}`,
-      context
+      context,
     );
   }
 }

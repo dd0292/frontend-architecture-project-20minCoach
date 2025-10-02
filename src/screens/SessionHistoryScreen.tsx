@@ -12,6 +12,7 @@ import { Avatar } from "../components/common/atoms/Avatar";
 import { TagChip } from "../components/common/molecules/TagChip";
 import { NavigationHeader } from "../components/common/organisms/NavigationHeader";
 import { createGlobalStyles } from "../components/styles/GlobalStyles";
+import { Session } from "../models/Coach";
 
 const SessionHistoryScreen: React.FC = () => {
   const { sessions, coaches } = useSelector(
@@ -59,7 +60,7 @@ const SessionHistoryScreen: React.FC = () => {
     });
   };
 
-  const renderSessionCard = ({ item }: { item: any }) => {
+  const renderSessionCard = ({ item }: { item: Session }) => {
     const coach = getCoachById(item.coachId);
     if (!coach) return null;
 

@@ -5,7 +5,7 @@
  */
 
 export interface LogEntry {
-  level: 'info' | 'warn' | 'error' | 'debug';
+  level: "info" | "warn" | "error" | "debug";
   message: string;
   context?: Record<string, any>;
   timestamp: Date;
@@ -25,25 +25,25 @@ export interface LoggingProvider {
 export class ConsoleLoggingProvider implements LoggingProvider {
   log(entry: LogEntry): void {
     const timestamp = entry.timestamp.toISOString();
-    const contextStr = entry.context ? JSON.stringify(entry.context) : '';
-    const componentStr = entry.component ? `[${entry.component}]` : '';
-    const userIdStr = entry.userId ? `[User: ${entry.userId}]` : '';
-    const actionStr = entry.action ? `[Action: ${entry.action}]` : '';
-    const durationStr = entry.duration ? `[Duration: ${entry.duration}ms]` : '';
-    
+    const contextStr = entry.context ? JSON.stringify(entry.context) : "";
+    const componentStr = entry.component ? `[${entry.component}]` : "";
+    const userIdStr = entry.userId ? `[User: ${entry.userId}]` : "";
+    const actionStr = entry.action ? `[Action: ${entry.action}]` : "";
+    const durationStr = entry.duration ? `[Duration: ${entry.duration}ms]` : "";
+
     const message = `${timestamp} ${componentStr} ${userIdStr} ${actionStr} ${durationStr} ${entry.message} ${contextStr}`;
-    
+
     switch (entry.level) {
-      case 'info':
+      case "info":
         console.info(message);
         break;
-      case 'warn':
+      case "warn":
         console.warn(message);
         break;
-      case 'error':
+      case "error":
         console.error(message);
         break;
-      case 'debug':
+      case "debug":
         console.debug(message);
         break;
     }
@@ -63,8 +63,11 @@ export class SupabaseLoggingProvider implements LoggingProvider {
   log(entry: LogEntry): void {
     // In a real implementation, this would send logs to Supabase
     // For now, we only simulate the behavior
-    console.log(`[SUPABASE LOG] ${entry.level.toUpperCase()}: ${entry.message}`, entry);
-    
+    console.log(
+      `[SUPABASE LOG] ${entry.level.toUpperCase()}: ${entry.message}`,
+      entry,
+    );
+
     // Example of how the real implementation would be:
     /*
     this.supabaseClient
@@ -98,8 +101,11 @@ export class SentryLoggingProvider implements LoggingProvider {
 
   log(entry: LogEntry): void {
     // In a real implementation, this would send logs to Sentry
-    console.log(`[SENTRY LOG] ${entry.level.toUpperCase()}: ${entry.message}`, entry);
-    
+    console.log(
+      `[SENTRY LOG] ${entry.level.toUpperCase()}: ${entry.message}`,
+      entry,
+    );
+
     // Example of how the real implementation would be:
     /*
     if (this.sentryClient) {
@@ -154,17 +160,17 @@ export class Logger {
   /**
    * Logs an event using all configured providers
    */
-  log(entry: Omit<LogEntry, 'timestamp'>): void {
+  log(entry: Omit<LogEntry, "timestamp">): void {
     const logEntry: LogEntry = {
       ...entry,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    this.providers.forEach(provider => {
+    this.providers.forEach((provider) => {
       try {
         provider.log(logEntry);
       } catch (error) {
-        console.error('Error in logging provider:', error);
+        console.error("Error in logging provider:", error);
       }
     });
   }
@@ -172,53 +178,71 @@ export class Logger {
   /**
    * Convenience methods for different levels
    */
-  info(message: string, context?: Record<string, any>, component?: string): void {
+  info(
+    message: string,
+    context?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log({
-      level: 'info',
+      level: "info",
       message,
       context,
-      component
+      component,
     });
   }
 
-  warn(message: string, context?: Record<string, any>, component?: string): void {
+  warn(
+    message: string,
+    context?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log({
-      level: 'warn',
+      level: "warn",
       message,
       context,
-      component
+      component,
     });
   }
 
-  error(message: string, context?: Record<string, any>, component?: string): void {
+  error(
+    message: string,
+    context?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log({
-      level: 'error',
+      level: "error",
       message,
       context,
-      component
+      component,
     });
   }
 
-  debug(message: string, context?: Record<string, any>, component?: string): void {
+  debug(
+    message: string,
+    context?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log({
-      level: 'debug',
+      level: "debug",
       message,
       context,
-      component
+      component,
     });
   }
 }
 
 // Singleton logger instance
-export const logger = new Logger([
-  new ConsoleLoggingProvider()
-]);
+export const logger = new Logger([new ConsoleLoggingProvider()]);
 
 // Convenience function to log events
-export const logEvent = (message: string, level: 'info' | 'warn' | 'error' | 'debug' = 'info', context?: Record<string, any>): void => {
+export const logEvent = (
+  message: string,
+  level: "info" | "warn" | "error" | "debug" = "info",
+  context?: Record<string, any>,
+): void => {
   logger.log({
     level,
     message,
-    context
+    context,
   });
 };

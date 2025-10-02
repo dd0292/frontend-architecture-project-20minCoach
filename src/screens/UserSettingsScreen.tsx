@@ -18,6 +18,7 @@ import { logout } from "../slices/authSlice";
 import { useTheme } from "../components/styles/ThemeContext";
 import { createGlobalStyles } from "../components/styles/GlobalStyles";
 import { supabase } from "../utils/supabase";
+import { ErrorAdapter, logger } from "../middleware";
 
 const UserSettingsScreen: React.FC = () => {
   const theme = useTheme();
@@ -38,8 +39,13 @@ const UserSettingsScreen: React.FC = () => {
             dispatch(logout());
             navigation.navigate("Login" as never);
           } catch (error) {
-            Alert.alert("Error", "Failed to logout. Please try again.");
-            console.error("Logout error:", error);
+            const appError = ErrorAdapter.toAppError(error);
+            logger.error(
+              "Failed to logout",
+              { error: appError.getTechnicalInfo() },
+              `handleLogout`,
+            );
+            throw appError;
           }
         },
       },
@@ -71,7 +77,7 @@ const UserSettingsScreen: React.FC = () => {
     >
       <View style={styles.settingsItemLeft}>
         <Ionicons
-          name={icon as any}
+          name={icon as never}
           size={20}
           color={theme.colors.textSecondary}
         />

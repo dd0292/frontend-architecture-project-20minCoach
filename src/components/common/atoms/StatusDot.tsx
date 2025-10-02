@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { createStatusDotStyles } from "../../styles/atoms/StatusDot.styles";
 
 interface StatusDotProps {
-  status: "online" | "offline" | "busy";
+  status: "online" | "offline" | "busy" | "true" | "false";
   size?: number;
 }
 
@@ -15,6 +15,10 @@ export const StatusDot: React.FC<StatusDotProps> = ({ status, size = 12 }) => {
       case "online":
         return "#10B981";
       case "busy":
+        return "#F59E0B";
+      case "true":
+        return "#10B981";
+      case "false":
         return "#F59E0B";
       case "offline":
       default:

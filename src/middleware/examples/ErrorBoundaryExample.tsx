@@ -3,11 +3,11 @@
  * Implements React's Error Boundary pattern to capture UI errors
  */
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { AppError } from '../types/AppError';
-import { ErrorAdapter } from '../adapters/ErrorAdapter';
-import { logger } from '../logging/LoggingStrategy';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { AppError } from "../types/AppError";
+import { ErrorAdapter } from "../adapters/ErrorAdapter";
+import { logger } from "../logging/LoggingStrategy";
 
 interface Props {
   children: ReactNode;
@@ -29,34 +29,33 @@ export class ErrorBoundary extends Component<Props, State> {
   static getDerivedStateFromError(error: Error): State {
     // Update state to show error UI
     const appError = ErrorAdapter.toAppError(error, {
-      component: 'ErrorBoundary',
-      action: 'getDerivedStateFromError'
+      component: "ErrorBoundary",
+      action: "getDerivedStateFromError",
     });
 
     return {
       hasError: true,
-      error: appError
+      error: appError,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log the error
     const appError = ErrorAdapter.toAppError(error, {
-      component: 'ErrorBoundary',
-      action: 'componentDidCatch',
+      component: "ErrorBoundary",
+      action: "componentDidCatch",
       metadata: {
-        componentStack: errorInfo.componentStack,
-        errorBoundary: errorInfo.errorBoundary
-      }
+        componentStack: errorInfo.componentStack
+      },
     });
 
     logger.error(
-      'Error boundary caught error',
+      "Error boundary caught error",
       {
         error: appError.getTechnicalInfo(),
-        componentStack: errorInfo.componentStack
+        componentStack: errorInfo.componentStack,
       },
-      'ErrorBoundary'
+      "ErrorBoundary",
     );
 
     // Notify callback if it exists
@@ -85,7 +84,10 @@ export class ErrorBoundary extends Component<Props, State> {
             <Text style={styles.errorMessage}>
               {ErrorAdapter.toUserMessage(this.state.error)}
             </Text>
-            <TouchableOpacity style={styles.retryButton} onPress={this.handleRetry}>
+            <TouchableOpacity
+              style={styles.retryButton}
+              onPress={this.handleRetry}
+            >
               <Text style={styles.retryButtonText}>Try again</Text>
             </TouchableOpacity>
           </View>
@@ -100,17 +102,17 @@ export class ErrorBoundary extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
     padding: 20,
   },
   errorContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -121,28 +123,28 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#e74c3c',
+    fontWeight: "bold",
+    color: "#e74c3c",
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorMessage: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: 20,
     lineHeight: 22,
   },
   retryButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: "#3498db",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
   },
   retryButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 
@@ -152,25 +154,28 @@ const styles = StyleSheet.create({
 export function useErrorHandler() {
   const handleError = (error: unknown, context?: any) => {
     const appError = ErrorAdapter.toAppError(error, {
-      component: 'useErrorHandler',
-      action: 'handleError',
-      metadata: context
+      component: "useErrorHandler",
+      action: "handleError",
+      metadata: context,
     });
 
     logger.error(
-      'Error handled by useErrorHandler',
+      "Error handled by useErrorHandler",
       {
         error: appError.getTechnicalInfo(),
-        context
+        context,
       },
-      'useErrorHandler'
+      "useErrorHandler",
     );
 
     // In a real implementation, this could:
     // - Show a toast
     // - Update error state
     // - Navigate to error screen
-    console.log('Error message for user:', ErrorAdapter.toUserMessage(appError));
+    console.log(
+      "Error message for user:",
+      ErrorAdapter.toUserMessage(appError),
+    );
   };
 
   return { handleError };
@@ -182,16 +187,14 @@ export function useErrorHandler() {
 export function AppWithErrorBoundary() {
   return (
     <ErrorBoundary
-      onError={(error, errorInfo) => {
+      onError={(error) => {
         // Here you could send the error to a monitoring service
-        console.log('Error captured by boundary:', error.getTechnicalInfo());
+        console.log("Error captured by boundary:", error.getTechnicalInfo());
       }}
       fallbackComponent={
         <View style={styles.container}>
           <Text style={styles.errorTitle}>Custom Error</Text>
-          <Text style={styles.errorMessage}>
-            This is a custom error UI
-          </Text>
+          <Text style={styles.errorMessage}>This is a custom error UI</Text>
         </View>
       }
     >

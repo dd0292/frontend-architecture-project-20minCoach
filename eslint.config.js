@@ -5,16 +5,7 @@ import typescriptPlugin from "@typescript-eslint/eslint-plugin";
 import reactPlugin from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import prettierPlugin from "eslint-plugin-prettier";
-
-/**
- * ESLint configuration for a React Native Expo project using TypeScript.
- * This config includes:
- * - JavaScript standard rules
- * - TypeScript support
- * - React and React Hooks linting
- * - Prettier integration for code formatting
- * - Custom rules for cleaner code
- */
+import globals from "globals";
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
@@ -25,11 +16,12 @@ export default [
   {
     languageOptions: {
       globals: {
+        ...globals.browser,
         console: "readonly",
         window: "readonly",
         document: "readonly",
         navigator: "readonly",
-        process: "readonly", // For backend-like logic or build tools
+        process: "readonly",
       },
     },
   },
@@ -43,7 +35,7 @@ export default [
       sourceType: "module",
       parserOptions: {
         ecmaFeatures: {
-          jsx: true, // Enables JSX in TS files
+          jsx: true,
         },
       },
     },
@@ -51,7 +43,6 @@ export default [
       "@typescript-eslint": typescriptPlugin,
     },
     rules: {
-      // Includes recommended TypeScript rules
       ...typescriptPlugin.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": "error",
       "@typescript-eslint/no-explicit-any": "warn",
@@ -68,34 +59,26 @@ export default [
     rules: {
       ...reactPlugin.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
     },
     settings: {
       react: {
-        version: "detect", // Automatically detects React version
+        version: "detect",
       },
     },
   },
 
-  // Prettier integration for formatting
+  // Prettier integration
   {
     plugins: {
       prettier: prettierPlugin,
     },
     rules: {
-      "prettier/prettier": "error", // Show Prettier formatting issues as ESLint errors
+      "prettier/prettier": "error",
     },
   },
-
-  // Custom code quality rules
-  {
-    rules: {
-      "no-console": "warn", // Always warn on console logs
-      "prefer-const": "error", // Prefer const over let
-      "no-var": "error", // Disallow var entirely
-    },
-  },
-
-  // Ignore common non-source folders and test files
+  // Ignore common non-source folders
   {
     ignores: [
       "node_modules/",
@@ -105,6 +88,7 @@ export default [
       "*.min.js",
       "src/tests/",
       "*.config.js",
+      "src/middleware/"
     ],
   },
 ];

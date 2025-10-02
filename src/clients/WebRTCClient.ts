@@ -1,11 +1,16 @@
+/* eslint-disable no-undef */
 /**
  * Resilient WebRTC client with error handling for video/audio devices
  * Implements robust error handling for video calls
  */
 
-import { AppError, ErrorContext, ERROR_CODES } from '../types/AppError';
-import { ErrorAdapter } from '../adapters/ErrorAdapter';
-import { logger } from '../logging/LoggingStrategy';
+import {
+  AppError,
+  ErrorContext,
+  ERROR_CODES,
+} from "../middleware/types/AppError";
+import { ErrorAdapter } from "../middleware/adapters/ErrorAdapter";
+import { logger } from "../middleware/logging/LoggingStrategy";
 
 export interface WebRTCConfig {
   iceServers?: RTCIceServer[];
@@ -18,10 +23,10 @@ export interface WebRTCConfig {
 export interface MediaDevice {
   deviceId: string;
   label: string;
-  kind: 'audioinput' | 'audiooutput' | 'videoinput';
+  kind: "audioinput" | "audiooutput" | "videoinput";
 }
 
-export type WebRTCEventHandler = (event: any) => void;
+export type WebRTCEventHandler = (event: unknown) => void;
 export type WebRTCErrorHandler = (error: AppError) => void;
 
 export class WebRTCClient {
@@ -36,8 +41,8 @@ export class WebRTCClient {
   constructor(private config: WebRTCConfig = {}) {
     this.config = {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
       ],
       audioConstraints: { audio: true },
       videoConstraints: { video: true },
@@ -47,15 +52,15 @@ export class WebRTCClient {
     };
   }
 
-/**
- * Initializes the WebRTC connection
- */
+  /**
+   * Initializes the WebRTC connection
+   */
   async initialize(context: ErrorContext = {}): Promise<void> {
     try {
       logger.info(
-        'Initializing WebRTC connection',
+        "Initializing WebRTC connection",
         { iceServers: this.config.iceServers?.length },
-        'WebRTCClient'
+        "WebRTCClient",
       );
 
       this.peerConnection = new RTCPeerConnection({
@@ -63,28 +68,23 @@ export class WebRTCClient {
       });
 
       this.setupPeerConnectionEventHandlers(context);
-      
+
       // Configurar timeouts
       this.setupTimeouts(context);
-      
     } catch (error) {
       throw ErrorAdapter.toAppError(error, context);
     }
   }
 
-/**
- * Requests access to media devices
- */
+  /**
+   * Requests access to media devices
+   */
   async requestMediaAccess(
     constraints: MediaStreamConstraints = {},
-    context: ErrorContext = {}
+    context: ErrorContext = {},
   ): Promise<MediaStream> {
     try {
-      logger.info(
-        'Requesting media access',
-        { constraints },
-        'WebRTCClient'
-      );
+      logger.info("Requesting media access", { constraints }, "WebRTCClient");
 
       const stream = await navigator.mediaDevices.getUserMedia({
         ...this.config.audioConstraints,
@@ -93,10 +93,10 @@ export class WebRTCClient {
       });
 
       this.localStream = stream;
-      
+
       // Agregar stream local al peer connection
       if (this.peerConnection) {
-        stream.getTracks().forEach(track => {
+        stream.getTracks().forEach((track) => {
           if (this.peerConnection) {
             this.peerConnection.addTrack(track, stream);
           }
@@ -104,12 +104,12 @@ export class WebRTCClient {
       }
 
       logger.info(
-        'Media access granted',
-        { 
+        "Media access granted",
+        {
           audioTracks: stream.getAudioTracks().length,
-          videoTracks: stream.getVideoTracks().length 
+          videoTracks: stream.getVideoTracks().length,
         },
-        'WebRTCClient'
+        "WebRTCClient",
       );
 
       return stream;
@@ -119,32 +119,30 @@ export class WebRTCClient {
     }
   }
 
-/**
- * Creates an offer to start a call
- */
-  async createOffer(context: ErrorContext = {}): Promise<RTCSessionDescriptionInit> {
+  /**
+   * Creates an offer to start a call
+   */
+  async createOffer(
+    context: ErrorContext = {},
+  ): Promise<RTCSessionDescriptionInit> {
     if (!this.peerConnection) {
       throw new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'Peer connection not initialized',
-        context
+        "Peer connection not initialized",
+        context,
       );
     }
 
     try {
-      logger.info(
-        'Creating WebRTC offer',
-        {},
-        'WebRTCClient'
-      );
+      logger.info("Creating WebRTC offer", {}, "WebRTCClient");
 
       const offer = await this.peerConnection.createOffer();
       await this.peerConnection.setLocalDescription(offer);
-      
+
       logger.info(
-        'WebRTC offer created successfully',
+        "WebRTC offer created successfully",
         { type: offer.type },
-        'WebRTCClient'
+        "WebRTCClient",
       );
 
       return offer;
@@ -153,36 +151,36 @@ export class WebRTCClient {
     }
   }
 
-/**
- * Creates an answer to an offer
- */
+  /**
+   * Creates an answer to an offer
+   */
   async createAnswer(
     offer: RTCSessionDescriptionInit,
-    context: ErrorContext = {}
+    context: ErrorContext = {},
   ): Promise<RTCSessionDescriptionInit> {
     if (!this.peerConnection) {
       throw new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'Peer connection not initialized',
-        context
+        "Peer connection not initialized",
+        context,
       );
     }
 
     try {
       logger.info(
-        'Creating WebRTC answer',
+        "Creating WebRTC answer",
         { offerType: offer.type },
-        'WebRTCClient'
+        "WebRTCClient",
       );
 
       await this.peerConnection.setRemoteDescription(offer);
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer);
-      
+
       logger.info(
-        'WebRTC answer created successfully',
+        "WebRTC answer created successfully",
         { type: answer.type },
-        'WebRTCClient'
+        "WebRTCClient",
       );
 
       return answer;
@@ -191,81 +189,82 @@ export class WebRTCClient {
     }
   }
 
-/**
- * Sets the remote description
- */
+  /**
+   * Sets the remote description
+   */
   async setRemoteDescription(
     description: RTCSessionDescriptionInit,
-    context: ErrorContext = {}
+    context: ErrorContext = {},
   ): Promise<void> {
     if (!this.peerConnection) {
       throw new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'Peer connection not initialized',
-        context
+        "Peer connection not initialized",
+        context,
       );
     }
 
     try {
       await this.peerConnection.setRemoteDescription(description);
-      
+
       logger.info(
-        'Remote description set successfully',
+        "Remote description set successfully",
         { type: description.type },
-        'WebRTCClient'
+        "WebRTCClient",
       );
     } catch (error) {
       throw ErrorAdapter.toAppError(error, context);
     }
   }
 
-/**
- * Adds an ICE candidate
- */
+  /**
+   * Adds an ICE candidate
+   */
   async addIceCandidate(
     candidate: RTCIceCandidateInit,
-    context: ErrorContext = {}
+    context: ErrorContext = {},
   ): Promise<void> {
     if (!this.peerConnection) {
       throw new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'Peer connection not initialized',
-        context
+        "Peer connection not initialized",
+        context,
       );
     }
 
     try {
       await this.peerConnection.addIceCandidate(candidate);
-      
+
       logger.debug(
-        'ICE candidate added successfully',
+        "ICE candidate added successfully",
         { candidate: candidate.candidate },
-        'WebRTCClient'
+        "WebRTCClient",
       );
     } catch (error) {
       throw ErrorAdapter.toAppError(error, context);
     }
   }
 
-/**
- * Gets available media devices
- */
+  /**
+   * Gets available media devices
+   */
   async getMediaDevices(context: ErrorContext = {}): Promise<MediaDevice[]> {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
-      
+
       const mediaDevices: MediaDevice[] = devices
-        .filter(device => device.kind !== 'audiooutput')
-        .map(device => ({
+        .filter((device) => device.kind !== "audiooutput")
+        .map((device) => ({
           deviceId: device.deviceId,
-          label: device.label || `${device.kind} ${device.deviceId.slice(0, 8)}`,
-          kind: device.kind as 'audioinput' | 'audiooutput' | 'videoinput',
+          label:
+            device.label || `${device.kind} ${device.deviceId.slice(0, 8)}`,
+          kind: device.kind as "audioinput" | "audiooutput" | "videoinput",
         }));
 
       logger.info(
-        'Media devices retrieved',
+        "Media devices retrieved",
         { deviceCount: mediaDevices.length },
-        'WebRTCClient'
+        "WebRTCClient",
       );
 
       return mediaDevices;
@@ -274,18 +273,18 @@ export class WebRTCClient {
     }
   }
 
-/**
- * Switches video device
- */
+  /**
+   * Switches video device
+   */
   async switchVideoDevice(
     deviceId: string,
-    context: ErrorContext = {}
+    context: ErrorContext = {},
   ): Promise<void> {
     if (!this.localStream) {
       throw new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'No local stream available',
-        context
+        "No local stream available",
+        context,
       );
     }
 
@@ -294,8 +293,8 @@ export class WebRTCClient {
       if (!videoTrack) {
         throw new AppError(
           ERROR_CODES.RTC_DEVICE,
-          'No video track available',
-          context
+          "No video track available",
+          context,
         );
       }
 
@@ -304,27 +303,27 @@ export class WebRTCClient {
       });
 
       logger.info(
-        'Video device switched successfully',
+        "Video device switched successfully",
         { deviceId },
-        'WebRTCClient'
+        "WebRTCClient",
       );
     } catch (error) {
       throw ErrorAdapter.toAppError(error, context);
     }
   }
 
-/**
- * Switches audio device
- */
+  /**
+   * Switches audio device
+   */
   async switchAudioDevice(
     deviceId: string,
-    context: ErrorContext = {}
+    context: ErrorContext = {},
   ): Promise<void> {
     if (!this.localStream) {
       throw new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'No local stream available',
-        context
+        "No local stream available",
+        context,
       );
     }
 
@@ -333,8 +332,8 @@ export class WebRTCClient {
       if (!audioTrack) {
         throw new AppError(
           ERROR_CODES.RTC_DEVICE,
-          'No audio track available',
-          context
+          "No audio track available",
+          context,
         );
       }
 
@@ -343,24 +342,20 @@ export class WebRTCClient {
       });
 
       logger.info(
-        'Audio device switched successfully',
+        "Audio device switched successfully",
         { deviceId },
-        'WebRTCClient'
+        "WebRTCClient",
       );
     } catch (error) {
       throw ErrorAdapter.toAppError(error, context);
     }
   }
 
-/**
- * Closes the WebRTC connection
- */
+  /**
+   * Closes the WebRTC connection
+   */
   close(): void {
-    logger.info(
-      'Closing WebRTC connection',
-      {},
-      'WebRTCClient'
-    );
+    logger.info("Closing WebRTC connection", {}, "WebRTCClient");
 
     // Limpiar timeouts
     if (this.connectionTimeout) {
@@ -375,7 +370,7 @@ export class WebRTCClient {
 
     // Detener streams locales
     if (this.localStream) {
-      this.localStream.getTracks().forEach(track => track.stop());
+      this.localStream.getTracks().forEach((track) => track.stop());
       this.localStream = null;
     }
 
@@ -386,30 +381,30 @@ export class WebRTCClient {
     }
   }
 
-/**
- * Gets the remote stream
- */
+  /**
+   * Gets the remote stream
+   */
   getRemoteStream(): MediaStream | null {
     return this.remoteStream;
   }
 
-/**
- * Gets the local stream
- */
+  /**
+   * Gets the local stream
+   */
   getLocalStream(): MediaStream | null {
     return this.localStream;
   }
 
-/**
- * Gets the connection state
- */
+  /**
+   * Gets the connection state
+   */
   getConnectionState(): RTCPeerConnectionState | null {
     return this.peerConnection?.connectionState || null;
   }
 
-/**
- * Registers a handler for WebRTC events
- */
+  /**
+   * Registers a handler for WebRTC events
+   */
   onEvent(event: string, handler: WebRTCEventHandler): void {
     if (!this.eventHandlers.has(event)) {
       this.eventHandlers.set(event, []);
@@ -417,9 +412,9 @@ export class WebRTCClient {
     this.eventHandlers.get(event)!.push(handler);
   }
 
-/**
- * Registers an error handler
- */
+  /**
+   * Registers an error handler
+   */
   onError(handler: WebRTCErrorHandler): void {
     this.errorHandler = handler;
   }
@@ -432,54 +427,50 @@ export class WebRTCClient {
 
     this.peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        this.notifyEvent('icecandidate', event);
+        this.notifyEvent("icecandidate", event);
       }
     };
 
     this.peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection?.connectionState;
-      logger.info(
-        'WebRTC connection state changed',
-        { state },
-        'WebRTCClient'
-      );
-      
-      if (state === 'connected') {
+      logger.info("WebRTC connection state changed", { state }, "WebRTCClient");
+
+      if (state === "connected") {
         this.clearTimeouts();
-      } else if (state === 'failed') {
+      } else if (state === "failed") {
         const error = new AppError(
           ERROR_CODES.RTC_DEVICE,
-          'WebRTC connection failed',
-          context
+          "WebRTC connection failed",
+          context,
         );
         this.notifyError(error);
       }
-      
-      this.notifyEvent('connectionstatechange', { state });
+
+      this.notifyEvent("connectionstatechange", { state });
     };
 
     this.peerConnection.oniceconnectionstatechange = () => {
       const state = this.peerConnection?.iceConnectionState;
       logger.info(
-        'WebRTC ICE connection state changed',
+        "WebRTC ICE connection state changed",
         { state },
-        'WebRTCClient'
+        "WebRTCClient",
       );
-      
-      this.notifyEvent('iceconnectionstatechange', { state });
+
+      this.notifyEvent("iceconnectionstatechange", { state });
     };
 
     this.peerConnection.ontrack = (event) => {
       this.remoteStream = event.streams[0];
-      this.notifyEvent('track', event);
-      
+      this.notifyEvent("track", event);
+
       logger.info(
-        'Remote track received',
-        { 
+        "Remote track received",
+        {
           audioTracks: this.remoteStream.getAudioTracks().length,
-          videoTracks: this.remoteStream.getVideoTracks().length 
+          videoTracks: this.remoteStream.getVideoTracks().length,
         },
-        'WebRTCClient'
+        "WebRTCClient",
       );
     };
   }
@@ -492,8 +483,8 @@ export class WebRTCClient {
     this.connectionTimeout = setTimeout(() => {
       const error = new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'WebRTC connection timeout',
-        context
+        "WebRTC connection timeout",
+        context,
       );
       this.notifyError(error);
     }, this.config.connectionTimeout);
@@ -502,8 +493,8 @@ export class WebRTCClient {
     this.iceConnectionTimeout = setTimeout(() => {
       const error = new AppError(
         ERROR_CODES.RTC_DEVICE,
-        'ICE connection timeout',
-        context
+        "ICE connection timeout",
+        context,
       );
       this.notifyError(error);
     }, this.config.iceConnectionTimeout);
@@ -529,47 +520,50 @@ export class WebRTCClient {
    */
   private handleMediaError(error: Error, context: ErrorContext): AppError {
     const message = error.message.toLowerCase();
-    
-    if (message.includes('permission denied') || message.includes('not allowed')) {
+
+    if (
+      message.includes("permission denied") ||
+      message.includes("not allowed")
+    ) {
       return new AppError(
         ERROR_CODES.RTC_PERMISSION_DENIED,
-        'Permisos de cámara/micrófono denegados',
+        "Permisos de cámara/micrófono denegados",
         context,
-        error
+        error,
       );
     }
-    
-    if (message.includes('not found') || message.includes('not available')) {
+
+    if (message.includes("not found") || message.includes("not available")) {
       return new AppError(
         ERROR_CODES.RTC_DEVICE_UNAVAILABLE,
-        'Dispositivo de video/audio no disponible',
+        "Dispositivo de video/audio no disponible",
         context,
-        error
+        error,
       );
     }
-    
+
     return new AppError(
       ERROR_CODES.RTC_DEVICE,
-      'Error con el dispositivo de video/audio',
+      "Error con el dispositivo de video/audio",
       context,
-      error
+      error,
     );
   }
 
   /**
    * Notifica eventos a los handlers registrados
    */
-  private notifyEvent(event: string, data: any): void {
+  private notifyEvent(event: string, data: unknown): void {
     const handlers = this.eventHandlers.get(event);
     if (handlers) {
-      handlers.forEach(handler => {
+      handlers.forEach((handler) => {
         try {
           handler(data);
         } catch (error) {
           logger.error(
             `Error in event handler for ${event}`,
             { error: error, event },
-            'WebRTCClient'
+            "WebRTCClient",
           );
         }
       });
