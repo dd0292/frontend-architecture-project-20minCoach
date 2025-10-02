@@ -1259,6 +1259,273 @@ These rules must be followed by the development team when contributing in the UI
 
 ---
 
+
+## 14. State Management
+
+### 14.1 Solution Architecture
+
+This project uses **Redux Toolkit** as the state management solution, which provides a powerful, scalable, and maintainable approach to managing application state across all screens and components.
+
+#### Why Redux Toolkit?
+
+- **Predictable State**: Single source of truth for application state
+- **TypeScript Support**: Strong typing with RootState and AppDispatch
+- **DevTools Integration**: Time-travel debugging and state inspection
+- **Performance**: Optimized with memoization and selective re-renders
+- **Maintainability**: Clear separation between state logic and UI components
+- **Scalability**: Easy to add new slices as the application grows
+
+#### State Architecture Diagram
+
+```mermaid
+graph TD
+    A[App.tsx] --> B[Redux Provider]
+    B --> C[Redux Store]
+    C --> D[AuthSlice]
+    C --> E[CoachesSlice]
+    
+    F[LoginScreen] --> G[useDispatch]
+    F --> H[useSelector]
+    G --> I[loginSuccess action]
+    I --> D
+    H --> D
+    
+    J[CoachListingScreen] --> K[useDispatch]
+    J --> L[useSelector]
+    K --> M[setSearchResults action]
+    M --> E
+    L --> E
+    
+    D --> N[AuthState]
+    E --> O[CoachesState]
+    
+    N --> P[user, isAuthenticated, isLoading]
+    O --> Q[coaches, sessions, favorites, searchResults]
+```
+
+### 14.2 Store Configuration
+
+The Redux store is configured in `src/state/store.ts` using Redux Toolkit's `configureStore`:
+
+```typescript
+// src/state/store.ts
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "../slices/authSlice";
+import coachesReducer from "../slices/coachesSlice";
+
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    coaches: coachesReducer,
+  },
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+```
+
+**Key Features**:
+- **Combined Reducers**: Multiple slices organized by domain
+- **Type Exports**: `RootState` and `AppDispatch` for TypeScript support
+- **DevTools**: Automatically enabled in development mode
+- **Middleware**: Default middleware includes Redux Thunk
+
+### 14.3 State Slices
+
+#### 14.3.1 Auth Slice (`src/slices/authSlice.ts`)
+
+**Responsibility**: Manages user authentication state and user profile data
+
+**State Structure**:
+```typescript
+interface AuthState {
+  user: User | null;           // Current logged-in user
+  isAuthenticated: boolean;    // Authentication status
+  isLoading: boolean;          // Loading state for async operations
+}
+```
+
+**Actions**:
+
+| Action | Payload | Description |
+|--------|---------|-------------|
+| `loginStart()` | None | Sets loading state to true |
+| `loginSuccess(user)` | `User` | Sets user data and authenticated flag |
+| `loginFailure()` | None | Resets user and authentication state |
+| `logout()` | None | Clears all authentication data |
+| `updateUser(userData)` | `Partial<User>` | Updates specific user properties |
+
+**Usage Example**:
+```typescript
+// In LoginScreen.tsx
+import { useDispatch } from 'react-redux';
+import { loginStart, loginSuccess, loginFailure } from '../slices/authSlice';
+
+const dispatch = useDispatch();
+
+const handleLogin = async () => {
+  dispatch(loginStart());
+  
+  try {
+    const user = await authenticateUser(email, password);
+    if (user) {
+      dispatch(loginSuccess(user));
+    } else {
+      dispatch(loginFailure());
+    }
+  } catch (error) {
+    dispatch(loginFailure());
+  }
+};
+```
+
+#### 14.3.2 Coaches Slice (`src/slices/coachesSlice.ts`)
+
+**Responsibility**: Manages coaches data, search results, favorites, and sessions
+
+**State Structure**:
+```typescript
+interface CoachesState {
+  coaches: Coach[];            // All available coaches
+  sessions: Session[];         // User's coaching sessions
+  reviews: Review[];           // Coach reviews
+  favorites: string[];         // IDs of favorited coaches
+  searchResults: Coach[];      // Filtered search results
+  isLoading: boolean;          // Loading state
+}
+```
+
+**Actions**:
+
+| Action | Payload | Description |
+|--------|---------|-------------|
+| `setSearchResults(coaches)` | `Coach[]` | Updates search results |
+| `toggleFavorite(coachId)` | `string` | Adds/removes coach from favorites |
+| `addSession(session)` | `Session` | Adds a new coaching session |
+| `updateSession(data)` | `{id, updates}` | Updates existing session |
+
+**Usage Example**:
+```typescript
+// In UserHomeScreen.tsx
+import { useSelector, useDispatch } from 'react-redux';
+import { setSearchResults } from '../slices/coachesSlice';
+import type { RootState } from '../state/store';
+
+const { coaches } = useSelector((state: RootState) => state.coaches);
+const dispatch = useDispatch();
+
+const handleSearch = () => {
+  const results = searchCoaches(coaches, query, tags);
+  dispatch(setSearchResults(results));
+};
+```
+
+### 14.4 Accessing State in Components
+
+#### Using `useSelector` Hook
+
+```typescript
+import { useSelector } from 'react-redux';
+import type { RootState } from '../state/store';
+
+// Select single value
+const user = useSelector((state: RootState) => state.auth.user);
+
+// Select multiple values
+const { coaches, favorites } = useSelector((state: RootState) => state.coaches);
+```
+
+#### Using `useDispatch` Hook
+
+```typescript
+import { useDispatch } from 'react-redux';
+import { logout, updateUser } from '../slices/authSlice';
+
+const dispatch = useDispatch();
+dispatch(logout());
+dispatch(updateUser({ name: 'New Name' }));
+```
+
+### 14.5 State Flow Pattern
+
+```mermaid
+sequenceDiagram
+    participant UI as Component
+    participant Dispatch as useDispatch
+    participant Store as Redux Store
+    participant Slice as Slice Reducer
+    participant Selector as useSelector
+    
+    UI->>Dispatch: dispatch(loginStart())
+    Dispatch->>Store: Action dispatched
+    Store->>Slice: Process action
+    Slice->>Store: Update state
+    Store->>Selector: Notify subscribers
+    Selector->>UI: Re-render with new state
+```
+
+### 14.6 Best Practices
+
+#### 1. Type Safety
+Always use typed selectors:
+```typescript
+const user = useSelector((state: RootState) => state.auth.user);
+```
+
+#### 2. Local vs Global State
+Not all state needs Redux. Use local state for:
+- Form inputs
+- UI toggles (modals, dropdowns)
+- Temporary UI state
+
+#### 3. Action Naming Conventions
+```typescript
+dispatch(loginStart());      // Loading states
+dispatch(loginSuccess(user)); // Success states
+dispatch(loginFailure());     // Failure states
+```
+
+### 14.7 Integration with Components
+
+#### Provider Setup in `App.tsx`
+
+```typescript
+import { Provider } from 'react-redux';
+import { store } from './src/state/store';
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <ThemeProvider>
+        <NavigationContainer>
+          {/* App screens */}
+        </NavigationContainer>
+      </ThemeProvider>
+    </Provider>
+  );
+}
+```
+
+### 14.8 Performance Optimization
+
+#### Selective Re-renders
+```typescript
+import { shallowEqual, useSelector } from 'react-redux';
+
+const coaches = useSelector(
+  (state: RootState) => state.coaches.coaches,
+  shallowEqual
+);
+```
+
+#### Split Large Slices
+Consider splitting if a slice becomes too large:
+- coachesSlice (coach data)
+- sessionsSlice (session data)
+- favoritesSlice (favorites data)
+
+---
+
 ## 14. Linter configuration
 
 This project uses [ESLint](https://eslint.org/) as the linting tool to ensure clean, consistent, and error-free code. ESLint is configured with support for TypeScript, React, React Hooks, and Prettier integration for formatting. Also other pluggins used are:
@@ -1315,7 +1582,7 @@ npm run lint --fix # to automatically fix problems
 
 ### 15.1 Pipeline Architecture
 
-El proyecto utiliza **GitHub Actions** como sistema de CI/CD para automatizar el proceso de build, testing y deployment. El pipeline está diseñado para garantizar la calidad del código antes de cualquier despliegue.
+The project uses **GitHub Actions** as a CI/CD system to automate the build, testing and deployment process. The pipeline is designed to ensure code quality before any deployment.
 
 ```mermaid
 graph LR
@@ -1335,21 +1602,21 @@ graph LR
 
 #### Pipeline Stages:
 
-1. **Code Checkout**: Obtiene el código del repositorio
-2. **Environment Setup**: Configura Node.js 18 con npm cache
-3. **Dependency Installation**: Instala dependencias usando `npm ci` (clean install)
-4. **Code Quality Check**: Ejecuta ESLint para validar estándares de código
-5. **Unit Testing**: Ejecuta la suite completa de tests (47 tests)
-6. **Coverage Report**: Genera reporte de cobertura de código
-7. **Docker Build**: Construye imagen de contenedor (solo si los tests pasan)
-8. **Container Push**: Publica imagen a GitHub Container Registry
-9. **Deployment**: Despliega a entorno correspondiente
+1. **Code Checkout**: Gets the code from the repository
+2. **Environment Setup**: Configures Node.js 18 with npm cache
+3. **Dependency Installation**: Installs dependencies using `npm ci` (clean install)
+4. **Code Quality Check**: Runs ESLint to validate code standards
+5. **Unit Testing**: Runs complete test suite (47 tests)
+6. **Coverage Report**: Generates code coverage report
+7. **Docker Build**: Builds container image (only if tests pass)
+8. **Container Push**: Publishes image to GitHub Container Registry
+9. **Deployment**: Deploys to corresponding environment
 
 ### 15.2 Build Process by Environment
 
 #### Development Environment
 
-**Propósito**: Desarrollo local con hot-reload y debugging activo
+**Purpose**: Local development with hot-reload and active debugging
 
 **Comandos básicos**:
 ```bash
@@ -1361,7 +1628,7 @@ npm run web            # Ejecuta en navegador web
 
 ### 15.4 Unit Testing Pipeline
 
-Integrado en CI/CD y se ejecuta automáticamente en cada push.
+Integrated into CI/CD and runs automatically on each push.
 
 #### Pipeline Steps:
 
@@ -1369,47 +1636,47 @@ Integrado en CI/CD y se ejecuta automáticamente en cada push.
 2. **Run Linter**: `npm run lint`
 3. **Execute Tests**: `npm run test`
 4. **Generate Coverage**: `npm run test:coverage`
-5. **Upload Reports**: Artifacts guardados en GitHub Actions
+5. **Upload Reports**: Artifacts stored in GitHub Actions
 
 #### Test Commands Available
 
 ```bash
 # Testing básico
-npm test                    # Ejecuta todos los tests
-npm run test:watch          # Modo watch para desarrollo
-npm run test:coverage       # Con reporte de cobertura
+npm test                    # Run all tests
+npm run test:watch          # Watch mode for development
+npm run test:coverage       # With coverage report
 
-# Testing específico
-npm run test:models         # Solo tests de modelos
-npm run test:controllers    # Solo tests de controladores
-npm run test:unit           # Solo tests unitarios
-npm run test:integration    # Solo tests de integración
+# Specific testing
+npm run test:models         # Only model tests
+npm run test:controllers    # Only controller tests
+npm run test:unit          # Only unit tests
+npm run test:integration   # Only integration tests
 
 # CI/CD
-npm run test             # Para integración continua (sin watch)
+npm run test             # For continuous integration (no watch)
 ```
 
 ### 15.5 Deployment Documentation Standards
 
 #### Documentation Structure
 
-Cada deployment debe incluir:
+Each deployment must include:
 
-1. **Changelog**: Descripción de cambios en `CHANGELOG.md`
-2. **Release Notes**: Notas para usuarios en GitHub Releases
-3. **Technical Notes**: Detalles técnicos para el equipo
-4. **Rollback Plan**: Procedimiento de rollback si es necesario
+1. **Changelog**: Description of changes in `CHANGELOG.md`
+2. **Release Notes**: Notes for users in GitHub Releases
+3. **Technical Notes**: Technical details for the team
+4. **Rollback Plan**: Rollback procedure if needed
 
 #### Git Commit Standards
 
 ```bash
-feat: Nueva funcionalidad
-fix: Corrige error
-docs: Actualiza documentación de deployment
-style: Ajusta estilos
-refactor: Refactoriza controladores
-test: Añade tests
-chore: Actualiza lógica
+feat: New feature
+fix: Bug fix
+docs: Update deployment documentation
+style: Adjust styles
+refactor: Refactor controllers
+test: Add tests
+chore: Update logic
 ```
 
 ### 15.6 Developer Instructions
@@ -1441,10 +1708,10 @@ npm start
 
 | Command | Description | Use Case |
 |---------|-------------|----------|
-| `npm start` | Inicia Expo dev server | Desarrollo general |
-| `npm run android` | Ejecuta en Android | Testing Android |
-| `npm run ios` | Ejecuta en iOS | Testing iOS |
-| `npm run web` | Ejecuta en browser | Testing web |
+| `npm start` | Starts Expo dev server | General development |
+| `npm run android` | Runs on Android | Android testing |
+| `npm run ios` | Runs on iOS | iOS testing |
+| `npm run web` | Runs in browser | Web testing |
 
 #### Deployment Process
 
@@ -1483,53 +1750,6 @@ npm test
 npx expo-doctor
 npx expo install --fix
 ```
-
----
-
-## Deliverables Checklist  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-1. MISSING DIAGRAMS
-  - [ ] Architecture-diagram.pdf - Clear N-Layer diagram
-  - [ ] Class-diagram.pdf - With labeled design patterns
-  - [ ] Component-hierarchy.pdf - React component structure
-
-2. REAL PROOF OF CONCEPTS (PoCs)
-  - [ ] PoC #1: Functional video call (20min timer included)
-  - [ ] PoC #2: Working role system (BasicUser/PremiumUser)
-  - [ ] PoC #3: Real-time search with filters
-  - [ ] PoC #4: Real-time notifications
-
-3. AUTHENTICATION
-  - [ ] Auth0/Clerk configured with 2 roles
-  - [ ] BasicUser: Can only search coaches
-  - [ ] PremiumUser: Can search + book instantly
-  - [ ] MFA (Two Factor) working
-  - [ ] Permission middleware implemented
-
-4. TESTING
-  - [✅] 5 UNIT TESTS for AuthController ✅ **PASSING**
-  - [✅] 17 UNIT TESTS for Coach model ✅ **PASSING**
-  - [✅] Tests running in pipeline ✅ **47 tests passing**
-  - [✅] Scripts: npm test → works ✅ **FULLY FUNCTIONAL**
-
-5. UX/UI
-  - [ ] Test with Maze/Useberry (5 real participants)
-  - [ ] Evidence: result screenshots
-
-6. IMPLEMENTED ARCHITECTURE
-  - [ ] Middleware Layer: error handling, logging, auth
-  - [ ] Business Layer: real business logic
-  - [ ] Services Layer: functional API clients
-  - [ ] Utils Layer: loggers, validators
-
-WHAT THE PROFESSOR WILL REVIEW SPECIFICALLY
-[✅] 1. Can I clone the repo and run `npm test` without errors? **✅ YES - 47 tests passing**
-[✅] 2. Do the unit tests PASS? **✅ YES - 47/47 tests passing, 0 failing**
-[ ] 3. Can I login as BasicUser and PremiumUser?
-[ ] 4. Do I see different functionalities based on my role?
-[ ] 5. Is the architecture diagram clear and professional?
-[ ] 6. Is there evidence of UX testing with real people?
-[✅] 7. Can I understand EVERYTHING by just reading the README.md? **✅ YES - Complete documentation**
 
 ---
 
