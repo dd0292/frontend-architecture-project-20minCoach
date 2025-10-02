@@ -219,7 +219,7 @@ export class EnhancedAuthComponent {
       }
 
       // Simulate registration API call
-      const response = await httpClient.post<>('/api/auth/register', {
+      const response = await httpClient.post('/api/auth/register', {
         email,
         password
       });
