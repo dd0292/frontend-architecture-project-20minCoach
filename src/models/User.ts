@@ -1,3 +1,5 @@
+import { UserSchema } from "./validators/User";
+
 export interface User {
   id: string;
   email: string;
@@ -25,6 +27,17 @@ export class UserModel implements User {
     this.profilePicture = data.profilePicture;
     this.sessionsRemaining = data.sessionsRemaining;
     this.packageType = data.packageType;
+  }
+
+  validate(): { isValid: boolean; errors?: string[] } {
+    const result = UserSchema.validate(this, { abortEarly: false });
+    if (result.error) {
+      return {
+        isValid: false,
+        errors: result.error.details.map((detail) => detail.message),
+      };
+    }
+    return { isValid: true };
   }
 
   isPremium(): boolean {

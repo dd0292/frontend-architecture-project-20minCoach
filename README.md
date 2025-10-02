@@ -121,16 +121,10 @@ npm start # Run the app
 ```
 
 ---
+
 # Proof of concepts to develop
 
-##  Testing Strategy
-
-###  Current Status: 
-- **Framework**: Jest 29.7.0 + React Native Testing Library
-- **Implemented tests**: **47 unit tests passing** 
-- **Coverage**: 80% lines, 90% functions, 75% branches
-- **Result**: **4 test suites, 0 tests failing**
-- **Execution time**: ~7.5 seconds
+## Testing Strategy
 
 ###  Run Tests
 ```bash
@@ -194,7 +188,7 @@ npm test
 
 ---
 
-## UX & Security proof of Concepts
+## UX & Security
 
 ### 1. Prototype screen & UX testing
 - AI tool used: Vercel's [v0](https://v0.app/)
@@ -251,33 +245,422 @@ npm test
 
 ---
 
-Diagrams stored in `/docs/diagrams/`.
+
+
+## 1. Visual Components
+
+### Visual component architecture
+This project follows an atomic design architecture, structured into three levels of UI components:
+
+```bash
+src/components/
+├── common/
+│   ├── atoms/        # Basic, reusable UI elements (Button, Input, etc.)
+│   ├── molecules/    # Groupings of atoms (SearchBar, ProfileHeader, etc.)
+│   └── organisms/    # Larger composites (CoachCard, FilterPanel, etc.)
+├── auth/             # Screens and flows related to authentication
+└── styles/           # Modularized style files for each component
+```
+Each component has a corresponding .styles.ts file located in the styles/ directory under its appropriate level (atoms, molecules, organisms).
+
+### Reusability & scalability
+
+All UI components are:
+- 1. Reusably designed with props for flexibility.
+- 2. Separated into visual `(*.tsx)` and styling `(*.styles.ts)` layers.
+- 3. Easily themable via a central `ThemeContext`.
+
+Example: `Button.tsx` receives props like disabled, with all visuals defined in `Button.styles.ts.`
+ 
+ ``` tsx
+ // src/components/common/atoms/Button.tsx
+ interface ButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: "primary" | "secondary" | "outline" | "ghost";
+  size?: "small" | "medium" | "large";
+  disabled?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+}
+```
+
+``` ts
+// src/components/styles/atoms/Button.styles.tsx
+export const createButtonStyles = (theme: ThemeContextType, disabled = false) =>
+  StyleSheet.create({
+    baseStyle: {
+      borderRadius: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+    },
+    // ...
+    ghostTextStyles: {
+      color: disabled ? theme.colors.textSecondary : theme.colors.primary,
+  },
+});
+ ```
+
+### Responsive design guidelines
+
+Responsiveness is managed via:
+- **Flexbox** layouts for dynamic resizing.
+- **StyleSheet** composition for base, responsive, and conditional styles.
+- Shared layout patterns in `GlobalStyles.tsx`.
 
 ---
 
-### 4. Detailed Layer Design Requirements
+## 2. Styles/theme strategy
 
-Each of these subsections must describe **responsibilities, examples, templates, and outputs** for developers:
+Dark and light themes are implemented via:
+- A global [ThemeContext](src/components/styles/ThemeContext.tsx). This helps to centralized theme values.
+- All styles reference the active theme from context.
 
-- **Visual Components** — hierarchy (atoms/molecules/organisms), accessibility rules, responsive design examples.  
-- **Controllers** — mediation logic, hooks integration, validation handling.  
-- **Models** — domain objects (`User`, `Coach`), validators, usage examples.  
-- **Middleware** — interceptors, error handling, logging.  
-- **Business Logic** — reusable services, domain rules.  
-- **Proxy/Client** — API abstraction (`api/client.ts`).  
-- **Background/Listeners** — WebSocket listeners, periodic refreshers.  
-- **Validators** — `validators/validator.ts`, templates.  
-- **DTOs** — mapping between API and frontend models.  
-- **State Management** — Redux slices + store.  
-- **Styles** — responsive rules, dark/light mode strategy.  
-- **Utilities** — helpers, singletons.  
-- **Exception Handling** — friendly error handling + logging.  
-- **Logging** — strategy-pattern logger with pluggable providers.  
-- **Security** — auth integration with roles.
+**How it Works**
+
+A `ThemeProvider` wraps the application and manages theme state.
+The theme preference (light, dark, or system) is stored persistently using `AsyncStorage`. Theme colors are defined in a consistent shape via a `ThemeColors` interface for strong typing and reusability.
+
+Each theme (light and dark) defines values for:
+```tsx
+interface ThemeColors {
+  background: string;
+  surface: string;
+  primary: string;
+  secondary: string;
+  accent: string;
+  text: string;
+  textSecondary: string;
+  border: string;
+  card: string;
+  error: string;
+  success: string;
+  warning: string;
+}
+```
+
+Example
+```tsx
+import { useTheme } from '../styles/ThemeContext';
+
+const MyComponent = () => {
+  const { colors } = useTheme();
+
+  return (
+    <View style={{ backgroundColor: colors.background }}>
+      <Text style={{ color: colors.text }}>Hello Theme!</Text>
+    </View>
+  );
+};
+```
+
+### Styling strategy
+
+|**Principle**	| **Pecommended practice**	| 
+| --- | --- |
+|Modular styles	| One style file per component (`*.styles.ts`)	| 
+|Theme support	| Central `ThemeContext` with light/dark toggling	| 
+|Responsive rules	| Flexbox layout, % widths 	| 
+|Layout styles	| Stored in `GlobalStyles.tsx`	| 
+
+All style files use `StyleSheet.create()` to enable React Native optimization.
+
+### Developer instructions
+
+These rules must be followed by the development team when contributing in the UI:
+- When creating a new reusable component, select the appropriate level (atom, molecule, or organism).
+- Create a new style file when building a new component (e.g. `NewButton.styles.ts`) in the corresponding level folder.
+- Use the theme context to apply colors, spacing, and font sizes (recommended to maintain consistency with the app’s overall design).
+- Avoid hardcoding styles directly in `.tsx` files; place all styles in a corresponding `*.styles.ts` file. (Only very specific or unlikely-to-change details can be exceptions.)
+- Ensure mobile responsiveness using flex, percentages (%), Dimensions, etc.
+- Test both light and dark modes before submitting changes.
 
 ---
 
-## 1. Controllers
+## 3. Linter configuration
+
+This project uses [ESLint](https://eslint.org/) as the linting tool to ensure clean, consistent, and error-free code. ESLint is configured with support for TypeScript, React, React Hooks, and Prettier integration for formatting. Also other pluggins used are:
+- `@typescript-eslint/eslint-plugin` — TypeScript support.
+- `eslint-plugin-react` — React-specific rules.
+- `eslint-plugin-react-hooks` — Rules for hooks best practices.
+- `eslint-plugin-prettier` — Enforces Prettier formatting rules. 
+
+### Rules/conventions
+
+#### Base JavaScript Rules (from `@eslint/js`)
+
+Standard best practices for JavaScript, including:
+- Disallow unused variables
+- Disallow unreachable code
+- Warn about confusing arrow functions or misuse of == vs ===
+- Enforce curly braces for blocks
+- Encourage === over ==
+
+#### TypeScript Rules (from `@typescript-eslint`)
+
+- `@typescript-eslint/no-unused-vars`: Disallow unused variables (Error)
+- `@typescript-eslint/no-explicit-any`: Discourages using any type (Warning)
+- Enforces strict typing and clean, maintainable TypeScript code
+- Checks function return types, parameter consistency, and type safety
+
+#### React Rules (from `eslint-plugin-react`)
+
+- Enforces best practices in React components
+- Validates JSX syntax
+- Warns if component props aren’t used properly
+- Helps avoid unnecessary re-renders or unsafe lifecycle methods
+
+#### Prettier Formatting Rules (from `eslint-plugin-prettier`)
+
+- All code must follow Prettier formatting
+- Any formatting issues (indentation, spacing, quotes, etc.) are treated as errors
+- Helps keep consistent code style across the entire team
+
+#### Custom Rules
+- `no-console`: Warn when using console.log
+- `prefer-const`: Prefer const over let if possible
+- `no-var`: Disallow use of var
+
+### Running ESLint
+```bash
+npm run lint # to check your code
+npm run lint --fix # to automatically fix problems
+```
+
+---
+
+## 3. Models and validators
+
+Each model consists of:
+- **Interface:** Defines the data structure and contract
+- **Class:** Implements the interface and adds business logic + validation methods
+
+**Example:**
+```typescript
+interface Coach {
+  id: string;
+  name: string;
+  title: string;
+  specialization: string[];
+  rating: number;
+  reviewCount: number;
+  tags: string[];
+  profilePicture: ImageSourcePropType;
+  isAvailable: boolean;
+  bio: string;
+  experience: string;
+  hourlyRate: number;
+  coverPhoto?: ImageSourcePropType;
+}
+
+class CoachModel implements Coach {
+  
+  // Validation Methods
+  validate(): ValidationResult
+  
+  // Business Logic Methods
+  hasTag(tag: string): boolean
+  matchesSpecialization(searchTerm: string): boolean
+}
+```
+### For validation
+We use **Joi** for comprehensive schema validation combined with custom rule validation.
+THey go inside the `src/models/validators` folder to help keep both models and validators close.
+
+**Example:**
+```typescript
+import Joi from 'joi';
+
+export const CoachSchema = Joi.object({
+  id: Joi.string().required().messages({
+    'string.empty': 'Coach ID is required',
+    'any.required': 'Coach ID is required'
+  }),
+  name: Joi.string().min(2).max(50).required().messages({
+    'string.min': 'Name must be at least 2 characters',
+    'string.max': 'Name cannot exceed 50 characters',
+    'any.required': 'Name is required'
+  }),
+  // ...
+  title: Joi.string().min(5).max(100).required(),
+  });
+```
+
+```typescript
+export class CoachModel implements Coach {
+  // ... properties
+
+  /**
+   * Recommended Validates against Joi schema
+   */
+  validate(): { isValid: boolean; errors?: string[] } {
+    const result = CoachSchema.validate(this, { 
+      abortEarly: false, 
+      allowUnknown: false 
+    });
+    if (result.error) {
+      return {
+        isValid: false,
+        errors: result.error.details.map(detail => detail.message)
+      };
+    }
+    return { isValid: true };
+  }
+}
+```
+
+### Create new Models/Validators
+
+- 1. Create interface and class
+
+```typescript
+// 1. Define Interface
+interface Thing {
+  id: string;
+  name: string;
+}
+
+// 2. Create Class with Validation
+class thingModel implements Thing {
+  id: string;
+  name: string;
+
+  constructor(data: Product) {
+    this.id = data.id;
+    this.name = data.name;
+  }
+}
+```
+- 2. Create Validator
+```typescript
+import Joi from 'joi';
+
+// Simple validator schema
+export const ProductSchema = Joi.object({
+  id: Joi.string().required(),
+  name: Joi.string().min(2).required(),
+});
+
+// Use in model
+class thingModel implements Thing {
+  // ... properties and methods
+  
+  validateWithJoi() {
+    const result = ProductSchema.validate(this);
+    return {
+      isValid: !result.error,
+      errors: result.error ? result.error.details.map(d => d.message) : []
+    };
+  }
+}
+```
+
+- 3. Usage
+```typescript
+// Create instance
+const product = new ProductModel({
+  id: '1',
+  name: 'Yoga Mat',
+});
+
+// Validate
+const validation = product.validate();
+if (!validation.isValid) {
+  console.log('Errors:', validation.errors);
+}
+```
+---
+
+## 4. Clients
+
+The HTTP Client (`HttpClient.ts`) provides an general way for a new API communications with built-in fault tolerance patterns including retries, circuit breakers, and comprehensive error handling.
+
+### HttpClient 
+It does:
+- 1. **Circuit Breaker** - Blocks requests if API is broken
+- 2. **Auto Retry** - Retries failed requests
+- 3. **Timeout** - Stops requests after 30 seconds
+- 4. **Error Standardization** - All errors look the same
+- 5. **Common Methods** - get(), post(), put(), delete()
+
+```typescript
+class HttpClient {
+  async request(url, config) {
+    // 1. Check circuit breaker
+    // 2. Make fetch request
+    // 3. If error → circuit breaker counts failure
+    // 4. If success → return data
+  }
+  
+  // Shortcut methods
+  get(url)    // GET request
+  post(url, data)  // POST request  
+  put(url, data)   // PUT request
+  delete(url) // DELETE request
+}
+```
+
+### Basic Usage
+
+```typescript
+// GET request
+const coaches = await httpClient.get<Coach[]>('/coaches');
+
+// POST request  
+const newSession = await httpClient.post<Session>('/sessions', {
+  coachId: '123',
+  scheduledTime: '2024-01-01T10:00:00Z'
+});
+
+// With error context
+const user = await httpClient.get<User>('/user/123', {}, {
+  operation: 'fetchUser',
+  userId: '123'
+});
+```
+
+### Template for new API clients
+
+```typescript
+import { HttpClient } from "src/clients/HttpClient.ts";
+
+// [resource].api.ts
+class [Resource]Api {
+  constructor(private http: HttpClient) {}
+
+  // GET all
+  async getAll(): Promise<[Resource][]> {
+    return this.http.get<[Resource][]>('/[resource]');
+  }
+
+  // GET by ID
+  async getById(id: string): Promise<[Resource]> {
+    return this.http.get<[Resource]>(`/[resource]/${id}`);
+  }
+
+  // CREATE
+  async create(data: Create[Resource]Request): Promise<[Resource]> {
+    return this.http.post<[Resource]>('/[resource]', data);
+  }
+
+  // UPDATE
+  async update(id: string, data: Partial<[Resource]>): Promise<[Resource]> {
+    return this.http.put<[Resource]>(`/[resource]/${id}`, data);
+  }
+
+  // DELETE
+  async delete(id: string): Promise<void> {
+    return this.http.delete(`/[resource]/${id}`);
+  }
+}
+
+export const [resource]Api = new [Resource]Api(httpClient);
+```
+
+---
+
+## 5. Controllers
 
 The controllers in this project implement the business logic and act as mediators between the user interface and the data services. The architecture follows separation-of-concerns principles and uses modern React patterns with hooks for connectivity.
 
@@ -425,7 +808,7 @@ export class EnhancedAuthController {
     
 - **Testing Ready**: Structure prepared for unit testing
 
-## 2. Middleware Layer - Error Handling & Logging
+## 6. Middleware Layer 
 
 ### 4.1 Flow and General Purpose
 
@@ -834,7 +1217,7 @@ describe('HttpClient', () => {
 
 ---
 
-## 3. Logging System
+## 7. Logging System
 
 ### 5.1 Strategy Pattern Implementation
 
@@ -876,7 +1259,7 @@ interface LogEntry {
 
 ---
 
-## 4. Exception Handling System
+## 8. Exception Handling System
 
 ### 6.1 Centralized Error Management
 
@@ -925,7 +1308,7 @@ const httpError = ErrorAdapter.fromHttpError(response);
 
 ---
 
-## 5. Utilities & Helpers
+## 9. Utilities & Helpers
 
 ### 7.1 Validation Utilities
 
@@ -964,7 +1347,7 @@ const { data, error } = await supabase.auth.signInWithPassword({
 
 ---
 
-## 6. Background Jobs & Listeners
+## 10. Background Jobs & Listeners
 
 ### 8.1 WebSocket Client
 
@@ -1019,7 +1402,7 @@ const newCoach = await httpClient.post('/api/coaches', coachData);
 
 ---
 
-## 7. Middleware System
+## 11. Middleware System
 
 ### 9.1 Middleware Wrappers
 
@@ -1059,7 +1442,8 @@ const resilientFunction = withRetry(myFunction, 3, 1000, { component: 'MyCompone
 
 ---
 
-## 8. Proof of Concepts (PoCs)
+
+## 12. Proof of Concepts (PoCs)
 
 ### 10.1 Video Call PoC (`pocs/video-call/`)
 
@@ -1083,7 +1467,7 @@ const resilientFunction = withRetry(myFunction, 3, 1000, { component: 'MyCompone
 
 ---
 
-## 9. Class Diagram & Design Patterns
+## 13. Class Diagram & Design Patterns
 
 ### 11.1 Main Classes
 
@@ -1114,245 +1498,12 @@ El diagrama de clases muestra la arquitectura del sistema con los siguientes com
 
 ---
 
-## 10. Required Diagrams
+## 14. Required Diagrams
 
 All diagrams are stored in `/docs/diagrams/` and exported as **PDF** and editable source files:
 
 1. **N-Layer Architecture Diagram** - Shows all layers and their interactions
 2. **Class Diagram (UML)** - Shows class relationships and design patterns
-3. **Component Hierarchy** - Shows the structure of React Native components
-
-
----
-
-## 11. Visual Components
-
-
-### Visual component architecture
-This project follows an atomic design architecture, structured into three levels of UI components:
-
-```bash
-src/components/
-├── common/
-│   ├── atoms/        # Basic, reusable UI elements (Button, Input, etc.)
-│   ├── molecules/    # Groupings of atoms (SearchBar, ProfileHeader, etc.)
-│   └── organisms/    # Larger composites (CoachCard, FilterPanel, etc.)
-├── auth/             # Screens and flows related to authentication
-└── styles/           # Modularized style files for each component
-```
-Each component has a corresponding .styles.ts file located in the styles/ directory under its appropriate level (atoms, molecules, organisms).
-
-### Reusability & scalability
-
-All UI components are:
-- 1. Reusably designed with props for flexibility.
-- 2. Separated into visual `(*.tsx)` and styling `(*.styles.ts)` layers.
-- 3. Easily themable via a central `ThemeContext`.
-
-Example: `Button.tsx` receives props like disabled, with all visuals defined in `Button.styles.ts.`
- 
- ``` tsx
- // src/components/common/atoms/Button.tsx
- interface ButtonProps {
-  title: string;
-  onPress: () => void;
-  variant?: "primary" | "secondary" | "outline" | "ghost";
-  size?: "small" | "medium" | "large";
-  disabled?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-}
-```
-
-``` ts
-// src/components/styles/atoms/Button.styles.tsx
-export const createButtonStyles = (theme: ThemeContextType, disabled = false) =>
-  StyleSheet.create({
-    baseStyle: {
-      borderRadius: 8,
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "row",
-    },
-    // ...
-    ghostTextStyles: {
-      color: disabled ? theme.colors.textSecondary : theme.colors.primary,
-  },
-});
- ```
-
-### Responsive design guidelines
-
-Responsiveness is managed via:
-- **Flexbox** layouts for dynamic resizing.
-- **StyleSheet** composition for base, responsive, and conditional styles.
-- Shared layout patterns in `GlobalStyles.tsx`.
-
----
-
-## 12. Styles
-
-## 13. Theme Strategy
-
-Dark and light themes are implemented via:
-- A global [ThemeContext](src/components/styles/ThemeContext.tsx). This helps to centralized theme values.
-- All styles reference the active theme from context.
-
-**How it Works**
-
-A `ThemeProvider` wraps the application and manages theme state.
-The theme preference (light, dark, or system) is stored persistently using `AsyncStorage`. Theme colors are defined in a consistent shape via a `ThemeColors` interface for strong typing and reusability.
-
-Each theme (light and dark) defines values for:
-```tsx
-interface ThemeColors {
-  background: string;
-  surface: string;
-  primary: string;
-  secondary: string;
-  accent: string;
-  text: string;
-  textSecondary: string;
-  border: string;
-  card: string;
-  error: string;
-  success: string;
-  warning: string;
-}
-```
-
-Example
-```tsx
-import { useTheme } from '../styles/ThemeContext';
-
-const MyComponent = () => {
-  const { colors } = useTheme();
-
-  return (
-    <View style={{ backgroundColor: colors.background }}>
-      <Text style={{ color: colors.text }}>Hello Theme!</Text>
-    </View>
-  );
-};
-```
-
-### Styling strategy
-
-|**Principle**	| **Pecommended practice**	| 
-| --- | --- |
-|Modular styles	| One style file per component (`*.styles.ts`)	| 
-|Theme support	| Central `ThemeContext` with light/dark toggling	| 
-|Responsive rules	| Flexbox layout, % widths 	| 
-|Layout styles	| Stored in `GlobalStyles.tsx`	| 
-
-All style files use `StyleSheet.create()` to enable React Native optimization.
-
-### Developer instructions
-
-These rules must be followed by the development team when contributing in the UI:
-- When creating a new reusable component, select the appropriate level (atom, molecule, or organism).
-- Create a new style file when building a new component (e.g. `NewButton.styles.ts`) in the corresponding level folder.
-- Use the theme context to apply colors, spacing, and font sizes (recommended to maintain consistency with the app’s overall design).
-- Avoid hardcoding styles directly in `.tsx` files; place all styles in a corresponding `*.styles.ts` file. (Only very specific or unlikely-to-change details can be exceptions.)
-- Ensure mobile responsiveness using flex, percentages (%), Dimensions, etc.
-- Test both light and dark modes before submitting changes.
-
----
-
-## 14. Linter configuration
-
-This project uses [ESLint](https://eslint.org/) as the linting tool to ensure clean, consistent, and error-free code. ESLint is configured with support for TypeScript, React, React Hooks, and Prettier integration for formatting. Also other pluggins used are:
-- `@typescript-eslint/eslint-plugin` — TypeScript support.
-- `eslint-plugin-react` — React-specific rules.
-- `eslint-plugin-react-hooks` — Rules for hooks best practices.
-- `eslint-plugin-prettier` — Enforces Prettier formatting rules. 
-
-### Rules/conventions
-
-#### Base JavaScript Rules (from `@eslint/js`)
-
-Standard best practices for JavaScript, including:
-- Disallow unused variables
-- Disallow unreachable code
-- Warn about confusing arrow functions or misuse of == vs ===
-- Enforce curly braces for blocks
-- Encourage === over ==
-
-#### TypeScript Rules (from `@typescript-eslint`)
-
-- `@typescript-eslint/no-unused-vars`: Disallow unused variables (Error)
-- `@typescript-eslint/no-explicit-any`: Discourages using any type (Warning)
-- Enforces strict typing and clean, maintainable TypeScript code
-- Checks function return types, parameter consistency, and type safety
-
-#### React Rules (from `eslint-plugin-react`)
-
-- Enforces best practices in React components
-- Validates JSX syntax
-- Warns if component props aren’t used properly
-- Helps avoid unnecessary re-renders or unsafe lifecycle methods
-
-#### Prettier Formatting Rules (from `eslint-plugin-prettier`)
-
-- All code must follow Prettier formatting
-- Any formatting issues (indentation, spacing, quotes, etc.) are treated as errors
-- Helps keep consistent code style across the entire team
-
-#### Custom Rules
-- `no-console`: Warn when using console.log
-- `prefer-const`: Prefer const over let if possible
-- `no-var`: Disallow use of var
-
-### Running ESLint
-```bash
-npm run lint # to check your code
-npm run lint --fix # to automatically fix problems
-```
-
-## Deliverables Checklist  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-1. MISSING DIAGRAMS
-  - [ ] Architecture-diagram.pdf - Clear N-Layer diagram
-  - [ ] Class-diagram.pdf - With labeled design patterns
-  - [ ] Component-hierarchy.pdf - React component structure
-
-2. REAL PROOF OF CONCEPTS (PoCs)
-  - [ ] PoC #1: Functional video call (20min timer included)
-  - [ ] PoC #2: Working role system (BasicUser/PremiumUser)
-  - [ ] PoC #3: Real-time search with filters
-  - [ ] PoC #4: Real-time notifications
-
-3. AUTHENTICATION
-  - [ ] Auth0/Clerk configured with 2 roles
-  - [ ] BasicUser: Can only search coaches
-  - [ ] PremiumUser: Can search + book instantly
-  - [ ] MFA (Two Factor) working
-  - [ ] Permission middleware implemented
-
-4. TESTING
-  - [✅] 5 UNIT TESTS for AuthController ✅ **PASSING**
-  - [✅] 17 UNIT TESTS for Coach model ✅ **PASSING**
-  - [✅] Tests running in pipeline ✅ **47 tests passing**
-  - [✅] Scripts: npm test → works ✅ **FULLY FUNCTIONAL**
-
-5. UX/UI
-  - [ ] Test with Maze/Useberry (5 real participants)
-  - [ ] Evidence: result screenshots
-
-6. IMPLEMENTED ARCHITECTURE
-  - [ ] Middleware Layer: error handling, logging, auth
-  - [ ] Business Layer: real business logic
-  - [ ] Services Layer: functional API clients
-  - [ ] Utils Layer: loggers, validators
-
-WHAT THE PROFESSOR WILL REVIEW SPECIFICALLY
-[✅] 1. Can I clone the repo and run `npm test` without errors? **✅ YES - 47 tests passing**
-[✅] 2. Do the unit tests PASS? **✅ YES - 47/47 tests passing, 0 failing**
-[ ] 3. Can I login as BasicUser and PremiumUser?
-[ ] 4. Do I see different functionalities based on my role?
-[ ] 5. Is the architecture diagram clear and professional?
-[ ] 6. Is there evidence of UX testing with real people?
-[✅] 7. Can I understand EVERYTHING by just reading the README.md? **✅ YES - Complete documentation**
 
 ---
 
