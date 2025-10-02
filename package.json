@@ -58,11 +58,5 @@
     "globals": "^16.4.0",
     "jest": "^29.7.0",
     "typescript": "^5.3.0"
-  },
-  "jest": {
-    "preset": "react-native",
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/tests/setup.ts"
-    ]
   }
 }

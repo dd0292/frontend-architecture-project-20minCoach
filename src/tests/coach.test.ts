@@ -8,13 +8,15 @@ describe("CoachModel", () => {
     coachData = {
       id: "coach-1",
       name: "Dr. María García",
+      title: "Psychologist",
       specialization: ["psychology", "therapy", "mental-health"],
       bio: "Experienced psychologist with 10 years of practice in cognitive behavioral therapy",
       rating: 4.8,
+      reviewCount: 120,
       profilePicture: "https://example.com/maria.jpg",
-      location: "Bogotá, Colombia",
       isAvailable: true,
       experience: "10 years",
+      hourlyRate: 50,
       tags: ["psychology", "therapy", "cbt", "anxiety", "depression"],
     };
     coach = new CoachModel(coachData);
@@ -24,6 +26,7 @@ describe("CoachModel", () => {
     test("should create coach with all required properties", () => {
       expect(coach.id).toBe("coach-1");
       expect(coach.name).toBe("Dr. María García");
+      expect(coach.title).toBe("Psychologist");
       expect(coach.specialization).toEqual([
         "psychology",
         "therapy",
@@ -33,10 +36,11 @@ describe("CoachModel", () => {
         "Experienced psychologist with 10 years of practice in cognitive behavioral therapy",
       );
       expect(coach.rating).toBe(4.8);
+      expect(coach.reviewCount).toBe(120);
       expect(coach.profilePicture).toBe("https://example.com/maria.jpg");
-      expect(coach.location).toBe("Bogotá, Colombia");
       expect(coach.isAvailable).toBe(true);
       expect(coach.experience).toBe("10 years");
+      expect(coach.hourlyRate).toBe(50);
       expect(coach.tags).toEqual([
         "psychology",
         "therapy",
@@ -50,13 +54,15 @@ describe("CoachModel", () => {
       const minimalData = {
         id: "coach-2",
         name: "John Doe",
+        title: "Developer",
         specialization: ["programming"],
         bio: "Software developer",
         rating: 4.0,
+        reviewCount: 50,
         profilePicture: "",
-        location: "São Paulo, Brazil",
         isAvailable: false,
         experience: "5 years",
+        hourlyRate: 30,
         tags: ["programming"],
       };
 
@@ -64,6 +70,7 @@ describe("CoachModel", () => {
 
       expect(minimalCoach.id).toBe("coach-2");
       expect(minimalCoach.name).toBe("John Doe");
+      expect(minimalCoach.title).toBe("Developer");
       expect(minimalCoach.isAvailable).toBe(false);
     });
   });

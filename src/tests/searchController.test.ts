@@ -9,49 +9,57 @@ describe("SearchController", () => {
       {
         id: "1",
         name: "Dr. María García",
+        title: "Psychologist",
         specialization: ["psychology", "therapy", "mental-health"],
         bio: "Experienced psychologist specializing in cognitive behavioral therapy",
         rating: 4.8,
+        reviewCount: 120,
         profilePicture: "https://example.com/maria.jpg",
-        location: "Bogotá, Colombia",
         isAvailable: true,
         experience: "10 years",
+        hourlyRate: 50,
         tags: ["psychology", "therapy", "cbt", "anxiety", "depression"],
       },
       {
         id: "2",
         name: "Carlos Developer",
+        title: "Software Developer",
         specialization: ["programming", "web-development", "react"],
         bio: "Senior software developer with expertise in React and Node.js",
         rating: 4.6,
+        reviewCount: 95,
         profilePicture: "https://example.com/carlos.jpg",
-        location: "São Paulo, Brazil",
         isAvailable: true,
         experience: "8 years",
+        hourlyRate: 40,
         tags: ["programming", "react", "javascript", "web-development"],
       },
       {
         id: "3",
         name: "Ana Fitness",
+        title: "Personal Trainer",
         specialization: ["health", "fitness", "nutrition"],
         bio: "Certified personal trainer and nutritionist",
         rating: 4.7,
+        reviewCount: 80,
         profilePicture: "https://example.com/ana.jpg",
-        location: "Medellín, Colombia",
         isAvailable: false,
         experience: "6 years",
+        hourlyRate: 35,
         tags: ["fitness", "nutrition", "health", "training"],
       },
       {
         id: "4",
         name: "Roberto Legal",
+        title: "Corporate Lawyer",
         specialization: ["law", "legal", "contracts"],
         bio: "Corporate lawyer with 15 years of experience",
         rating: 4.9,
+        reviewCount: 150,
         profilePicture: "https://example.com/roberto.jpg",
-        location: "Buenos Aires, Argentina",
         isAvailable: true,
         experience: "15 years",
+        hourlyRate: 60,
         tags: ["law", "legal", "contracts", "corporate"],
       },
     ];
@@ -85,14 +93,14 @@ describe("SearchController", () => {
       const result = SearchController.validateProblemDescription("");
 
       expect(result.isValid).toBe(false);
-      expect(result.message).toContain("Current count: 1 words");
+      expect(result.message).toContain("Current count: 0 words");
     });
 
     test("should handle description with only whitespace", () => {
       const result = SearchController.validateProblemDescription("   \n\t   ");
 
       expect(result.isValid).toBe(false);
-      expect(result.message).toContain("Current count: 1 words");
+      expect(result.message).toContain("Current count: 0 words");
     });
 
     test("should handle description with exactly 40 words", () => {
