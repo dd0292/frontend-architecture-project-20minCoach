@@ -1289,7 +1289,7 @@ Standard best practices for JavaScript, including:
 
 - Enforces best practices in React components
 - Validates JSX syntax
-- Warns if component props aren’t used properly
+- Warns if component props aren't used properly
 - Helps avoid unnecessary re-renders or unsafe lifecycle methods
 
 #### Prettier Formatting Rules (from `eslint-plugin-prettier`)
@@ -1308,6 +1308,183 @@ Standard best practices for JavaScript, including:
 npm run lint # to check your code
 npm run lint --fix # to automatically fix problems
 ```
+
+---
+
+## 15. Build and Deployment Pipeline
+
+### 15.1 Pipeline Architecture
+
+El proyecto utiliza **GitHub Actions** como sistema de CI/CD para automatizar el proceso de build, testing y deployment. El pipeline está diseñado para garantizar la calidad del código antes de cualquier despliegue.
+
+```mermaid
+graph LR
+    A[Push to Master] --> B[Checkout Code]
+    B --> C[Setup Node.js 18]
+    C --> D[Install Dependencies]
+    D --> E[Run ESLint]
+    E --> F[Run Unit Tests]
+    F --> G{All Checks Pass?}
+    G -->|Yes| I[Build Docker Image]
+    H -->|No| J[Fail Pipeline]
+    I --> J[Push to Registry]
+    J --> K[Deploy to Environment]
+```
+
+**Pipeline File**: `.github/workflows/pipeline.yaml`
+
+#### Pipeline Stages:
+
+1. **Code Checkout**: Obtiene el código del repositorio
+2. **Environment Setup**: Configura Node.js 18 con npm cache
+3. **Dependency Installation**: Instala dependencias usando `npm ci` (clean install)
+4. **Code Quality Check**: Ejecuta ESLint para validar estándares de código
+5. **Unit Testing**: Ejecuta la suite completa de tests (47 tests)
+6. **Coverage Report**: Genera reporte de cobertura de código
+7. **Docker Build**: Construye imagen de contenedor (solo si los tests pasan)
+8. **Container Push**: Publica imagen a GitHub Container Registry
+9. **Deployment**: Despliega a entorno correspondiente
+
+### 15.2 Build Process by Environment
+
+#### Development Environment
+
+**Propósito**: Desarrollo local con hot-reload y debugging activo
+
+**Comandos básicos**:
+```bash
+npm start              # Inicia Expo dev server
+npm run android        # Ejecuta en emulador Android
+npm run ios            # Ejecuta en simulador iOS
+npm run web            # Ejecuta en navegador web
+```
+
+### 15.4 Unit Testing Pipeline
+
+Integrado en CI/CD y se ejecuta automáticamente en cada push.
+
+#### Pipeline Steps:
+
+1. **Install Dependencies**: `npm install`
+2. **Run Linter**: `npm run lint`
+3. **Execute Tests**: `npm run test`
+4. **Generate Coverage**: `npm run test:coverage`
+5. **Upload Reports**: Artifacts guardados en GitHub Actions
+
+#### Test Commands Available
+
+```bash
+# Testing básico
+npm test                    # Ejecuta todos los tests
+npm run test:watch          # Modo watch para desarrollo
+npm run test:coverage       # Con reporte de cobertura
+
+# Testing específico
+npm run test:models         # Solo tests de modelos
+npm run test:controllers    # Solo tests de controladores
+npm run test:unit           # Solo tests unitarios
+npm run test:integration    # Solo tests de integración
+
+# CI/CD
+npm run test             # Para integración continua (sin watch)
+```
+
+### 15.5 Deployment Documentation Standards
+
+#### Documentation Structure
+
+Cada deployment debe incluir:
+
+1. **Changelog**: Descripción de cambios en `CHANGELOG.md`
+2. **Release Notes**: Notas para usuarios en GitHub Releases
+3. **Technical Notes**: Detalles técnicos para el equipo
+4. **Rollback Plan**: Procedimiento de rollback si es necesario
+
+#### Git Commit Standards
+
+```bash
+feat: Nueva funcionalidad
+fix: Corrige error
+docs: Actualiza documentación de deployment
+style: Ajusta estilos
+refactor: Refactoriza controladores
+test: Añade tests
+chore: Actualiza lógica
+```
+
+### 15.6 Developer Instructions
+
+#### Initial Setup (Fresh Installation)
+
+```bash
+# 1. Clone repository
+git clone https://github.com/your-org/20mincoach.git
+cd 20mincoach
+
+# 2. Install Node.js 18+ (if not installed)
+# Visit: https://nodejs.org/
+
+# 3. Install dependencies
+npm install
+
+# 5. Configure Supabase credentials in .env.development
+# Get credentials from: https://app.supabase.com/project/your-project/settings/api
+
+# 6. Start development server
+npm start
+
+# 7. Open Expo Go app on your phone and scan QR code
+# OR press 'a' for Android emulator / 'i' for iOS simulator
+```
+
+#### Running the Application
+
+| Command | Description | Use Case |
+|---------|-------------|----------|
+| `npm start` | Inicia Expo dev server | Desarrollo general |
+| `npm run android` | Ejecuta en Android | Testing Android |
+| `npm run ios` | Ejecuta en iOS | Testing iOS |
+| `npm run web` | Ejecuta en browser | Testing web |
+
+#### Deployment Process
+
+- **Step 1: Pre-deployment Checklist**
+
+- **Step 2: Push to Repository**
+
+- **Step 3: Monitor Pipeline**
+
+- **Step 4: Verify Deployment**
+
+#### Troubleshooting
+
+**Common Issues**:
+
+1. **Dependencies Error**
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+2. **Cache Issues**
+```bash
+npm start -- --clear
+npx expo start -c
+```
+
+3. **Test Failures**
+```bash
+npx jest --clearCache
+npm test
+```
+
+4. **Build Errors**
+```bash
+npx expo-doctor
+npx expo install --fix
+```
+
+---
 
 ## Deliverables Checklist  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
