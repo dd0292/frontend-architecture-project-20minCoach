@@ -31,10 +31,10 @@ jobs:
         run: npx eslint .
         
       - name: Run tests
-        run: npm run test:ci
+        run: npm run test
         
       - name: Unit tests coverage
-        run: npm run test:ci -- --coverage
+        run: npm run test -- --coverage
 
   deploy:
     needs: ci-cd
