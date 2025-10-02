@@ -221,7 +221,7 @@ Diagrams stored in `/docs/diagrams/`.
 
 ---
 
-### 3. Detailed Layer Design Requirements
+### 4. Detailed Layer Design Requirements
 
 Each of these subsections must describe **responsibilities, examples, templates, and outputs** for developers:
 
@@ -243,7 +243,155 @@ Each of these subsections must describe **responsibilities, examples, templates,
 
 ---
 
-## 4. Middleware Layer - Error Handling & Logging
+## 1. Controllers
+
+The controllers in this project implement the business logic and act as mediators between the user interface and the data services. The architecture follows separation-of-concerns principles and uses modern React patterns with hooks for connectivity.
+
+### Controller Structure
+
+There are 2 main controllers:
+
+#### 1. **AuthController** (`src/controllers/authController.ts`)
+
+- **Responsibility**: User authentication handling and credential validation
+    
+- **Key functions**:
+    
+    - `authenticateUser()`: Authenticates users with email and password
+        
+    - `validateEmail()`: Validates email format using regular expressions
+        
+- **Implementation**: Uses hard-coded data for simulation, with artificial delay to mimic API calls
+    
+
+#### 2. **SearchController** (`src/controllers/searchController.ts`)
+
+- **Responsibility**: Search and filtering logic for coaches
+    
+- **Key functions**:
+    
+    - `searchCoaches()`: Filters coaches by query and tags
+        
+    - `getAvailableCoaches()`: Retrieves available coaches
+        
+    - `sortCoachesByRating()`: Sorts coaches by rating
+        
+    - `SearchController.validateProblemDescription()`: Validates problem descriptions (minimum 40 words)
+        
+    - `SearchController.filterCoaches()`: Advanced filtering with multiple criteria
+        
+    - `SearchController.getAvailableTags()`: Provides a complete list of available tags
+        
+
+### Hook-based Connectors
+
+Controllers integrate with React components via custom hooks and Redux:
+
+```typescript
+// Example usage in LoginScreen.tsx
+const dispatch = useDispatch();
+const navigation = useNavigation();
+
+const handleAuth = async () => {
+  // Input validation using the controller
+  if (!validateEmail(email)) {
+    Alert.alert("Error", "Please enter a valid email address");
+    return;
+  }
+  
+  dispatch(loginStart());
+  
+  try {
+    // Controller call
+    const user = await authenticateUser(email, password);
+    if (user) {
+      dispatch(loginSuccess(user));
+      // Role-based navigation
+    }
+  } catch (error) {
+    dispatch(loginFailure());
+  }
+};
+```
+
+```typescript
+// Example usage in UserHomeScreen.tsx
+const { coaches } = useSelector((state: RootState) => state.coaches);
+const dispatch = useDispatch();
+
+const handleSearch = async () => {
+  // Use the search controller
+  const results = searchCoaches(coaches, searchQuery, selectedTags);
+  dispatch(setSearchResults(results));
+  navigation.navigate("CoachListing");
+};
+```
+
+### Input Validation and Processing
+
+Controllers implement robust validation of user data:
+
+1. **Email Validation**: Regular expression for valid format
+    
+2. **Password Validation**: Minimum length check
+    
+3. **Description Validation**: Minimum 40 words for problem descriptions
+    
+4. **Data Filtering**: Availability checks and search criteria validation
+    
+
+### Dependency Injection
+
+Although the project uses mocked data, the architecture is prepared for dependency injection:
+
+- **HTTP Client**: Ready for integration with `HttpClient`
+    
+- **Middleware**: Implemented middleware system for error handling and logging
+    
+- **Adapters**: Adapter pattern implemented for error conversion
+    
+- **Services**: Structure prepared for external services (Supabase integrated)
+    
+
+### Middleware Integration
+
+Controllers are designed to work with the middleware system:
+
+```typescript
+// Example of middleware integration (AuthIntegrationExample.tsx)
+export class EnhancedAuthController {
+  private static async _authenticateUser(email: string, password: string): Promise<any> {
+    const context: ErrorContext = {
+      component: 'EnhancedAuthController',
+      action: '_authenticateUser',
+      metadata: { email }
+    };
+    
+    // Validation using existing controller
+    if (!validateEmail(email)) {
+      throw new AppError(ERROR_CODES.EMAIL_INVALID, 'Invalid email format', context);
+    }
+    
+    // Use the original controller with improved error handling
+    const user = await authenticateUser(email, password);
+    return user;
+  }
+}
+```
+
+### Architectural Patterns
+
+- **Separation of Concerns**: Controllers split by domain (auth, search)
+    
+- **Stateless Functions**: Pure functions with no internal state
+    
+- **Error Handling**: Centralized error handling with context
+    
+- **TypeScript**: Strong typing for better type safety
+    
+- **Testing Ready**: Structure prepared for unit testing
+
+## 2. Middleware Layer - Error Handling & Logging
 
 ### 4.1 Flow and General Purpose
 
@@ -652,7 +800,7 @@ describe('HttpClient', () => {
 
 ---
 
-## 5. Logging System
+## 3. Logging System
 
 ### 5.1 Strategy Pattern Implementation
 
@@ -694,7 +842,7 @@ interface LogEntry {
 
 ---
 
-## 6. Exception Handling System
+## 4. Exception Handling System
 
 ### 6.1 Centralized Error Management
 
@@ -743,7 +891,7 @@ const httpError = ErrorAdapter.fromHttpError(response);
 
 ---
 
-## 7. Utilities & Helpers
+## 5. Utilities & Helpers
 
 ### 7.1 Validation Utilities
 
@@ -782,7 +930,7 @@ const { data, error } = await supabase.auth.signInWithPassword({
 
 ---
 
-## 8. Background Jobs & Listeners
+## 6. Background Jobs & Listeners
 
 ### 8.1 WebSocket Client
 
@@ -837,7 +985,7 @@ const newCoach = await httpClient.post('/api/coaches', coachData);
 
 ---
 
-## 9. Middleware System
+## 7. Middleware System
 
 ### 9.1 Middleware Wrappers
 
@@ -877,7 +1025,7 @@ const resilientFunction = withRetry(myFunction, 3, 1000, { component: 'MyCompone
 
 ---
 
-## 10. Proof of Concepts (PoCs)
+## 8. Proof of Concepts (PoCs)
 
 ### 10.1 Video Call PoC (`pocs/video-call/`)
 
@@ -901,7 +1049,7 @@ const resilientFunction = withRetry(myFunction, 3, 1000, { component: 'MyCompone
 
 ---
 
-## 11. Class Diagram & Design Patterns
+## 9. Class Diagram & Design Patterns
 
 ### 11.1 Main Classes
 
@@ -932,16 +1080,19 @@ El diagrama de clases muestra la arquitectura del sistema con los siguientes com
 
 ---
 
-## Required Diagrams
+## 10. Required Diagrams
 
 All diagrams are stored in `/docs/diagrams/` and exported as **PDF** and editable source files:
 
-1. **N-Layer Architecture Diagram** - Muestra las capas de la aplicación
-2. **Class Diagram (UML)** - Diagrama de clases con patrones de diseño
-3. **Component Hierarchy** - Estructura de componentes React Native
+1. **N-Layer Architecture Diagram** - Shows all layers and their interactions
+2. **Class Diagram (UML)** - Shows class relationships and design patterns
+3. **Component Hierarchy** - Shows the structure of React Native components
+
 
 ---
-## Visual Components
+
+## 11. Visual Components
+
 
 ### Visual component architecture
 This project follows an atomic design architecture, structured into three levels of UI components:
@@ -1004,9 +1155,10 @@ Responsiveness is managed via:
 - Shared layout patterns in `GlobalStyles.tsx`.
 
 ---
-## Styles
 
-## Theme Strategy
+## 12. Styles
+
+## 13. Theme Strategy
 
 Dark and light themes are implemented via:
 - A global [ThemeContext](src/components/styles/ThemeContext.tsx). This helps to centralized theme values.
@@ -1073,7 +1225,7 @@ These rules must be followed by the development team when contributing in the UI
 
 ---
 
-## Linter configuration
+## 14. Linter configuration
 
 This project uses [ESLint](https://eslint.org/) as the linting tool to ensure clean, consistent, and error-free code. ESLint is configured with support for TypeScript, React, React Hooks, and Prettier integration for formatting. Also other pluggins used are:
 - `@typescript-eslint/eslint-plugin` — TypeScript support.
