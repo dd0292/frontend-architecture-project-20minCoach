@@ -210,10 +210,44 @@ npm test
 - Test link: [UX Testing 20min Coach](https://t.maze.co/447054949)
 - Results stored in: `/docs/ux-tests/`  
 
-### 3. Authorization  
-- Provider: `Supabase`  
-- Two-Factor Authentication enabled.  
-- Login screen integrated (`LoginScreen.tsx`).  
+### 3. Authentication & Authorization
+
+#### Authentication Provider
+- Provider: `Supabase Auth`
+- Two-Factor Authentication enabled via SMS/Email
+- Built-in login screen with email/password (`Auth.tsx`)
+- Session management with auto-refresh
+
+#### Role-Based Access Control
+- **Roles & Permissions**:
+  - BasicUser:
+    - Can search and view coaches
+    - Can book free consultation sessions
+  - PremiumUser: 
+    - All BasicUser permissions
+    - Can book paid coaching sessions
+    - Access to premium coaches
+
+#### Implementation Details
+- Role configuration in Supabase Management Console
+- Server-side permission validation via Row Level Security (RLS)
+- Client-side UI rendering based on user role
+- Protected routes with role-based guards
+
+#### Account Creation
+- Sign up with your email at `Auth.tsx` login screen
+- Check your email for verification link
+- After verification, you can access the platform with:
+  - Basic features by default
+  - Premium features by upgrading your account
+- 2FA options available:
+  - SMS verification
+  - Authenticator app
+
+#### Integration
+- Login screen (`src/components/auth/Auth.tsx`)
+- Role-based routing (`src/navigation/ProtectedRoute.tsx`)
+- Permission hooks (`src/hooks/usePermissions.ts`)
 
 ---
 
