@@ -2,7 +2,7 @@
 
 > **Case #1, 25%**  
 > Group Project — 3 members 
-> Jose David Chaves Mena, <no olvidar nombre>, <no olvidar nombre> 
+> Jose David Chaves Mena, Sebastián Chacón Muñoz, <no olvidar nombre> 
 
 ---
 ### Project Overview
@@ -1140,7 +1140,7 @@ LO QUE EL PROFESOR VA A REVISAR ESPECÍFICAMENTE
 
 ## Timeline
 
-- **Last commit date:** Saturday, September 27  
+- **Last commit date:** Wednesday, October 1,2025
 - **Participation requirement:** Every group member must contribute commits weekly.  
 
 ---
