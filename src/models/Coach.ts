@@ -1,4 +1,5 @@
 import { ImageSourcePropType } from "react-native";
+import { CoachSchema } from "./validators/Coach";
 
 export interface Coach {
   id: string;
@@ -66,6 +67,17 @@ export class CoachModel implements Coach {
     this.experience = data.experience;
     this.hourlyRate = data.hourlyRate;
     this.coverPhoto = data.coverPhoto;
+  }
+
+  validate(): { isValid: boolean; errors?: string[] } {
+    const result = CoachSchema.validate(this, { abortEarly: false });
+    if (result.error) {
+      return {
+        isValid: false,
+        errors: result.error.details.map((detail) => detail.message),
+      };
+    }
+    return { isValid: true };
   }
 
   hasTag(tag: string): boolean {
