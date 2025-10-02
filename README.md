@@ -2,7 +2,7 @@
 
 > **Case #1, 25%**  
 > Group Project — 3 members 
-> Jose David Chaves Mena, Sebastián Chacón Muñoz, <no olvidar nombre> 
+> Jose David Chaves Mena, Sebastián Chacón Muñoz, Marlon Badilla Mora
 
 ---
 ### Project Overview
