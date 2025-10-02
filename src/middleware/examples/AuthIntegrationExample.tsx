@@ -404,8 +404,7 @@ export function EnhancedLoginScreen() {
       <TouchableOpacity 
         onPress={handleLogin}
         disabled={isLoading}
-        style={[styles.button, isLoading && styles.buttonDisabled]}
-      >
+        style={[styles.button, isLoading && styles.buttonDisabled]}>
         <Text style={styles.buttonText}>
           {isLoading ? 'Logging in...' : 'Log In'}
         </Text>
