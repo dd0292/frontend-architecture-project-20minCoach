@@ -125,72 +125,72 @@ npm start # Run the app
 
 ##  Testing Strategy
 
-###  Estado Actual: 
+###  Current Status: 
 - **Framework**: Jest 29.7.0 + React Native Testing Library
-- **Tests implementados**: **47 tests unitarios pasando** 
-- **Cobertura**: 80% líneas, 90% funciones, 75% ramas
-- **Resultado**: **4 test suites, 0 tests fallando**
-- **Tiempo de ejecución**: ~7.5 segundos
+- **Implemented tests**: **47 unit tests passing** 
+- **Coverage**: 80% lines, 90% functions, 75% branches
+- **Result**: **4 test suites, 0 tests failing**
+- **Execution time**: ~7.5 seconds
 
-###  Ejecutar Tests
+###  Run Tests
 ```bash
-# Desde la raíz del proyecto
-npm test                 #  Ejecutar todos los tests
-npm run test:watch       #  Modo watch (automático)
-npm run test:coverage    #  Reporte de cobertura
-npm run test:ci          #  Para CI/CD
-npm run test:models      #  Solo tests de modelos
-npm run test:controllers #  Solo tests de controladores
+# From the project root
+npm test                 #  Run all tests
+npm run test:watch       #  Watch mode (automatic)
+npm run test:coverage    #  Coverage report
+npm run test:ci          #  For CI/CD
+npm run test:models      #  Only model tests
+npm run test:controllers #  Only controller tests
 ```
 
-###  Cobertura de Tests
-| Componente | Tests | Estado | Descripción |
-|------------|-------|--------|-------------|
-| **UserModel** | 4 tests |  PASS | Validaciones, roles, acceso premium |
-| **CoachModel** | 17 tests |  PASS | Constructor, búsqueda, especialización, tags |
-| **SearchController** | 22 tests |  PASS | Búsqueda, filtros, validaciones de texto |
-| **AuthController** | 5 tests |  PASS | Login, validaciones, roles |
-| **TOTAL** | **47 tests** | ** ALL PASS** | **0 tests fallando** |
+###  Test Coverage
+| Component | Tests | Status | Description |
+|-----------|-------|--------|-------------|
+| **UserModel** | 4 tests |  PASS | Validations, roles, premium access |
+| **CoachModel** | 17 tests |  PASS | Constructor, search, specialization, tags |
+| **SearchController** | 22 tests |  PASS | Search, filters, text validations |
+| **AuthController** | 5 tests |  PASS | Login, validations, roles |
+| **TOTAL** | **47 tests** | ** ALL PASS** | **0 tests failing** |
 
-###  Estructura de Tests
+###  Test Structure
 ```bash
 src/tests/
-├── setup.ts                    #  Configuración global de Jest
-├── fixtures/                   #  Datos de prueba reutilizables
-├── mocks/                      #  Mocks para APIs externas
-├── utils/                      #  Utilidades para tests
+├── setup.ts                    #  Global Jest configuration
+├── fixtures/                   #  Reusable test data
+├── mocks/                      #  External API mocks
+├── utils/                      #  Test utilities
 ├── user.test.ts               #  4 tests - UserModel
 ├── coach.test.ts              #  17 tests - CoachModel
 ├── authController.test.ts     #  5 tests - AuthController
 └── searchController.test.ts   #  22 tests - SearchController
 ```
 
-###  Configuración Técnica
-- **Jest Config**: `jest.config.js` - Configuración completa
-- **Setup**: `src/tests/setup.ts` - Mocks de React Native
-- **TypeScript**: Soporte completo con tipos
-- **Cobertura**: Reportes HTML, LCOV, JSON
+###  Technical Configuration
+- **Jest Config**: `jest.config.js` - Complete configuration
+- **Setup**: `src/tests/setup.ts` - React Native mocks
+- **TypeScript**: Complete support with types
+- **Coverage**: HTML, LCOV, JSON reports
 
-###  Comandos de Debug
+###  Debug Commands
 ```bash
-npx jest --verbose              # Output detallado
-npx jest --detectOpenHandles   # Detectar handles abiertos
-npx jest --clearCache          # Limpiar cache
-npx jest user.test.ts          # Test específico
+npx jest --verbose              # Detailed output
+npx jest --detectOpenHandles   # Detect open handles
+npx jest --clearCache          # Clear cache
+npx jest user.test.ts          # Specific test
 ```
 
-###  Verificación Rápida
+###  Quick Verification
 ```bash
-# Verificar que todo funciona
+# Verify everything works
 npm test
 
-# Resultado esperado:
+# Expected result:
 #  Test Suites: 4 passed, 4 total
 #  Tests:       47 passed, 47 total
 #  Snapshots:   0 total
 #  Time:        ~7.5s
 ```
-** Documentación completa codigo, consejos y Mejores Prácticas: **: [Testing Guide](docs/Testing_20Guide.md)
+** Complete documentation, tips and Best Practices: **: [Testing Guide](docs/Testing_20Guide.md)
 
 ---
 
@@ -1125,48 +1125,48 @@ npm run lint --fix # to automatically fix problems
 
 ## Deliverables Checklist  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-1. DIAGRAMAS FALTANTES
-  - [ ] Architecture-diagram.pdf - Diagrama N-Layer claro
-  - [ ] Class-diagram.pdf - Con patrones de diseño etiquetados
-  - [ ] Component-hierarchy.pdf - Estructura de componentes React
+1. MISSING DIAGRAMS
+  - [ ] Architecture-diagram.pdf - Clear N-Layer diagram
+  - [ ] Class-diagram.pdf - With labeled design patterns
+  - [ ] Component-hierarchy.pdf - React component structure
 
-2. PRUEBAS DE CONCEPTO (PoCs) REALES
-  - [ ] PoC #1: Video llamada funcional (20min timer incluido)
-  - [ ] PoC #2: Sistema de roles funcionando (BasicUser/PremiumUser)
-  - [ ] PoC #3: Búsqueda en tiempo real con filtros
-  - [ ] PoC #4: Notificaciones en tiempo real
+2. REAL PROOF OF CONCEPTS (PoCs)
+  - [ ] PoC #1: Functional video call (20min timer included)
+  - [ ] PoC #2: Working role system (BasicUser/PremiumUser)
+  - [ ] PoC #3: Real-time search with filters
+  - [ ] PoC #4: Real-time notifications
 
-3. AUTENTICACIÓN
-  - [ ] Auth0/Clerk configurado con 2 roles
-  - [ ] BasicUser: Solo puede buscar coaches
-  - [ ] PremiumUser: Puede buscar + reservar instantáneamente
-  - [ ] MFA (Two Factor) funcionando
-  - [ ] Middleware de permisos implementado
+3. AUTHENTICATION
+  - [ ] Auth0/Clerk configured with 2 roles
+  - [ ] BasicUser: Can only search coaches
+  - [ ] PremiumUser: Can search + book instantly
+  - [ ] MFA (Two Factor) working
+  - [ ] Permission middleware implemented
 
 4. TESTING
-  - [✅] 5 UNIT TESTS para AuthController ✅ **PASANDO**
-  - [✅] 17 UNIT TESTS para Coach model ✅ **PASANDO**
-  - [✅] Tests ejecutándose en pipeline ✅ **47 tests pasando**
-  - [✅] Scripts: npm test → funciona ✅ **COMPLETAMENTE FUNCIONAL**
+  - [✅] 5 UNIT TESTS for AuthController ✅ **PASSING**
+  - [✅] 17 UNIT TESTS for Coach model ✅ **PASSING**
+  - [✅] Tests running in pipeline ✅ **47 tests passing**
+  - [✅] Scripts: npm test → works ✅ **FULLY FUNCTIONAL**
 
 5. UX/UI
-  - [ ] Test con Maze/Useberry (5 participantes reales)
-  - [ ] Evidencia: screenshots de resultados
+  - [ ] Test with Maze/Useberry (5 real participants)
+  - [ ] Evidence: result screenshots
 
-6. ARQUITECTURA IMPLEMENTADA
-  - [ ] Capa Middleware: error handling, logging, auth
-  - [ ] Capa Business: lógica de negocio real
-  - [ ] Capa Services: API clients funcionales
-  - [ ] Capa Utils: loggers, validators
+6. IMPLEMENTED ARCHITECTURE
+  - [ ] Middleware Layer: error handling, logging, auth
+  - [ ] Business Layer: real business logic
+  - [ ] Services Layer: functional API clients
+  - [ ] Utils Layer: loggers, validators
 
-LO QUE EL PROFESOR VA A REVISAR ESPECÍFICAMENTE
-[✅] 1. ¿Puedo clonar el repo y ejecutar `npm test` sin errores? **✅ SÍ - 47 tests pasando**
-[✅] 2. ¿Los tests unitarios PASAN? **✅ SÍ - 47/47 tests pasando, 0 fallando**
-[ ] 3. ¿Puedo hacer login como BasicUser y PremiumUser?
-[ ] 4. ¿Veo diferentes funcionalidades según mi rol?
-[ ] 5. ¿El diagrama de arquitectura es claro y profesional?
-[ ] 6. ¿Hay evidencia de testing UX con personas reales?
-[✅] 7. ¿Puedo entender TODO con solo leer el README.md? **✅ SÍ - Documentación completa**
+WHAT THE PROFESSOR WILL REVIEW SPECIFICALLY
+[✅] 1. Can I clone the repo and run `npm test` without errors? **✅ YES - 47 tests passing**
+[✅] 2. Do the unit tests PASS? **✅ YES - 47/47 tests passing, 0 failing**
+[ ] 3. Can I login as BasicUser and PremiumUser?
+[ ] 4. Do I see different functionalities based on my role?
+[ ] 5. Is the architecture diagram clear and professional?
+[ ] 6. Is there evidence of UX testing with real people?
+[✅] 7. Can I understand EVERYTHING by just reading the README.md? **✅ YES - Complete documentation**
 
 ---
 
