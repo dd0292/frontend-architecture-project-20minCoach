@@ -74,9 +74,9 @@ export class CoachModel implements Coach {
 
   matchesSpecialization(searchTerm: string): boolean {
     if (!searchTerm) return true;
-    
-    return this.specialization.some(spec => 
-      spec.toLowerCase().includes(searchTerm.toLowerCase())
+
+    return this.specialization.some((spec) =>
+      spec.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }
 }
