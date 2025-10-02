@@ -1,6 +1,6 @@
 # 20minCoach — Frontend Architecture & Prototype
 
-> **Case #1, 30%**  
+> **Case #1, 25%**  
 > Group Project — 3 members 
 > Jose David Chaves Mena, <no olvidar nombre>, <no olvidar nombre> 
 
@@ -35,39 +35,73 @@ Coaches can:
 
 ```bash
 repo-root/
-│── README.md                 # This documentation
-│── docs/                     # Documentation files & diagrams
-│   ├── diagrams/             # Architecture & UML diagrams
-│   ├── Testing Guide.md      # Complete testing documentation
-│   └── ...
-│── src/                      # Source code (PoCs + architecture implementation)
-│   ├── pocs/                 # PRUEBAS DE CONCEPTO FUNCIONALES !!!!!!!!~
-│   │   ├── video-call/
-│   │   ├── auth-roles/
-│   │   ├── real-time-search/
-│   │   └── notifications/
-│   ├── components/           # Visual components
-│   │   ├── auth/
-│   │   ├── common/           # Atoms, Molecules, Organisms
-│   │   │   ├── atoms/        # Componentes básicos
-│   │   │   ├── molecules/    # Componentes compuestos
-│   │   │   └── organisms/    # Componentes complejos
-│   │   └── styles/
-│   ├── controllers/          # Controllers (Auth, Search, etc.)
-│   ├── models/               # Models (User, Coach, etc.)
-│   ├── screens/              # Screens (Login, Search, Results, Profile)
-│   ├── slices/               # Redux slices
-│   ├── state/                # Store config
-│   ├── api/                  # Proxy/Client layer [TODO]
-│   ├── business/             # Business logic services [TODO]
-│   ├── middleware/           # Middlewares (logging, validation, error handler)
-│   ├── utils/                # Helpers (logger, formatters, singletons)
-│   └── tests/                # Unit tests (fixtures, mocks, utils)
-├── App.tsx     
-│── package.json
-│── tsconfig.json
-│── .gitignore
-└── ...
+│
+├── app.json                          # Expo app configuration
+├── App.tsx                           # Root application component 
+├── assets/                           # Static assets management
+│   └── public/                       # Background images and professional profile pictures
+├── docs/                             # Comprehensive documentation
+│   ├── ScriptForAi.txt               # AI prompt templates and guidelines
+│   ├── Testing Guide.md              # Testing strategies and procedures
+│   └── ux-tests/                     # User experience test reports
+├── github/                           # CI/CD and deployment configuration
+│   └── workflows/                    # GitHub Actions build/test/deploy pipeline
+├── src/                              # CORE SOURCE CODE
+│   │
+│   ├── clients/                      # External service clients
+│   │   ├── HttpClient.ts             # Example of REST API client
+│   │   ├── WebRTCClient.ts           # Mock Video call WebRTC implementation
+│   │   └── WebSocketClient.ts        # Mock Real-time communication client
+│   │
+│   ├── components/                   # REUSABLE UI COMPONENTS (Atomic Design)
+│   │   ├── auth/                     # Authentication-specific components
+│   │   │   ├── Account.tsx           # User account management component
+│   │   │   └── Auth.tsx              # Main authentication flow component
+│   │   │
+│   │   ├── common/                   # Atomic design system implementation
+│   │   │   ├── atoms/                # Fundamental building blocks
+│   │   │   ├── molecules/            # Combinations of atoms
+│   │   │   └── organisms/            # Complex composite components
+│   │   └── styles/                   # STYLING SYSTEM & THEMING
+│   │       ├── GlobalStyles.tsx      # Global style constants and mixins
+│   │       ├── ThemeContext.tsx      # Light/dark theme context provider
+│   │       ├── atoms/                # Component-specific style files
+│   │       ├── molecules/            # Molecular component styles
+│   │       └── organisms/            # Organism component styles
+│   │
+│   ├── controllers/                  # LOGIC CONTROLLERS
+│   │   ├── authController.ts         # Authentication business logic
+│   │   └── searchController.ts       # Search and filtering logic
+│   │
+│   ├── middleware/                   # MIDDLEWARE 
+│   │   ├── adapters/                 # External service adapters
+│   │   ├── logging/                  # Application logging
+│   │   ├── types/                    # Type definitions
+│   │   ├── wrappers/                 # Function wrappers
+│   │   └── examples/                 # Implementation examples
+│   │
+│   ├── models/                       # DATA MODELS & TYPES
+│   │
+│   ├── pocs/                         # PROOF OF CONCEPT PROTOTYPES
+│   │   ├── real-time-search/         # Real-time search implementation
+│   │   ├── video-call/               # Video call feature exploration
+│   │   └── notifications/            # Push notification system POC
+│   │
+│   ├── screens/                      # APPLICATION SCREENS
+│   ├── slices/                       # REDUX SLICES
+│   │   ├── authSlice.ts              # Authentication state management
+│   │   └── coachesSlice.ts           # Coaches data and search state
+│   │
+│   ├── state/                        # STATE MANAGEMENT 
+│   ├── tests/                        # TESTING
+│   └── utils/                        # UTILITIES
+├── package.json                      # NPM dependencies and scripts
+├── tsconfig.json                     # TypeScript compiler configuration
+├── babel.config.js                   # Babel transpiler configuration
+├── metro.config.js                   # Metro bundler configuration
+├── jest.config.js                    # Jest testing framework setup
+├── eslint.config.js                  # ESLint code quality rules
+└── README.md                         # Project documentation and setup
 ```
 
 ---
@@ -86,10 +120,8 @@ npm install
 npm start # Run the app
 ```
 
-### Demo Accounts
-- **User** → `user@example.com / password123`  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 ---
+# Proof of concepts to develop
 
 ## Testing Strategy
 - **Framework**: Jest 29.7.0 + React Native Testing Library
@@ -97,7 +129,7 @@ npm start # Run the app
 - **Tests implementados**: 52 tests unitarios pasando
 - **Documentación completa**: Ver [Testing Guide](docs/Testing%20Guide.md)
 
-### 🏃 Running Tests
+### Running tests
 ```bash
 cd src
 npm test                 # Run all tests
@@ -126,13 +158,13 @@ src/tests/
 └── setup.ts         # Jest config
 ```
 
-**📖 Para más detalles, consulta la [Guía Completa de Testing](docs/Testing%20Guide.md)**
+**For more details: [Guide for Testing](docs/Testing%20Guide.md)**
 
 ---
 
-## UX & Security Proof of Concepts
+## UX & Security proof of Concepts
 
-### 1. Prototype Screen
+### 1. Prototype screen & UX testing
 - AI tool used: Vercel's [v0](https://v0.app/)
 - Prototype created for: **Search Screen + Coach Results**.  
 - Stored under: `src/screens`  
@@ -146,40 +178,12 @@ src/tests/
 - Test link: [UX Testing 20min Coach](https://t.maze.co/447054949)
 - Results stored in: `/docs/ux-tests/`  
 
-### 3. Authentication & Authorization  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+### 3. Authorization  
 - Provider: `Supabase`  
-- Roles:  
-  - `BasicUser` → Action A only.  
-  - `PremiumUser` → Action A + Action B.  
 - Two-Factor Authentication enabled.  
 - Login screen integrated (`LoginScreen.tsx`).  
 
 ---
-
-## Frontend Architecture Design 
-
-### 1. Technology Selection  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-- Framework: **React Native with Expo**  
-- State Management: **Redux Toolkit**  
-- Testing: **Jest + React Native Testing Library**   
-
-See `/docs/Technology-Selection.md` for full justification.  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
----
-
-### 2. N-Layer Architecture  TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-**Layers included:**  
-- **Presentation Layer** → `components/`, `screens/`  
-- **Controllers Layer** → `controllers/`  
-- **Model Layer** → `models/`  
-- **Middleware Layer** → `middleware/`  
-- **Business Layer** → `business/`  
-- **Proxy/Client Layer** → `api/`  
-- **State Management Layer** → `slices/`, `state/`  
-- **Validators & DTOs** → `validators/`, `dto/`  
-- **Utilities** → `utils/`  
-- **Security** → Integrated auth provider  
 
 Diagrams stored in `/docs/diagrams/`.
 
